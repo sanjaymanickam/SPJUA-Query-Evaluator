@@ -32,11 +32,14 @@ public class Main {
                 CCJSqlParser parser = new CCJSqlParser(fil);
                 Statement stmt;
                 while ((stmt = parser.Statement()) != null) {
-                    if (stmt instanceof CreateTable) {
-                        CreateTable ct = (CreateTable) stmt;
-                        tables.put(ct.getTable().getName(), ct);
-                        System.out.println("CreateTable : " + ct.getTable().getName());
-                    }
+                    /* -----------------------------                  Using InstanceOf              ---------------------------------------------*/
+//                    if (stmt instanceof CreateTable) {
+//                        CreateTable ct = (CreateTable) stmt;
+//                        tables.put(ct.getTable().getName(), ct);
+//                        System.out.println("CreateTable : " + ct.getTable().getName());
+//                    }
+                    StatementVisitor stmt_visitor = new Visitor_Parse();
+                    stmt.accept(stmt_visitor);
                 }
 
             } catch (IOException e) {
