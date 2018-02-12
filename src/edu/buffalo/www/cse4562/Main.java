@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
-import net.sf.jsqlparser.statement.create.table.CreateTable;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,7 +15,6 @@ public class Main {
         int i;
         File dataDir = null;
         ArrayList<File> sqlFile = new ArrayList<File>();
-        HashMap<String, CreateTable> tables = new HashMap<String, CreateTable>();
         for (i = 0; i < args.length; i++) {
             if (args[i].equals("--data")) {
                 dataDir = new File(args[i + 1]);

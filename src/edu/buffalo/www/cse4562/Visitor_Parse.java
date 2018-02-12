@@ -10,9 +10,14 @@ import net.sf.jsqlparser.statement.update.*;
 import net.sf.jsqlparser.statement.insert.*;
 import net.sf.jsqlparser.statement.drop.*;
 
+import java.util.HashMap;
+
 public class Visitor_Parse implements StatementVisitor {
+    HashMap<String, CreateTable> tables = new HashMap<>();
     @Override
     public void visit(Select select) {
+        SelectVisitor s_visit = new Select_Parse();
+        select.getSelectBody().accept(s_visit);
     }
 
     @Override
@@ -42,6 +47,11 @@ public class Visitor_Parse implements StatementVisitor {
     @Override
     public void visit(CreateTable createTable) {
         System.out.println("Table name from visitor is :" + createTable.getTable().getName());
+        tables.put(createTable.getTable().getName(), createTable);
+    }
+
+    public HashMap retTable() {
+        return tables;
     }
 }
 
