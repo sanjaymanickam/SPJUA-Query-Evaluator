@@ -1,0 +1,3 @@
+CREATE TABLE R (A int, B date, C string)
+SELECT A, B FROM R
+SELECT A+B AS C FROM R
