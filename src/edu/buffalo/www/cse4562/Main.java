@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
+import net.sf.jsqlparser.schema.PrimitiveType;
 
 public class Main {
     public static void main(String[] args) {
