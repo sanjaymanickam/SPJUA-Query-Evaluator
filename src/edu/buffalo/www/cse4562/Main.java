@@ -1,6 +1,8 @@
 package edu.buffalo.www.cse4562;
 
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +25,32 @@ public class Main {
                 sqlFile.add(new File(args[i]));
             }
         }
-        for (File sql : sqlFile) {
+        FileReader fil;
+		try {
+			fil = new FileReader("data/query.sql");
+			CCJSqlParser parser = new CCJSqlParser(fil);
+	        Statement stmt;
+	        while ((stmt = parser.Statement()) != null) {
+			    /* -----------------------------                  Using InstanceOf              ---------------------------------------------*/
+//            if (stmt instanceof CreateTable) {
+//                CreateTable ct = (CreateTable) stmt;
+//                tables.put(ct.getTable().getName(), ct);
+//                System.out.println("CreateTable : " + ct.getTable().getName());
+//            }
+	        		System.out.println("Parsing : "+stmt.toString());
+			    StatementVisitor stmt_visitor = new Visitor_Parse();
+			    stmt.accept(stmt_visitor);
+	        }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+       
+        /*for (File sql : sqlFile) {
             try {
                 FileReader fil = new FileReader(sql);
                 CCJSqlParser parser = new CCJSqlParser(fil);
@@ -35,7 +62,7 @@ public class Main {
 //                        tables.put(ct.getTable().getName(), ct);
 //                        System.out.println("CreateTable : " + ct.getTable().getName());
 //                    }
-                    StatementVisitor stmt_visitor = new Visitor_Parse();
+                    /*StatementVisitor stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
                 }
 
@@ -44,7 +71,7 @@ public class Main {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
     }
 }

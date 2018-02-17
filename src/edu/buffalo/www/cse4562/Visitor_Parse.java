@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Visitor_Parse implements StatementVisitor {
-    HashMap<String, HashMap<String,String>> tables = new HashMap<>();
+   
     @Override
     public void visit(Select select) {
         SelectVisitor s_visit = new Select_Parse();
@@ -54,14 +54,22 @@ public class Visitor_Parse implements StatementVisitor {
         System.out.println("Table name from visitor is :" + createTable.getTable());
         List<ColumnDefinition> columns = createTable.getColumnDefinitions();
         HashMap<String, String> tableDetails =  new HashMap<>();
-        for(ColumnDefinition column : columns) {
+        String[] columnsArray = new String[columns.size()];
+        for(int i=0; i<columns.size();i++) {
+        		ColumnDefinition column = columns.get(i);
         		tableDetails.put(column.getColumnName(), column.getColDataType().toString());
+        		columnsArray[i] = column.getColumnName();
         }
-        tables.put(createTable.getTable().getName(), tableDetails);
+        Utility.tableName = createTable.getTable().getName();
+        Utility.tables.put(createTable.getTable().getName(), tableDetails);
+        Utility.tableColumns.put(createTable.getTable().getName(), columnsArray);
     }
 
-    public HashMap retTable() {
-        return tables;
-    }
+//    public HashMap retTable() {
+//        return tables;
+//    }
+//    public HashMap retTableColumn() {
+//        return tableColumns;
+//    }
 }
 
