@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Command_Executor {
      static String prompt = "$> "; // expected prompt
-        public void exec(String[] argsArray) throws Exception {
+        public static void exec(String[] argsArray) throws Exception {
                 // ready to read stdin, print out prompt
                 System.out.println(prompt);
                 System.out.flush();
