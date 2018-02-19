@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class Command_Executor {
     public static void exec(String[] args) {
+        String prompt = "$> ";
         int i;
         ArrayList<File> sqlFile = new ArrayList<>();
         for (i = 0; i < args.length; i++) {
@@ -26,12 +27,13 @@ public class Command_Executor {
                 FileReader fil = new FileReader(sql);
                 CCJSqlParser parser = new CCJSqlParser(fil);
                 Statement stmt;
+                System.out.println(prompt);
+                System.out.flush();
                 while ((stmt = parser.Statement()) != null) {
-                    System.out.println("$> " + stmt);
-                    System.out.flush();
                     Visitor_Parse stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
-
+                    System.out.println(prompt);
+                    System.out.flush();
                 }
 
             } catch (IOException e) {
