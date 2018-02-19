@@ -30,9 +30,7 @@ public class Command_Executor {
                     System.out.flush();
                     }
                 }
-                catch (IOException e) {
-                e.printStackTrace();
-                } catch (ParseException e) {
+                catch (ParseException e) {
                 e.printStackTrace();
                 }
         }
