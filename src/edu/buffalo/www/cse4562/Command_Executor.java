@@ -20,12 +20,15 @@ public class Command_Executor {
                 Data_Storage.dataDir = new File(args[i + 1]);
                 i++;
             } else
-                sqlFile.add(new File(args[i]));
+//                 sqlFile.add(new File(args[i]));
         }
         for (File sql : sqlFile) {
             try {
-                FileReader fil = new FileReader(sql);
-                CCJSqlParser parser = new CCJSqlParser(fil);
+//                 FileReader fil = new FileReader(sql);
+//                 CCJSqlParser parser = new CCJSqlParser(fil);
+//                 Statement stmt;
+                Reader in = new InputStreamReader(System.in);
+                CCJSqlParser parser = new CCJSqlParser(in);
                 Statement stmt;
                 System.out.println(prompt);
                 System.out.flush();
