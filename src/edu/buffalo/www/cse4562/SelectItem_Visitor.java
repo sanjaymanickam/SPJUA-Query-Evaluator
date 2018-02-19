@@ -25,6 +25,7 @@ public class SelectItem_Visitor implements SelectItemVisitor {
         if (columnName.indexOf(".") != -1) {
             columnName = columnName.split("\\.")[1];
         }
+        if(selectExpressionItem.getExpression())
         Data_Storage.selectedColumns.add(columnName);
 
         if (selectExpressionItem.getAlias() != null) {

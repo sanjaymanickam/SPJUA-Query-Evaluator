@@ -3,13 +3,8 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.StatementVisitor;
 
 import java.io.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class Command_Executor {
      static String prompt = "$> "; // expected prompt
