@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class SelectItem_Visitor implements SelectItemVisitor {
     @Override
     public void visit(AllColumns allColumns) {
-        Data_Storage.selectedColumns = new ArrayList<>(Arrays.asList(Data_Storage.tableColumns.get(Data_Storage.tablename)));
+//        Data_Storage.selectedColumns = new ArrayList<>(Arrays.asList(Data_Storage.tableColumns.get(Data_Storage.tablename)));
     }
 
     @Override

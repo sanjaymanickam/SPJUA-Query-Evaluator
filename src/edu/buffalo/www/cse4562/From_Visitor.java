@@ -14,12 +14,13 @@ public class From_Visitor implements FromItemVisitor {
 
     @Override
     public void visit(SubSelect subSelect) {
-
+        Select_Visitor select_visitor = new Select_Visitor();
+        subSelect.getSelectBody().accept(select_visitor);
     }
 
     @Override
     public void visit(Table table) {
-        System.out.println("The Table being used in this query : " + table.getName());
+//        System.out.println("The Table being used in this query : " + table.getName());
         tableName = table.getName();
     }
 

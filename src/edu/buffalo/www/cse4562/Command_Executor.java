@@ -27,9 +27,11 @@ public class Command_Executor {
                 CCJSqlParser parser = new CCJSqlParser(fil);
                 Statement stmt;
                 while ((stmt = parser.Statement()) != null) {
-                    System.out.println("$ > :" + stmt);
-                    StatementVisitor stmt_visitor = new Visitor_Parse();
+                    System.out.println("$> " + stmt);
+                    System.out.flush();
+                    Visitor_Parse stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
+
                 }
 
             } catch (IOException e) {

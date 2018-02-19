@@ -42,7 +42,7 @@ public class Eval_Iterator implements Iterator {
                             break;
                         count++;
                     }
-                    System.out.println("Required Column Datatype is " + data_type + " Column name is " + req_name);
+//                    System.out.println("Required Column Datatype is " + data_type + " Column name is " + req_name);
                     if (data_type.equals("int")) {
                         return new LongValue(to_copy[count]);
                     } else

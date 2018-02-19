@@ -12,4 +12,6 @@ public class Data_Storage {
     static List<String> selectedColumns = new ArrayList<>();
     static File dataDir = null;
     static String tablename = null;
+    static int star_flag = 0;
+    static Iterator oper;
 }
