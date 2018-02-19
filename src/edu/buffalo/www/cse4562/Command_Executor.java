@@ -20,7 +20,7 @@ public class Command_Executor {
                 Data_Storage.dataDir = new File(args[i + 1]);
                 i++;
             } else
-                sqlFile.add(new File("data\\/"+args[i]));
+                sqlFile.add(new File(args[i]));
         }
         for (File sql : sqlFile) {
             try {
