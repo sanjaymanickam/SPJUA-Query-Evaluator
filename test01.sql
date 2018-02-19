@@ -1,3 +1,3 @@
-CREATE TABLE R (A int, B date, C string)
-SELECT A, B FROM R
-SELECT A+B AS C FROM R
+CREATE TABLE T (A int, B date, C string)
+SELECT A,B FROM T
+SELECT A,B FROM T WHERE A>5

@@ -8,8 +8,9 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-public class Expr_Parse implements ExpressionVisitor {
+public class Expr_Visitor implements ExpressionVisitor {
 
+    Expression expr;
     @Override
     public void visit(NullValue nullValue) {
 
@@ -107,22 +108,22 @@ public class Expr_Parse implements ExpressionVisitor {
 
     @Override
     public void visit(GreaterThan greaterThan) {
-
+        expr = greaterThan;
     }
 
     @Override
     public void visit(GreaterThanEquals greaterThanEquals) {
-
+        expr = greaterThanEquals;
     }
 
     @Override
     public void visit(InExpression inExpression) {
-
+        expr = inExpression;
     }
 
     @Override
     public void visit(IsNullExpression isNullExpression) {
-
+        expr = isNullExpression;
     }
 
     @Override
@@ -132,17 +133,17 @@ public class Expr_Parse implements ExpressionVisitor {
 
     @Override
     public void visit(MinorThan minorThan) {
-
+        expr = minorThan;
     }
 
     @Override
     public void visit(MinorThanEquals minorThanEquals) {
-
+        expr = minorThanEquals;
     }
 
     @Override
     public void visit(NotEqualsTo notEqualsTo) {
-
+        expr = notEqualsTo;
     }
 
     @Override
@@ -203,5 +204,9 @@ public class Expr_Parse implements ExpressionVisitor {
     @Override
     public void visit(BitwiseXor bitwiseXor) {
 
+    }
+
+    public Expression getExpr() {
+        return expr;
     }
 }
