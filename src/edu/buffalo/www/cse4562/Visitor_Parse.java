@@ -24,7 +24,7 @@ public class Visitor_Parse implements StatementVisitor {
         String table_name = s_visit.retTableName();
         Data_Storage.tablename = table_name;
         Data_Storage.star_flag = 0;
-        StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".csv");
+        StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
         if (table_name != null) {
             Data_Storage.oper = new File_Iterator(new File(str.toString()));
         }
