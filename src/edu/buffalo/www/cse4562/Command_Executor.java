@@ -5,45 +5,35 @@ import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.StatementVisitor;
 
+import java.io.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Command_Executor {
-    public static void exec(String[] args) {
-        String prompt = "$> ";
-        int i;
-        ArrayList<File> sqlFile = new ArrayList<>();
-        for (i = 0; i < args.length; i++) {
-            if (args[i].equals("--data")) {
-                Data_Storage.dataDir = new File(args[i + 1]);
-                i++;
-            } else
-//                 sqlFile.add(new File(args[i]));
-        }
-        for (File sql : sqlFile) {
-            try {
-//                 FileReader fil = new FileReader(sql);
-//                 CCJSqlParser parser = new CCJSqlParser(fil);
-//                 Statement stmt;
-                Reader in = new InputStreamReader(System.in);
-                CCJSqlParser parser = new CCJSqlParser(in);
-                Statement stmt;
+     static String prompt = "$> "; // expected prompt
+        public static void main(String[] argsArray) throws Exception {
+                // ready to read stdin, print out prompt
                 System.out.println(prompt);
                 System.out.flush();
-                while ((stmt = parser.Statement()) != null) {
+                try
+                {
+                    Reader in = new InputStreamReader(System.in);
+                    CCJSqlParser parser = new CCJSqlParser(in);
+                    Statement stmt;
+                    // project here
+                    while((stmt = parser.Statement()) != null){
                     Visitor_Parse stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
                     System.out.println(prompt);
                     System.out.flush();
+                    }
                 }
-
-            } catch (IOException e) {
+                catch (IOException e) {
                 e.printStackTrace();
-            } catch (ParseException e) {
+                } catch (ParseException e) {
                 e.printStackTrace();
-            }
+                }
         }
-    }
 }
