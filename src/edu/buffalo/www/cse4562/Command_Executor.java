@@ -26,7 +26,7 @@ public class Command_Executor {
 
                     // project here
                     while((stmt = parser.Statement()) != null){
-                        System.out.println(stmt);
+//                        System.out.println(stmt);
                     Visitor_Parse stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
                     System.out.println(prompt);
