@@ -11,8 +11,12 @@ import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.schema.PrimitiveType;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args){
         // write your code here
-        Command_Executor.exec(args);
+        try {
+            Command_Executor.exec(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

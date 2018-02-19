@@ -23,7 +23,6 @@ public class Visitor_Parse implements StatementVisitor {
         select.getSelectBody().accept(s_visit);
         String table_name = s_visit.retTableName();
         Data_Storage.tablename = table_name;
-        Data_Storage.star_flag = 0;
         StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
         if (table_name != null) {
             Data_Storage.oper = new File_Iterator(new File(str.toString()));
@@ -38,10 +37,13 @@ public class Visitor_Parse implements StatementVisitor {
                     System.out.print(cols[i]);
                     if (cols.length != i + 1)
                         System.out.print("|");
-                } else if (Data_Storage.selectedColumns.contains(Data_Storage.tableColumns.get(Data_Storage.tablename)[i])) {
-                    System.out.print(cols[i]);
-                    if (cols.length != i + 1)
-                        System.out.print("|");
+                }
+                else {
+                    if(Data_Storage.selectedColumns.contains(Data_Storage.tableColumns.get(Data_Storage.tablename)[i])) {
+                        System.out.print(cols[i]);
+                        if (Data_Storage.selectedColumns.size() != i + 1)
+                            System.out.print("|");
+                    }
                 }
             }
             System.out.println();
