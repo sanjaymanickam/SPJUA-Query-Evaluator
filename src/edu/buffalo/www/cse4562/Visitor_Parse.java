@@ -37,7 +37,7 @@ public class Visitor_Parse implements StatementVisitor {
                     System.out.print(cols[i]);
                     if (cols.length != i + 1)
                         System.out.print("|");
-                    System.out.print(cols[i]+ " ");
+//                    System.out.print(cols[i]+ " ");
                 }
                 else {
                     if(Data_Storage.selectedColumns.contains(Data_Storage.tableColumns.get(Data_Storage.tablename)[i])) {
