@@ -23,6 +23,7 @@ public class Select_Visitor implements SelectVisitor {
         SelectItemVisitor select_Item = new SelectItem_Visitor();
         List<SelectItem> columns = plainSelect.getSelectItems();
 //        System.out.println("The Selected Columns are : " + columns);
+        Data_Storage.selectedColumns.clear();
         if (columns.size() == 1 && columns.get(0).toString().equals("*")) {
 //           System.out.println("Flag Set");
             Data_Storage.star_flag = 1;

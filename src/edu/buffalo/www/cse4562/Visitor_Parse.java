@@ -32,17 +32,20 @@ public class Visitor_Parse implements StatementVisitor {
         }
         String cols[] = Data_Storage.oper.readOneTuple();
         while (cols != null) {
+            int temp=0;
             for (int i = 0; i < cols.length; i++) {
                 if (Data_Storage.star_flag == 1) {
                     System.out.print(cols[i]);
-                    if (cols.length != i + 1)
+                    temp++;
+                    if (Data_Storage.selectedColumns.size()!=temp)
                         System.out.print("|");
 //                    System.out.print(cols[i]+ " ");
                 }
                 else {
                     if(Data_Storage.selectedColumns.contains(Data_Storage.tableColumns.get(Data_Storage.tablename)[i])) {
                         System.out.print(cols[i]);
-                        if (Data_Storage.selectedColumns.size() != i + 1)
+                        temp++;
+                        if (Data_Storage.selectedColumns.size() != temp)
                             System.out.print("|");
 //                        System.out.print(cols[i]+ " ");
                     }
