@@ -1,10 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.eval.Eval;
-import net.sf.jsqlparser.expression.BooleanValue;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.PrimitiveValue;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
 
 import java.sql.SQLException;
@@ -45,8 +42,14 @@ public class Eval_Iterator implements Iterator {
 //                    System.out.println("Required Column Datatype is " + data_type + " Column name is " + req_name);
                     if (data_type.equals("int")) {
                         return new LongValue(to_copy[count]);
-                    } else
+                    }
+                    else if(data_type.equals("string")){
+                        return new StringValue(to_copy[count]);
+                    }
+                    else{
                         return null;
+                    }
+
                 }
             };
             try {
