@@ -193,17 +193,17 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(BitwiseAnd bitwiseAnd) {
-
+        expr = bitwiseAnd;
     }
 
     @Override
     public void visit(BitwiseOr bitwiseOr) {
-
+        expr = bitwiseOr;
     }
 
     @Override
     public void visit(BitwiseXor bitwiseXor) {
-
+        expr = bitwiseXor;
     }
 
     public Expression getExpr() {
