@@ -37,7 +37,10 @@ public class Visitor_Parse implements StatementVisitor {
 //        }
         ArrayList<String> cols = Data_Storage.oper.readOneTuple();
         Iterator iter = schema.iterator();
-        ArrayList<String> schema_list = Data_Storage.tableColumns.get(table_name);
+        ArrayList<String> schema_list = new ArrayList<>(Data_Storage.tableColumns.get(table_name));
+        for(String s : Data_Storage.selectedColumns){
+            schema_list.add(s);
+        }
         StringBuilder to_output = new StringBuilder();
         while(cols!=null) {
             to_output = new StringBuilder();

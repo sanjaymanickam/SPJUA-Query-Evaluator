@@ -36,7 +36,8 @@ public class SelectItem_Visitor implements SelectItemVisitor {
 //            System.out.println("Alias is " + selectExpressionItem.getAlias());
             schema.add(selectExpressionItem.getAlias());
             Select_Visitor s_visit = new Select_Visitor();
-            Data_Storage.tableColumns.get(s_visit.retTableName()).add(selectExpressionItem.getAlias());
+            //Data_Storage.tableColumns.get(s_visit.retTableName()).add(selectExpressionItem.getAlias());
+            Data_Storage.selectedColumns.add(selectExpressionItem.getAlias());
             Expr_Visitor expr_visitor = new Expr_Visitor();
             selectExpressionItem.getExpression().accept(expr_visitor);
             expr = expr_visitor.getExpr();
