@@ -25,7 +25,7 @@ public class Visitor_Parse implements StatementVisitor {
         String table_name = s_visit.retTableName();
         schema = s_visit.retSchema();
         Data_Storage.tablename = table_name;
-        StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
+//        StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
 //        if (table_name != null) {
 //            Data_Storage.oper = new File_IteratorInteface(new File(str.toString()));
 //        }
@@ -92,7 +92,7 @@ public class Visitor_Parse implements StatementVisitor {
         }
         Data_Storage.tables.put(createTable.getTable().getName(), tableDetails);
         Data_Storage.tableColumns.put(createTable.getTable().getName(), columnArray);
-//       Data_Storage.tablename = createTable.getTable().getName();
+//      Data_Storage.tablename = createTable.getTable().getName();
     }
 }
 
