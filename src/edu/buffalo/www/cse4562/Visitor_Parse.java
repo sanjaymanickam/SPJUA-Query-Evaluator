@@ -21,8 +21,8 @@ public class Visitor_Parse implements StatementVisitor {
     List<String> schema;
     @Override
     public void visit(Select select) {
-        for(String s:Data_Storage.selectedColumns)
-            Data_Storage.tables.get(Data_Storage.tablename).remove(s);
+            for (String s : Data_Storage.selectedColumns)
+                Data_Storage.tables.get(Data_Storage.tablename).remove(s);
         Data_Storage.selectedColumns.removeAll(Data_Storage.selectedColumns);
         Select_Visitor s_visit = new Select_Visitor();
         select.getSelectBody().accept(s_visit);
@@ -46,18 +46,31 @@ public class Visitor_Parse implements StatementVisitor {
         {
             schema_list.add(s);
         }
-        StringBuilder to_output = new StringBuilder();
+//        StringBuilder to_output = new StringBuilder();
+//        while(cols!=null) {
+//            to_output = new StringBuilder();
+//            while (iter.hasNext()) {
+//                String to_check = iter.next().toString();
+//                if (schema_list.contains(to_check)) {
+//                    to_output.append(cols.get(schema_list.indexOf(to_check)));
+//                    if(iter.hasNext())
+//                        to_output.append("|");
+//                }
+//            }
+//            System.out.println(to_output.toString());
+//            iter = schema.iterator();
+//            cols = Data_Storage.oper.readOneTuple();
+//        }
         while(cols!=null) {
-            to_output = new StringBuilder();
             while (iter.hasNext()) {
                 String to_check = iter.next().toString();
                 if (schema_list.contains(to_check)) {
-                    to_output.append(cols.get(schema_list.indexOf(to_check)));
+                    System.out.print(cols.get(schema_list.indexOf(to_check)));
                     if(iter.hasNext())
-                        to_output.append("|");
+                        System.out.print("|");
                 }
             }
-            System.out.println(to_output.toString());
+            System.out.println();
             iter = schema.iterator();
             cols = Data_Storage.oper.readOneTuple();
         }

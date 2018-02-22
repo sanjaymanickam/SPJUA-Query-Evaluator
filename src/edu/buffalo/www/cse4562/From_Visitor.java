@@ -31,6 +31,7 @@ public class From_Visitor implements FromItemVisitor {
         tableName = table.getName();
 //       System.out.println("SCHEMA "+table.getSchemaName());
         schema = Data_Storage.tableColumns.get(table.getName());
+//        Data_Storage.tablename = table.getName();
     }
 
     public String retTableName() {
