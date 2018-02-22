@@ -22,7 +22,7 @@ public class SelectItem_Visitor implements SelectItemVisitor {
 
     @Override
     public void visit(AllTableColumns allTableColumns) {
-        System.out.println("IN ALL TABLE COLUMNS");
+//        System.out.println("IN ALL TABLE COLUMNS");
     }
 
     @Override
@@ -30,6 +30,7 @@ public class SelectItem_Visitor implements SelectItemVisitor {
         String columnName = selectExpressionItem.getExpression().toString();
         if (columnName.indexOf(".") != -1) {
             columnName = columnName.split("\\.")[1];
+            schema.add(columnName);
         }
         else if(selectExpressionItem.getAlias() != null) {
 //            System.out.println("Alias is " + selectExpressionItem.getAlias());
