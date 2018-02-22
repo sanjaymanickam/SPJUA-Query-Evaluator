@@ -76,7 +76,7 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                 }
                 else
                 {
-                    if(pr != BooleanValue.TRUE)
+                    if(pr != BooleanValue.TRUE && pr !=null)
                     tuple.add(pr.toString());
                 }
             } catch (SQLException e) {
