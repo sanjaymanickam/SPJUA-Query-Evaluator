@@ -11,7 +11,7 @@ import java.util.List;
 
 public class From_Visitor implements FromItemVisitor {
     static String tableName;
-    static int flag=0;
+
     static ArrayList<String> schema;
     @Override
     public void visit(SubJoin subJoin) {
@@ -23,7 +23,6 @@ public class From_Visitor implements FromItemVisitor {
         Select_Visitor select_visitor = new Select_Visitor();
         subSelect.getSelectBody().accept(select_visitor);
         schema = Data_Storage.tableColumns.get(tableName);
-        flag = 1;
     }
 
     @Override
@@ -38,5 +37,4 @@ public class From_Visitor implements FromItemVisitor {
         return tableName;
     }
     public List<String> retSchema() {return schema;}
-    public int retsubSelect(){return flag;}
 }

@@ -13,4 +13,5 @@ public class Data_Storage {
     static String tablename = null;
     static int star_flag = 0;
     static Iterator_Inteface oper;
+    static int subsel_flag=0;
 }
