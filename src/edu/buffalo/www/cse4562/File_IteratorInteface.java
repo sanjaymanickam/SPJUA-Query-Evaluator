@@ -1,13 +1,15 @@
 package edu.buffalo.www.cse4562;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class File_Iterator implements Iterator {
+public class File_IteratorInteface implements Iterator_Inteface {
 
     BufferedReader read;
     File new_file;
 
-    public File_Iterator(File new_file) {
+    public File_IteratorInteface(File new_file) {
         this.new_file = new_file;
         try {
             read = new BufferedReader(new FileReader(new_file));
@@ -17,7 +19,7 @@ public class File_Iterator implements Iterator {
     }
 
     @Override
-    public String[] readOneTuple() {
+    public ArrayList<String> readOneTuple() {
         if (read == null) {
             return null;
         }
@@ -30,7 +32,7 @@ public class File_Iterator implements Iterator {
         if (new_line == null) {
             return null;
         }
-        String str_split[] = new_line.split("\\|");
+        ArrayList<String> str_split =new ArrayList<>(Arrays.asList(new_line.split("\\|")));
         return str_split;
     }
 

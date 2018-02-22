@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.StatementVisitor;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -11,47 +12,43 @@ import net.sf.jsqlparser.statement.update.*;
 import net.sf.jsqlparser.statement.insert.*;
 import net.sf.jsqlparser.statement.drop.*;
 
-import javax.xml.crypto.Data;
+import javax.swing.text.html.HTMLDocument;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Visitor_Parse implements StatementVisitor {
+    List<String> schema;
     @Override
     public void visit(Select select) {
         Select_Visitor s_visit = new Select_Visitor();
         select.getSelectBody().accept(s_visit);
         String table_name = s_visit.retTableName();
+        schema = s_visit.retSchema();
         Data_Storage.tablename = table_name;
         StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
-        if (table_name != null) {
-            Data_Storage.oper = new File_Iterator(new File(str.toString()));
-        }
-        if (s_visit.retExpr() != null) {
-            Data_Storage.oper = new Eval_Iterator(Data_Storage.oper, s_visit.retExpr(), table_name);
-        }
-        String cols[] = Data_Storage.oper.readOneTuple();
-        while (cols != null) {
-            int temp=0;
-            for (int i = 0; i < cols.length; i++) {
-                if (Data_Storage.star_flag == 1) {
-                    System.out.print(cols[i]);
-                    temp++;
-                    if (Data_Storage.selectedColumns.size()!=temp)
+//        if (table_name != null) {
+//            Data_Storage.oper = new File_IteratorInteface(new File(str.toString()));
+//        }
+//        if (s_visit.retExpr() != null) {
+//            Data_Storage.oper = new Eval_IteratorInteface(Data_Storage.oper,schema,s_visit.retExpr(), table_name);
+//        }
+//        if(s_visit.retSelectExpr()!=null) {
+//            Data_Storage.oper = new Eval_IteratorInteface(Data_Storage.oper,schema,s_visit.retSelectExpr(), table_name);
+//        }
+        ArrayList<String> cols = Data_Storage.oper.readOneTuple();
+        Iterator iter = schema.iterator();
+        ArrayList<String> schema_list = Data_Storage.tableColumns.get(table_name);
+        while(cols!=null) {
+            while (iter.hasNext()) {
+                String to_check = iter.next().toString();
+                if (schema_list.contains(to_check)) {
+                    System.out.print(cols.get(schema_list.indexOf(to_check)));
+                    if(iter.hasNext())
                         System.out.print("|");
-//                    System.out.print(cols[i]+ " ");
-                }
-                else {
-                    if(Data_Storage.selectedColumns.contains(Data_Storage.tableColumns.get(Data_Storage.tablename)[i])) {
-                        System.out.print(cols[i]);
-                        temp++;
-                        if (Data_Storage.selectedColumns.size() != temp)
-                            System.out.print("|");
-//                        System.out.print(cols[i]+ " ");
-                    }
                 }
             }
             System.out.println();
+            iter = schema.iterator();
             cols = Data_Storage.oper.readOneTuple();
         }
     }
@@ -85,11 +82,11 @@ public class Visitor_Parse implements StatementVisitor {
 //        System.out.println("Table name from visitor is :" + createTable.getTable().getName());
         List<ColumnDefinition> columns = createTable.getColumnDefinitions();
         HashMap<String, String> tableDetails = new HashMap<>();
-        String[] columnArray = new String[columns.size()];
+        ArrayList<String> columnArray = new ArrayList<>();
         for (int i = 0; i < columns.size(); i++) {
             ColumnDefinition cols = columns.get(i);
             tableDetails.put(cols.getColumnName(), cols.getColDataType().getDataType());
-            columnArray[i] = cols.getColumnName();
+            columnArray.add(cols.getColumnName());
         }
         Data_Storage.tables.put(createTable.getTable().getName(), tableDetails);
         Data_Storage.tableColumns.put(createTable.getTable().getName(), columnArray);

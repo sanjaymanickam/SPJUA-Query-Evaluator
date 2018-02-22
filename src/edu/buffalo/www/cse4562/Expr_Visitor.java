@@ -13,17 +13,17 @@ public class Expr_Visitor implements ExpressionVisitor {
     Expression expr;
     @Override
     public void visit(NullValue nullValue) {
-
+        expr = nullValue;
     }
 
     @Override
     public void visit(Function function) {
-
+        expr = function;
     }
 
     @Override
     public void visit(InverseExpression inverseExpression) {
-
+        expr = inverseExpression;
     }
 
     @Override
@@ -33,77 +33,77 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(DoubleValue doubleValue) {
-
+        expr = doubleValue;
     }
 
     @Override
     public void visit(LongValue longValue) {
-
+        expr = longValue;
     }
 
     @Override
     public void visit(DateValue dateValue) {
-
+        expr = dateValue;
     }
 
     @Override
     public void visit(TimeValue timeValue) {
-
+        expr = timeValue;
     }
 
     @Override
     public void visit(TimestampValue timestampValue) {
-
+        expr = timestampValue;
     }
 
     @Override
     public void visit(BooleanValue booleanValue) {
-
+        expr = booleanValue;
     }
 
     @Override
     public void visit(StringValue stringValue) {
-
+        expr = stringValue;
     }
 
     @Override
     public void visit(Addition addition) {
-
+        expr = addition;
     }
 
     @Override
     public void visit(Division division) {
-
+        expr = division;
     }
 
     @Override
     public void visit(Multiplication multiplication) {
-
+        expr = multiplication;
     }
 
     @Override
     public void visit(Subtraction subtraction) {
-
+        expr = subtraction;
     }
 
     @Override
     public void visit(AndExpression andExpression) {
-
+        expr = andExpression;
     }
 
     @Override
     public void visit(OrExpression orExpression) {
-
+        expr = orExpression;
     }
 
     @Override
     public void visit(Between between) {
-
+            expr = between;
     }
 
     @Override
     public void visit(EqualsTo equalsTo) {
-
+            expr = equalsTo;
     }
 
     @Override
@@ -128,7 +128,7 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(LikeExpression likeExpression) {
-
+        expr = likeExpression;
     }
 
     @Override
@@ -148,12 +148,12 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(Column column) {
-
+        expr = column;
     }
 
     @Override
     public void visit(SubSelect subSelect) {
-
+        expr = subSelect;
     }
 
     @Override
