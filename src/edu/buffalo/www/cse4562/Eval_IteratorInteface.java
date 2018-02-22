@@ -47,8 +47,16 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                     if (data_type.equals("int")) {
                         return new LongValue(to_copy.get(count));
                     }
-                    else if(data_type.equals("string")){
+                    else if(data_type.equals("string")||data_type.equals("varchar")|data_type.equals("char")){
                         return new StringValue(to_copy.get(count));
+                    }
+                    else if(data_type.equals("decimal"))
+                    {
+                        return new DoubleValue(to_copy.get(count));
+                    }
+                    else if(data_type.equals("date"))
+                    {
+                        return new DateValue(to_copy.get(count));
                     }
                     else{
                         return null;
@@ -58,11 +66,19 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
             };
             try {
 //                System.out.println(eval.eval(condition).getType());
-                if(eval.eval(condition) == BooleanValue.FALSE)
-                    tuple = null;
-                else if(eval.eval(condition).getType().toString() == "LONG")
+                if(eval.eval(condition)==BooleanValue.TRUE)
                 {
-//                    tuple.removeAll(tuple);
+
+                }
+                else if(eval.eval(condition) == BooleanValue.FALSE) {
+                    tuple = null;
+                }
+                else if(eval.eval(condition) instanceof LongValue)
+                {
+                    tuple.add(eval.eval(condition).toString());
+                }
+                else if(eval.eval(condition) instanceof DoubleValue)
+                {
                     tuple.add(eval.eval(condition).toString());
                 }
 
