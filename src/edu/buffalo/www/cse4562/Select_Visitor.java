@@ -17,6 +17,7 @@ public class Select_Visitor implements SelectVisitor {
     List<String> schema;
     @Override
     public void visit(PlainSelect plainSelect) {
+        Data_Storage.selectedColumns.clear();
         From_Visitor from_visitor = new From_Visitor();
         plainSelect.getFromItem().accept(from_visitor);
         table_name = from_visitor.retTableName();
@@ -30,7 +31,7 @@ public class Select_Visitor implements SelectVisitor {
         Data_Storage.tablename = table_name;
         Data_Storage.star_flag = 0;
 //        System.out.println("The Selected Columns are : " + columns);
-        Data_Storage.selectedColumns.clear();
+
         Expr_Visitor expr_visitor = new Expr_Visitor();
         if (plainSelect.getWhere() != null) {
             plainSelect.getWhere().accept(expr_visitor);
