@@ -22,7 +22,7 @@ public class Select_Visitor implements SelectVisitor {
         table_name = from_visitor.retTableName();
         schema = from_visitor.retSchema();
         StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
-        System.out.println(Data_Storage.subsel_flag);
+//        System.out.println(Data_Storage.subsel_flag);
         if (Data_Storage.subsel_flag==0 && table_name != null) {
             Data_Storage.oper = new File_IteratorInteface(new File(str.toString()));
             Data_Storage.subsel_flag = 1;
