@@ -66,20 +66,14 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
             };
             try {
 //                System.out.println(eval.eval(condition).getType());
-                if(eval.eval(condition)==BooleanValue.TRUE)
-                {
-
-                }
-                else if(eval.eval(condition) == BooleanValue.FALSE) {
+                PrimitiveValue pr = eval.eval(condition);
+                if(pr == BooleanValue.FALSE) {
                     tuple = null;
                 }
-                else if(eval.eval(condition) instanceof LongValue)
+                else
                 {
-                    tuple.add(eval.eval(condition).toString());
-                }
-                else if(eval.eval(condition) instanceof DoubleValue)
-                {
-                    tuple.add(eval.eval(condition).toString());
+                    if(pr != BooleanValue.TRUE)
+                    tuple.add(pr.toString());
                 }
 
             } catch (SQLException e) {
