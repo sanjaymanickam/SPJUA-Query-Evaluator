@@ -36,6 +36,10 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                 public PrimitiveValue eval(Column column) throws SQLException {
                     int count = 0;
                     String req_name = column.getColumnName();
+                    if(req_name.indexOf(".")!=-1)
+                    {
+                        req_name = req_name.split("\\.")[1];
+                    }
                     String data_type = Data_Storage.tables.get(tableName).get(req_name);
                     ArrayList<String> tableColumns = Data_Storage.tableColumns.get(tableName);
                     for (String temp : tableColumns) {
@@ -75,7 +79,6 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                     if(pr != BooleanValue.TRUE)
                     tuple.add(pr.toString());
                 }
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
