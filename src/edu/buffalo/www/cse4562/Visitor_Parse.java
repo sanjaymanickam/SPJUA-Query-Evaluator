@@ -38,16 +38,18 @@ public class Visitor_Parse implements StatementVisitor {
         ArrayList<String> cols = Data_Storage.oper.readOneTuple();
         Iterator iter = schema.iterator();
         ArrayList<String> schema_list = Data_Storage.tableColumns.get(table_name);
+        StringBuilder to_output = new StringBuilder();
         while(cols!=null) {
+            to_output = new StringBuilder();
             while (iter.hasNext()) {
                 String to_check = iter.next().toString();
                 if (schema_list.contains(to_check)) {
-                    System.out.print(cols.get(schema_list.indexOf(to_check)));
+                    to_output.append(cols.get(schema_list.indexOf(to_check)));
                     if(iter.hasNext())
-                        System.out.print("|");
+                        to_output.append("|");
                 }
             }
-            System.out.println();
+            System.out.println(to_output.toString());
             iter = schema.iterator();
             cols = Data_Storage.oper.readOneTuple();
         }
