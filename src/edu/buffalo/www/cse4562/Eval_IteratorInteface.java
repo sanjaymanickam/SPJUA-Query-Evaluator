@@ -48,17 +48,17 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                         count++;
                     }
 //                    System.out.println("Required Column Datatype is " + data_type + " Column name is " + req_name);
-                    if (data_type.equals("int")) {
+                    if (data_type.equals("INT")) {
                         return new LongValue(to_copy.get(count));
                     }
-                    else if(data_type.equals("string")||data_type.equals("varchar")|data_type.equals("char")){
+                    else if(data_type.equals("STRING")||data_type.equals("VARCHAR")|data_type.equals("CHAR")){
                         return new StringValue(to_copy.get(count));
                     }
-                    else if(data_type.equals("decimal"))
+                    else if(data_type.equals("DECIMAL"))
                     {
                         return new DoubleValue(to_copy.get(count));
                     }
-                    else if(data_type.equals("date"))
+                    else if(data_type.equals("DATE"))
                     {
                         return new DateValue(to_copy.get(count));
                     }
