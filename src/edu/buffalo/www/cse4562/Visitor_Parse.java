@@ -13,6 +13,7 @@ import net.sf.jsqlparser.statement.insert.*;
 import net.sf.jsqlparser.statement.drop.*;
 
 import javax.swing.text.html.HTMLDocument;
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.*;
 
@@ -20,6 +21,9 @@ public class Visitor_Parse implements StatementVisitor {
     List<String> schema;
     @Override
     public void visit(Select select) {
+        for(String s:Data_Storage.selectedColumns)
+            Data_Storage.tables.get(Data_Storage.tablename).remove(s);
+        Data_Storage.selectedColumns.removeAll(Data_Storage.selectedColumns);
         Select_Visitor s_visit = new Select_Visitor();
         select.getSelectBody().accept(s_visit);
         String table_name = s_visit.retTableName();
@@ -37,7 +41,11 @@ public class Visitor_Parse implements StatementVisitor {
 //        }
         ArrayList<String> cols = Data_Storage.oper.readOneTuple();
         Iterator iter = schema.iterator();
-        ArrayList<String> schema_list = Data_Storage.tableColumns.get(table_name);
+        ArrayList<String> schema_list = new ArrayList<>(Data_Storage.tableColumns.get(table_name));
+        for(String s: Data_Storage.selectedColumns)
+        {
+            schema_list.add(s);
+        }
         StringBuilder to_output = new StringBuilder();
         while(cols!=null) {
             to_output = new StringBuilder();
@@ -92,7 +100,7 @@ public class Visitor_Parse implements StatementVisitor {
         }
         Data_Storage.tables.put(createTable.getTable().getName(), tableDetails);
         Data_Storage.tableColumns.put(createTable.getTable().getName(), columnArray);
-//      Data_Storage.tablename = createTable.getTable().getName();
+        Data_Storage.tablename = createTable.getTable().getName();
     }
 }
 

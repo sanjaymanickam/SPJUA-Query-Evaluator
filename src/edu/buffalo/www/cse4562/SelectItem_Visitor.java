@@ -1,19 +1,12 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItemVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.LongToDoubleFunction;
-
 
 public class SelectItem_Visitor implements SelectItemVisitor {
     net.sf.jsqlparser.expression.Expression expr;
@@ -41,8 +34,8 @@ public class SelectItem_Visitor implements SelectItemVisitor {
             String type;
             schema.add(selectExpressionItem.getAlias());
             Select_Visitor s_visit = new Select_Visitor();
-            Data_Storage.tableColumns.get(s_visit.retTableName()).add(selectExpressionItem.getAlias());
-            System.out.println(selectExpressionItem.getExpression());
+            Data_Storage.selectedColumns.add(selectExpressionItem.getAlias());
+//            System.out.println(selectExpressionItem.getExpression());
             type = Data_Storage.tables.get(s_visit.retTableName()).get(selectExpressionItem.getExpression().toString());
             Data_Storage.tables.get(s_visit.retTableName()).put(selectExpressionItem.getAlias(),type);
             Expr_Visitor expr_visitor = new Expr_Visitor();

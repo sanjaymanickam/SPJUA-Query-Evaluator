@@ -30,7 +30,6 @@ public class Select_Visitor implements SelectVisitor {
         Data_Storage.tablename = table_name;
         Data_Storage.star_flag = 0;
 //        System.out.println("The Selected Columns are : " + columns);
-        Data_Storage.selectedColumns.clear();
         Expr_Visitor expr_visitor = new Expr_Visitor();
         if (plainSelect.getWhere() != null) {
             plainSelect.getWhere().accept(expr_visitor);

@@ -25,6 +25,7 @@ public class Command_Executor {
                     Visitor_Parse stmt_visitor = new Visitor_Parse();
                     stmt.accept(stmt_visitor);
                     Data_Storage.subsel_flag = 0;
+
                     System.out.println(prompt);
                     System.out.flush();
                     }
