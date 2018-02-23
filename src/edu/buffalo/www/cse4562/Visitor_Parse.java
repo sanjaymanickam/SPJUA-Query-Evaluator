@@ -66,17 +66,20 @@ public class Visitor_Parse implements StatementVisitor {
 //            cols = Data_Storage.oper.readOneTuple();
 //        }
         while(cols!=null) {
-            String result = "";
+            //String result = "";
+            StringBuffer sbuf = new StringBuffer();
             while (iter.hasNext()) {
                 String to_check = iter.next().toString();
                 String to_print = cols.get(schema_list.indexOf(to_check)).toString();
                 if (schema_list.contains(to_check)) {
-                    result = result + to_print;
+                    //result = result + to_print;
+                    sbuf.append(to_print);
                     if(iter.hasNext())
-                        result = result + "|";
+                        //result = result + "|";
+                        sbuf.append("|");
                 }
             }
-            System.out.println(result);
+            System.out.println(sbuf.toString());
             iter = schema.iterator();
             cols = Data_Storage.oper.readOneTuple();
         }
