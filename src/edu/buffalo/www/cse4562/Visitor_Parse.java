@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.PrimitiveType;
 import net.sf.jsqlparser.statement.StatementVisitor;
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -16,6 +17,7 @@ import net.sf.jsqlparser.statement.drop.*;
 
 import javax.swing.text.html.HTMLDocument;
 import javax.xml.crypto.Data;
+import java.beans.Expression;
 import java.io.File;
 import java.util.*;
 
@@ -67,11 +69,9 @@ public class Visitor_Parse implements StatementVisitor {
             while (iter.hasNext()) {
                 String to_check = iter.next().toString();
                 String to_print = cols.get(schema_list.indexOf(to_check)).toString();
+                PrimitiveValue primval = new StringValue(to_print);
                 if (schema_list.contains(to_check)) {
-                    if(Data_Storage.tables.get(table_name).get(to_check).toString().equals("STRING") || Data_Storage.tables.get(table_name).get(to_check).toString().equals("VARCHAR") ||Data_Storage.tables.get(table_name).get(to_check).toString().equals("CHAR"))
-                            System.out.print(new StringValue(to_print));
-                    else
-                            System.out.print(to_print);
+                            System.out.print(primval);
                     if(iter.hasNext())
                         System.out.print("|");
                 }
