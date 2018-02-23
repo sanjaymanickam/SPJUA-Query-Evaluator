@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class File_IteratorInteface implements Iterator_Inteface {
 
@@ -32,7 +33,12 @@ public class File_IteratorInteface implements Iterator_Inteface {
         if (new_line == null) {
             return null;
         }
-        ArrayList<String> str_split =new ArrayList<>(Arrays.asList(new_line.split("\\|")));
+        ArrayList<String> str_split =new ArrayList<>();
+        StringTokenizer str_tok = new StringTokenizer(new_line,"|");
+        while(str_tok.hasMoreElements())
+        {
+            str_split.add(str_tok.nextElement().toString());
+        }
         return str_split;
     }
 
