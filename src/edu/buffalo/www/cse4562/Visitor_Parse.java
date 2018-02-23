@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.StatementVisitor;
@@ -66,7 +67,7 @@ public class Visitor_Parse implements StatementVisitor {
             while (iter.hasNext()) {
                 String to_check = iter.next().toString();
                 if (schema_list.contains(to_check)) {
-                    System.out.print(cols.get(schema_list.indexOf(to_check)).toString());
+                    System.out.print(new StringValue(cols.get(schema_list.indexOf(to_check)).toString()));
                     if(iter.hasNext())
                         System.out.print("|");
                 }
