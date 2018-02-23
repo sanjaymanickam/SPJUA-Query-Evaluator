@@ -72,8 +72,17 @@ public class Visitor_Parse implements StatementVisitor {
                 String to_print = cols.get(schema_list.indexOf(to_check)).toString();
                 if (schema_list.contains(to_check)) {
 //                    System.out.println(Data_Storage.tables.get(table_name).get(to_check));
+                    boolean bool;
                     if(to_print!=null) {
-                        if (Data_Storage.tables.get(table_name).get(to_check).equals("STRING") || Data_Storage.tables.get(table_name).get(to_check).equals("CHAR") || Data_Storage.tables.get(table_name).get(to_check).equals("VARCHAR"))
+                        if(Data_Storage.tables.get(table_name).get(to_check)!= null)
+                        {
+                             bool = (Data_Storage.tables.get(table_name).get(to_check).equals("STRING") || Data_Storage.tables.get(table_name).get(to_check).equals("CHAR") || Data_Storage.tables.get(table_name).get(to_check).equals("VARCHAR"));
+                        }
+                        else
+                        {
+                             bool = false;
+                        }
+                        if (bool)
                             System.out.print(new StringValue(to_print.toString()));
                         else
                             System.out.print(to_print);
