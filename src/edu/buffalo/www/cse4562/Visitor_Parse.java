@@ -71,7 +71,10 @@ public class Visitor_Parse implements StatementVisitor {
                 String to_print = cols.get(schema_list.indexOf(to_check)).toString();
                 if (schema_list.contains(to_check)) {
 //                    System.out.println(Data_Storage.tables.get(table_name).get(to_check));
-                    System.out.print(to_print);
+                    if((to_print.toCharArray()[1]>64 &&  to_print.toCharArray()[1]<91) || (to_print.toCharArray()[1]>96 &&  to_print.toCharArray()[1]<123))
+                        System.out.print(new StringValue(to_print.toString()));
+                    else
+                        System.out.print(to_print);
                     if(iter.hasNext())
                         System.out.print("|");
                 }
