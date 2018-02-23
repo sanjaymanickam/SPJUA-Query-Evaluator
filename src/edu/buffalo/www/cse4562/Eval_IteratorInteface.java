@@ -52,7 +52,7 @@ public class Eval_IteratorInteface implements Iterator_Inteface {
                         return new LongValue(to_copy.get(count));
                     }
                     else if(data_type.equals("STRING")||data_type.equals("VARCHAR")|data_type.equals("CHAR")){
-                        StringBuilder str = new StringBuilder().append("'").append(to_copy.get(count)).append("'");
+                        StringBuilder str = new StringBuilder().append("\\'").append(to_copy.get(count)).append("\\'");
                         return new StringValue(str.toString());
                     }
                     else if(data_type.equals("DECIMAL"))
