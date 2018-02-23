@@ -17,6 +17,7 @@ import net.sf.jsqlparser.statement.drop.*;
 
 import javax.swing.text.html.HTMLDocument;
 import javax.xml.crypto.Data;
+import java.awt.dnd.DropTarget;
 import java.beans.Expression;
 import java.io.File;
 import java.util.*;
@@ -72,7 +73,7 @@ public class Visitor_Parse implements StatementVisitor {
                 if (schema_list.contains(to_check)) {
 //                    System.out.println(Data_Storage.tables.get(table_name).get(to_check));
                     if(to_print!=null) {
-                        if ((to_print.toCharArray()[1] > 64 && to_print.toCharArray()[1] < 91) || (to_print.toCharArray()[1] > 96 && to_print.toCharArray()[1] < 123))
+                        if (Data_Storage.tables.get(table_name).get(to_check).equals("STRING") || Data_Storage.tables.get(table_name).get(to_check).equals("CHAR") || Data_Storage.tables.get(table_name).get(to_check).equals("VARCHAR"))
                             System.out.print(new StringValue(to_print.toString()));
                         else
                             System.out.print(to_print);
