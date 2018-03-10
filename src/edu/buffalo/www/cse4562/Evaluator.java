@@ -51,6 +51,7 @@ public class Evaluator extends Eval{
 	@Override
 	public PrimitiveValue eval(Column arg0) throws SQLException {
 		// TODO Auto-generated method stub
+		System.out.println(arg0.getColumnName());
 		System.out.println("Class");
 		return null;
 	}
