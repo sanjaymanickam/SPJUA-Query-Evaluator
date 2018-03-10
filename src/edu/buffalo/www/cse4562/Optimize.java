@@ -1,72 +1,92 @@
 package edu.buffalo.www.cse4562;
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.schema.Column;
+
+import javax.xml.crypto.Data;
 import java.io.File;
 
+
 public class Optimize {
-    int flag=0;
+    Iterator_Interface after_join_recursive_iter;
+    Iterator_Interface before_join_recursive_iter;
     public void optimize()
     {
-        Iterator_Interface to_overload = null;
-        Iterator_Interface iter = Data_Storage.oper;
-        while(iter!=null) {
-            if (iter instanceof EvalIterator_Interface) {
-                if(iter.getChild() instanceof JoinIterator_Interface) {
-                    EvalIterator_Interface evalIterator_interface = (EvalIterator_Interface) iter;
-                    Expression expr_right = evalIterator_interface.condition;
-                    while (expr_right != null) {
-                        if (expr_right instanceof AndExpression) {
-                            if (((AndExpression) expr_right).getRightExpression() != null) {
-                                if (((AndExpression) expr_right).getRightExpression() instanceof GreaterThan) {
-                                    GreaterThan greaterThan = (GreaterThan) ((AndExpression) expr_right).getRightExpression();
-                                    if(((AndExpression) expr_right).getLeftExpression() instanceof Column) {
-                                        greater_than(greaterThan, ((Column) ((AndExpression) expr_right).getLeftExpression()).getTable().getName());
-                                    }
-                                }
-                            }
-                            expr_right = ((AndExpression) expr_right).getLeftExpression();
+
+        Iterator_Interface to_iter = Data_Storage.oper;
+        while(to_iter!= null)
+        {
+            if(to_iter instanceof JoinIterator_Interface)
+            {
+
+            }
+            else if(to_iter instanceof EvalIterator_Interface)
+            {
+                if(to_iter.getChild() instanceof JoinIterator_Interface)
+                {
+                    EvalIterator_Interface evalIterator_interface = (EvalIterator_Interface) to_iter;
+                    Expression expr = evalIterator_interface.condition;
+                    while(expr!=null)
+                    {
+                        if(expr instanceof AndExpression)
+                        {
+                            AndExpression andExpression = (AndExpression) expr;
+                            evaluate(andExpression.getRightExpression());
+                            expr = andExpression.getLeftExpression();
+                        }
+                        else if(expr instanceof OrExpression)
+                        {
+                            OrExpression orExpression = (OrExpression) expr;
+                            evaluate(orExpression.getRightExpression());
+                            expr = orExpression.getLeftExpression();
                         }
                         else
                         {
-                            if(expr_right instanceof GreaterThan)
-                            {
-                                GreaterThan greaterThan = (GreaterThan)expr_right;
-                                if(greaterThan.getLeftExpression() instanceof Column)
-                                {
-                                    Column col = (Column) greaterThan.getLeftExpression();
-                                    greater_than(greaterThan, col.getTable().getName());
-                                }
-                            }
-                            expr_right = null;
+                            evaluate(expr);
+                            expr = null;
                         }
                     }
-                    System.out.println(evalIterator_interface.condition);
-                    System.out.println("EVAL ITERATOR INTERFACE");
                 }
-            } else if (iter instanceof JoinIterator_Interface) {
-                System.out.println("JOIN ITERATOR INTERFACE");
-            } else if (iter instanceof FileIterator_Interface) {
-                System.out.println("FILE ITERATOR INTERFACE");
             }
-            iter = iter.getChild();
-        }
-        System.out.println();
-    }
+            else if(to_iter instanceof ProjectionIterator_Interface)
+            {
 
-    private void greater_than(GreaterThan greaterThan, String table_name) {
-        Iterator_Interface to_overload;
-        if(!Data_Storage.operator_map.containsKey(table_name))
-        {
-            to_overload = new EvalIterator_Interface(new FileIterator_Interface(new File("data/" + table_name + ".dat")), greaterThan);
-            Data_Storage.operator_map.put(table_name,to_overload);
+            }
+
         }
-        else
-        {
-            to_overload = Data_Storage.operator_map.get(table_name);
-            to_overload = new EvalIterator_Interface(to_overload,greaterThan);
-            Data_Storage.operator_map.put(table_name,to_overload);
+    }
+    private void evaluate(Expression expression)
+    {
+        if(expression instanceof BinaryExpression) {
+//            if(((BinaryExpression) expression).getLeftExpression() instanceof Column && ((BinaryExpression) expression).getRightExpression() instanceof Column)
+//            {
+//                if(before_join_recursive_iter == null)
+//                    before_join_recursive_iter = new EvalIterator_Interface(Data_Storage.oper.getChild(),expression);
+//                else
+//                    before_join_recursive_iter = new EvalIterator_Interface(after_join_recursive_iter,expression);
+//            }
+            else if(((BinaryExpression) expression).getLeftExpression() instanceof Column)
+            {
+                Column col = (Column) ((BinaryExpression) expression).getLeftExpression();
+                String tableName = col.getTable().getName();
+                System.out.println(tableName);
+                System.out.println(col.getColumnName());
+                if(!Data_Storage.operator_map.containsKey(tableName))
+                {
+                    String stringBuilder = "data/"+tableName+".dat";
+                    after_join_recursive_iter = new EvalIterator_Interface(new FileIterator_Interface(new File(stringBuilder)),((BinaryExpression) expression).getLeftExpression());
+                    Data_Storage.operator_map.put(tableName,after_join_recursive_iter);
+                }
+                else
+                {
+                    after_join_recursive_iter = Data_Storage.operator_map.get(tableName);
+                    after_join_recursive_iter = new EvalIterator_Interface(after_join_recursive_iter,((BinaryExpression) expression).getLeftExpression());
+                    Data_Storage.operator_map.replace(tableName,after_join_recursive_iter);
+                }
+
+            }
         }
     }
 }
