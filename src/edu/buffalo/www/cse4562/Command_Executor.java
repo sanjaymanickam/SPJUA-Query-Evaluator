@@ -20,8 +20,7 @@ public class Command_Executor {
                 while((stmt = parser.Statement())!=null) {
                     Data_Storage.selectedColumns.clear();
                     Visitor_Parse.ret_type(stmt);
-                    Optimize optimize = new Optimize();
-                    optimize.optimize();
+                    new Optimize().optimize();
                     if(Data_Storage.oper!=null)
                     {
                         Data_Storage.oper.readOneTuple();

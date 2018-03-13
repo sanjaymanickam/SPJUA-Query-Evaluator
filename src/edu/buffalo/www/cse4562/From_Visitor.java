@@ -30,10 +30,9 @@ public class From_Visitor {
         {
                 Table table = (Table) stmt;
                 table_name = table.getName();
-                StringBuilder str_build = new StringBuilder().append("data/").append(table_name).append(".dat");
 //                ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
                 System.out.println("TABLE NAME : "+table_name);
-                Data_Storage.oper = new FileIterator_Interface(new File(str_build.toString()));
+                Data_Storage.oper = new FileIterator_Interface(table_name);
         }
     }
 

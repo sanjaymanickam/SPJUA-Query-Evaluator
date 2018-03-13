@@ -1,8 +1,6 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.statement.select.FromItem;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class JoinIterator_Interface implements Iterator_Interface{
@@ -14,12 +12,17 @@ public class JoinIterator_Interface implements Iterator_Interface{
         this.fromItem = fromItem;
     }
     @Override
-    public ArrayList<String> readOneTuple() {
+    public Tuple readOneTuple() {
         Iterator it = Data_Storage.operator_map.values().iterator();
+        Tuple tuple;
         while(it.hasNext())
         {
             Iterator_Interface iterator =(Iterator_Interface) it.next();
-            iterator.readOneTuple();
+            tuple = iterator.readOneTuple();
+            Iterator iter = tuple.tuples.iterator();
+            while(iter.hasNext()) {
+                System.out.println(iter.next());
+            }
         }
         System.out.println(" JOIN ");
         return null;

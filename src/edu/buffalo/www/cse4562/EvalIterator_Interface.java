@@ -17,11 +17,16 @@ public class EvalIterator_Interface implements Iterator_Interface{
         this.condition = condition;
     }
     @Override
-    public ArrayList<String> readOneTuple() {
+    public Tuple readOneTuple() {
        ArrayList<String> tuple;
+       ArrayList<Column> schema;
+       Tuple tup;
         do{
-            tuple = iter.readOneTuple();
+            tup = iter.readOneTuple();
+            tuple = tup.tuples;
+            schema = tup.schema;
             final ArrayList<String> to_copy = tuple;
+            final ArrayList<Column> schema_final = schema;
             if(tuple == null)
             {
                 return null;
@@ -38,8 +43,8 @@ public class EvalIterator_Interface implements Iterator_Interface{
                     {
                         col_name = column.getColumnName();
                     }
-                    int position = new ArrayList<>(Data_Storage.current_schema.keySet()).indexOf(col_name);
-                    String data_type = Data_Storage.tables.get(Data_Storage.current_schema.get(col_name)).get(col_name);
+                    int position =schema_final.indexOf(column);
+                    String data_type = Data_Storage.tables.get(schema_final.get(position).getTable().getName()).get(col_name);
                     if (data_type.equals("INT")) {
                         return new LongValue(to_copy.get(position));
                     }
@@ -74,7 +79,10 @@ public class EvalIterator_Interface implements Iterator_Interface{
             }
         }while(tuple ==null);
         System.out.println("EVAL");
-        return tuple;
+        Tuple ret_tuple = new Tuple(tuple,schema);
+        ret_tuple.tuples = tuple;
+        ret_tuple.schema =schema;
+        return ret_tuple;
     }
 
     @Override
