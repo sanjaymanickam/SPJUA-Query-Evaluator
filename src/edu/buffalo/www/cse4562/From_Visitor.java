@@ -6,8 +6,6 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
-import javax.xml.crypto.Data;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,9 +28,14 @@ public class From_Visitor {
         {
                 Table table = (Table) stmt;
                 table_name = table.getName();
-//                ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
                 System.out.println("TABLE NAME : "+table_name);
                 Data_Storage.oper = new FileIterator_Interface(table_name);
+                ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
+                Iterator it = cols.iterator();
+                while(it.hasNext()){
+                    Data_Storage.current_schema.put(it.next().toString(),table_name);
+                }
+                Data_Storage.project_columns.put(table_name,new ArrayList<String>());
         }
     }
 

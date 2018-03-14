@@ -4,7 +4,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.schema.Column;
-import java.io.File;
+import java.util.ArrayList;
 
 
 public class Optimize {
@@ -30,18 +30,18 @@ public class Optimize {
                         if(expr instanceof AndExpression)
                         {
                             AndExpression andExpression = (AndExpression) expr;
-                            evaluate(andExpression.getRightExpression());
+                            evaluate(andExpression.getRightExpression(), "Optimize");
                             expr = andExpression.getLeftExpression();
                         }
                         else if(expr instanceof OrExpression)
                         {
                             OrExpression orExpression = (OrExpression) expr;
-                            evaluate(orExpression.getRightExpression());
+                            evaluate(orExpression.getRightExpression(), "Optimize");
                             expr = orExpression.getLeftExpression();
                         }
                         else
                         {
-                            evaluate(expr);
+                            evaluate(expr, "Optimize");
                             expr = null;
                         }
                     }
@@ -54,29 +54,38 @@ public class Optimize {
         to_iter = to_iter.getChild();
         }
     }
-    private void evaluate(Expression expression)
+    public void evaluate(Expression expression, String from)
     {
-        if(expression instanceof BinaryExpression)
-        {
+        if(expression instanceof BinaryExpression) {
             if(((BinaryExpression) expression).getLeftExpression() instanceof Column)
             {
                 Column col = (Column) ((BinaryExpression) expression).getLeftExpression();
                 String tableName = col.getTable().getName();
                 System.out.println(tableName);
                 System.out.println(col.getColumnName());
-                if(!Data_Storage.operator_map.containsKey(tableName))
-                {
-                    after_join_recursive_iter = new EvalIterator_Interface(new FileIterator_Interface(tableName),expression);
-                    Data_Storage.operator_map.put(tableName,after_join_recursive_iter);
+                if(from.equals("Optimize")){
+                    if(!Data_Storage.operator_map.containsKey(tableName))
+                    {
+                        after_join_recursive_iter = new EvalIterator_Interface(new FileIterator_Interface(tableName),expression);
+                        Data_Storage.operator_map.put(tableName,after_join_recursive_iter);
+                    }
+                    else {
+                        after_join_recursive_iter = Data_Storage.operator_map.get(tableName);
+                        after_join_recursive_iter = new EvalIterator_Interface(after_join_recursive_iter, expression);
+                        Data_Storage.operator_map.replace(tableName, after_join_recursive_iter);
+                    }
                 }
-                else
-                {
-                    after_join_recursive_iter = Data_Storage.operator_map.get(tableName);
-                    after_join_recursive_iter = new EvalIterator_Interface(after_join_recursive_iter,expression);
-                    Data_Storage.operator_map.replace(tableName,after_join_recursive_iter);
+                else {
+                    updateProjectColumns(col.getColumnName(),tableName);
                 }
-
             }
+        }
+    }
+    public void updateProjectColumns(String columnName, String tableName) {
+        ArrayList<String> temp_list = Data_Storage.project_columns.get(tableName);
+        if (!temp_list.contains(columnName)) {
+            temp_list.add(columnName);
+            Data_Storage.project_columns.replace(tableName, temp_list);
         }
     }
 }

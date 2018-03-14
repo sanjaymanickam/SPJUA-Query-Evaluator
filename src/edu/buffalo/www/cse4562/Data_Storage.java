@@ -15,4 +15,5 @@ public class Data_Storage {
     static ArrayList<String> curr_tuple;
     static List<Iterator_Interface> from_list;
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
+    static HashMap<String, ArrayList<String>> project_columns = new HashMap<>();
 }

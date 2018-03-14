@@ -1,6 +1,9 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.statement.select.*;
 
 import java.util.Iterator;
@@ -29,6 +32,28 @@ public class Select_Visitor {
                 expression = expr.getExpr();
                 System.out.println("EXPRESSION : "+expression);
                 Data_Storage.oper = new EvalIterator_Interface(Data_Storage.oper,expression);
+                Expression expr_temp = expression;
+                Optimize opt = new Optimize();
+                while(expr_temp != null){
+                    if(expr_temp instanceof AndExpression)
+                    {
+                        AndExpression andExpression = (AndExpression) expr_temp;
+                        opt.evaluate(andExpression.getRightExpression(), "Project");
+                        expr_temp = andExpression.getLeftExpression();
+                    }
+                    else if(expr_temp instanceof OrExpression)
+                    {
+                        OrExpression orExpression = (OrExpression) expr_temp;
+                        opt.evaluate(orExpression.getRightExpression(), "Project");
+                        expr_temp = orExpression.getLeftExpression();
+                    }
+                    else
+                    {
+                        opt.evaluate(expr_temp, "Project");
+                        expr_temp = null;
+                    }
+
+                }
             }
             else
             {

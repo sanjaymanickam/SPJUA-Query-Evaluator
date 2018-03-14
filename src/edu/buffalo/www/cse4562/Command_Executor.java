@@ -19,6 +19,7 @@ public class Command_Executor {
             {
                 while((stmt = parser.Statement())!=null) {
                     Data_Storage.selectedColumns.clear();
+                    Data_Storage.project_columns.clear();
                     Visitor_Parse.ret_type(stmt);
                     new Optimize().optimize();
                     if(Data_Storage.oper!=null)

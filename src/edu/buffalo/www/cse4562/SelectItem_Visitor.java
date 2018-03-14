@@ -30,8 +30,12 @@ public class SelectItem_Visitor {
                 String tableName;
                 StringTokenizer strtok = new StringTokenizer(columnName,".");
                 tableName = strtok.nextElement().toString();
-                Data_Storage.alias_table.put(columnName,strtok.nextElement().toString());
+                String colName = strtok.nextElement().toString();
+                Data_Storage.alias_table.put(columnName,colName);
                 Data_Storage.selectedColumns.put(columnName,tableName);
+                Optimize opt = new Optimize();
+                opt.updateProjectColumns(colName,tableName);
+
             }
             else if(selectExpressionItem.getAlias()!= null)
             {
@@ -42,11 +46,15 @@ public class SelectItem_Visitor {
                 {
                     Data_Storage.alias_table.put(selectExpressionItem.getAlias(), columnName);
                     Data_Storage.selectedColumns.put(selectExpressionItem.getAlias(), Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
+                    Optimize opt = new Optimize();
+                    opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
                 }
             }
             else
             {
                 Data_Storage.selectedColumns.put(columnName, Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
+                Optimize opt = new Optimize();
+                opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
             }
         }
     }
