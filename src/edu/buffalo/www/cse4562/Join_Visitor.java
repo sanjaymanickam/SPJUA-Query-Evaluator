@@ -14,7 +14,7 @@ public class Join_Visitor {
             System.out.println("JOIN : "+join_item.getRightItem());
             Data_Storage.project_columns.put(join_item.getRightItem().toString(),new ArrayList<String>());
             From_Visitor.ret_type(join_item.getRightItem());
-            Data_Storage.oper = new JoinIterator_Interface(join_item.getRightItem(),iter);
+//            Data_Storage.oper = new Join2IteratorInterface(,iter);
         }
     }
 }

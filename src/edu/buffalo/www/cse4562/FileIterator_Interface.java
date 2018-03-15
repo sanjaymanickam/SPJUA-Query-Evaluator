@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class FileIterator_Interface implements Iterator_Interface{
     BufferedReader read;
     String new_file;
-    ArrayList<Column> schema = new ArrayList<>();
+
     public FileIterator_Interface(String new_file) {
         this.new_file = new_file;
         String file = "data/"+new_file+".dat";
@@ -24,6 +24,7 @@ public class FileIterator_Interface implements Iterator_Interface{
 
     @Override
     public Tuple readOneTuple() {
+        ArrayList<Column> schema = new ArrayList<>();
         if (read == null) {
             return null;
         }
@@ -49,6 +50,7 @@ public class FileIterator_Interface implements Iterator_Interface{
             Column col = new Column(new Table(new_file),it.next().toString());
             schema.add(col);
         }
+        System.out.println("");
         return new Tuple(str_split,schema);
 //        return null;
     }

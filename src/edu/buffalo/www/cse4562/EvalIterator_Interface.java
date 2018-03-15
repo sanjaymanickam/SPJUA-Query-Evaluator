@@ -2,7 +2,6 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 
 import java.sql.SQLException;
@@ -45,29 +44,25 @@ public class EvalIterator_Interface implements Iterator_Interface{
                     }
                     int position =schema_final.indexOf(column);
                     String data_type = Data_Storage.tables.get(schema_final.get(position).getTable().getName()).get(col_name);
-                    if (data_type.equals("INT")) {
-                        return new LongValue(to_copy.get(position));
-                    }
-                    else if(data_type.equals("STRING")||data_type.equals("VARCHAR")|data_type.equals("CHAR")){
-                        return new StringValue(to_copy.get(position));
-                    }
-                    else if(data_type.equals("DECIMAL"))
-                    {
-                        return new DoubleValue(to_copy.get(position));
-                    }
-                    else if(data_type.equals("DATE"))
-                    {
-                        return new DateValue(to_copy.get(position));
-                    }
-                    else{
-                        return null;
-                    }
+                        if (data_type.equals("INT")) {
+                            return new LongValue(to_copy.get(position));
+                        } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
+                            return new StringValue(to_copy.get(position));
+                        } else if (data_type.equals("DECIMAL")) {
+                            return new DoubleValue(to_copy.get(position));
+                        } else if (data_type.equals("DATE")) {
+                            return new DateValue(to_copy.get(position));
+                        } else {
+                            return null;
+                        }
+
                 }
             };
             try{
                 PrimitiveValue pr = eval.eval(condition);
-                if(pr == BooleanValue.FALSE)
-                    tuple = null;
+                if(pr == BooleanValue.FALSE) {
+                  tuple = null;
+                }
                 else
                 {
                     if(pr != BooleanValue.TRUE && pr != null)

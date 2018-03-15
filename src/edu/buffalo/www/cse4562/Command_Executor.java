@@ -5,6 +5,7 @@ import net.sf.jsqlparser.statement.Statement;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Iterator;
 
 public class Command_Executor {
     static String prompt = "$> ";
@@ -15,16 +16,27 @@ public class Command_Executor {
             Reader in = new InputStreamReader(System.in);
             CCJSqlParser parser = new CCJSqlParser(in);
             Statement stmt;
-            try
-            {
-                while((stmt = parser.Statement())!=null) {
+            try {
+                while ((stmt = parser.Statement()) != null) {
                     Data_Storage.selectedColumns.clear();
                     Data_Storage.project_columns.clear();
+                    Data_Storage.operator_map.clear();
+                    Data_Storage.current_schema.clear();
+                    Data_Storage.oper = null;
                     Visitor_Parse.ret_type(stmt);
-                    new Optimize().optimize();
-                    if(Data_Storage.oper!=null)
-                    {
-                        Data_Storage.oper.readOneTuple();
+                    if(Data_Storage.oper!=null) {
+//                        new Optimize().optimize();
+                        Tuple tuple = Data_Storage.oper.readOneTuple();
+                        do {
+                            Iterator it = tuple.tuples.iterator();
+                            while (it.hasNext()) {
+                                System.out.print(it.next().toString());
+                                if (it.hasNext())
+                                    System.out.print("|");
+                            }
+                            System.out.println();
+                            tuple = Data_Storage.oper.readOneTuple();
+                        } while (Data_Storage.oper != null);
                     }
                     System.out.println(prompt);
                     System.out.flush();

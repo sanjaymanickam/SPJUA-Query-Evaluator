@@ -20,18 +20,28 @@ public class Select_Visitor {
             PlainSelect plainSelect = (PlainSelect) stmt;
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
+            Iterator_Interface main_from_item_iter = Data_Storage.oper;
+            Iterator_Interface join_iter = null;
             if(joins!=null)
             {
                 Iterator it = joins.iterator();
-                while(it.hasNext())
-                     Join_Visitor.ret_type((Join) it.next(),Data_Storage.oper);
+                while(it.hasNext()) {
+//                     Join_Visitor.ret_type(Data_Storage.oper,(Join) it.next());
+                    Join join = (Join) it.next();
+                    From_Visitor.ret_type(join.getRightItem());
+                    if(join_iter==null) {
+                        join_iter = new Join2IteratorInterface(main_from_item_iter, Data_Storage.oper);
+                    }else {
+                        join_iter = new Join2IteratorInterface(join_iter,Data_Storage.oper);
+                    }
+                }
             }
             Expr_Visitor expr = new Expr_Visitor();
             if(plainSelect.getWhere()!=null) {
                 plainSelect.getWhere().accept(expr);
                 expression = expr.getExpr();
                 System.out.println("EXPRESSION : "+expression);
-                Data_Storage.oper = new EvalIterator_Interface(Data_Storage.oper,expression);
+                Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
                 Expression expr_temp = expression;
                 Optimize opt = new Optimize();
                 while(expr_temp != null){
@@ -57,7 +67,7 @@ public class Select_Visitor {
             }
             else
             {
-                expression = null;
+                Data_Storage.oper = join_iter;
             }
             List<SelectItem> sel_items = plainSelect.getSelectItems();
             for(SelectItem col : sel_items)

@@ -8,12 +8,11 @@ public class Data_Storage {
     static LinkedHashMap<String,String> selectedColumns = new LinkedHashMap<>();
     static HashMap<String,String> current_schema = new HashMap<>();
     static Iterator_Interface oper = null;
-    static List<String> second_file = new ArrayList<>();
-    static int join_flag = 0;
+    static boolean file_flag = false;
     static int all_flag = 0;
     static Iterator it;
-    static ArrayList<String> curr_tuple;
-    static List<Iterator_Interface> from_list;
+    static Tuple file1_temp_tuple;
+    static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static HashMap<String, ArrayList<String>> project_columns = new HashMap<>();
 }

@@ -44,6 +44,7 @@ public class Optimize {
                             evaluate(expr, "Optimize");
                             expr = null;
                         }
+                        Data_Storage.oper = to_iter.getChild();
                     }
                 }
             }
