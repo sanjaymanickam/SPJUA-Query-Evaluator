@@ -28,7 +28,6 @@ public class From_Visitor {
         {
                 Table table = (Table) stmt;
                 table_name = table.getName();
-//                System.out.println("TABLE NAME : "+table_name);
                 Data_Storage.oper = new FileIterator_Interface(table_name);
                 ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
                 Iterator it = cols.iterator();
