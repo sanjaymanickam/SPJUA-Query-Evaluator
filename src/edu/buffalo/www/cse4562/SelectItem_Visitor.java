@@ -6,6 +6,8 @@ import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
 public class SelectItem_Visitor {
@@ -18,7 +20,18 @@ public class SelectItem_Visitor {
         }
         else if(stmt instanceof AllTableColumns)
         {
-
+            AllTableColumns allTableColumns = (AllTableColumns)stmt;
+            String tableName = allTableColumns.getTable().getName();
+            if(Data_Storage.table_alias.containsKey(tableName))
+            {
+                tableName = Data_Storage.table_alias.get(tableName);
+            }
+            LinkedHashMap<String,String> linkedHashMap = Data_Storage.tables.get(tableName);
+            Iterator key_iterator = linkedHashMap.keySet().iterator();
+            while(key_iterator.hasNext())
+            {
+                Data_Storage.selectedColumns.put(new StringBuilder(tableName).append(".").append(key_iterator.next().toString()).toString(),tableName);
+            }
         }
         else if(stmt instanceof SelectExpressionItem)
         {

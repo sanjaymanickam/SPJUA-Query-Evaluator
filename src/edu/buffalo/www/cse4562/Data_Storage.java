@@ -7,6 +7,7 @@ import java.util.*;
 public class Data_Storage {
     static HashMap<String,LinkedHashMap<String,String>> tables = new HashMap<>();
     static HashMap<String,String> alias_table = new HashMap<>();
+    static HashMap<String,String> table_alias = new HashMap<>();
     static LinkedHashMap<String,String> selectedColumns = new LinkedHashMap<>();
     static HashMap<String,String> current_schema = new HashMap<>();
     static Iterator_Interface oper = null;
