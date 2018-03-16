@@ -93,11 +93,12 @@ public class Select_Visitor {
 
             }
             List<SelectItem> sel_items = plainSelect.getSelectItems();
+            Data_Storage.selectedColumns.clear();
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
             }
-            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.oper);
+            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.selectedColumns,Data_Storage.oper);
         }
         else if(stmt instanceof Union)
         {

@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,8 +43,21 @@ public class EvalIterator_Interface implements Iterator_Interface{
                     {
                         col_name = column.getColumnName();
                     }
-                    int position =schema_final.indexOf(column);
-                    String data_type = Data_Storage.tables.get(schema_final.get(position).getTable().getName()).get(col_name);
+                    Column col;
+                    if(Data_Storage.table_alias.containsKey(column.getTable().getName())) {
+                        col = new Column(new Table(Data_Storage.table_alias.get(column.getTable().getName())),col_name);
+                    }
+                    else
+                    {
+                        col = column;
+                    }
+                    int position =schema_final.indexOf(col);
+                    String tableName = schema_final.get(position).getTable().getName();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                    {
+                        tableName = Data_Storage.table_alias.get(tableName);
+                    }
+                    String data_type = Data_Storage.tables.get(tableName).get(col_name);
                         if (data_type.equals("INT")) {
                             return new LongValue(to_copy.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {

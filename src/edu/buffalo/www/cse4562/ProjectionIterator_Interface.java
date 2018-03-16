@@ -4,13 +4,16 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class ProjectionIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
-    public ProjectionIterator_Interface(Iterator_Interface iter){
+    HashMap<String,String> selectedColumns = new HashMap<>();
+    public ProjectionIterator_Interface(HashMap<String,String> selectedColumns, Iterator_Interface iter){
         this.iter = iter;
+        this.selectedColumns = selectedColumns;
     }
     @Override
     public Tuple readOneTuple() {
@@ -19,7 +22,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         Tuple tup;
             tup = iter.readOneTuple();
         if(tup!=null) {
-            Iterator project_iter = Data_Storage.selectedColumns.keySet().iterator();
+            Iterator project_iter = selectedColumns.keySet().iterator();
             while (project_iter.hasNext()) {
                 String colName = project_iter.next().toString();
                 String tableName = null;
