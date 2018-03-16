@@ -24,20 +24,7 @@ public class SelectItem_Visitor {
         {
             SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;;
             String columnName = selectExpressionItem.getExpression().toString();
-            System.out.println("SELECTED COLUMNS : "+columnName);
-            if(columnName.indexOf(".") != -1)
-            {
-                String tableName;
-                StringTokenizer strtok = new StringTokenizer(columnName,".");
-                tableName = strtok.nextElement().toString();
-                String colName = strtok.nextElement().toString();
-                Data_Storage.alias_table.put(columnName,colName);
-                Data_Storage.selectedColumns.put(columnName,tableName);
-                Optimize opt = new Optimize();
-                opt.updateProjectColumns(colName,tableName);
-
-            }
-            else if(selectExpressionItem.getAlias()!= null)
+            if(selectExpressionItem.getAlias()!= null)
             {
                 expr = selectExpressionItem.getExpression();
                 Expr_Visitor expr_visitor = new Expr_Visitor();
@@ -47,14 +34,27 @@ public class SelectItem_Visitor {
                     Data_Storage.alias_table.put(selectExpressionItem.getAlias(), columnName);
                     Data_Storage.selectedColumns.put(selectExpressionItem.getAlias(), Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
                     Optimize opt = new Optimize();
-                    opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
+                    //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
                 }
+            }
+            else if(columnName.indexOf(".") != -1)
+            {
+                String tableName;
+                StringTokenizer strtok = new StringTokenizer(columnName,".");
+                tableName = strtok.nextElement().toString();
+                String colName = strtok.nextElement().toString();
+                Data_Storage.alias_table.put(columnName,colName);
+                Data_Storage.selectedColumns.put(columnName,tableName);
+                Optimize opt = new Optimize();
+                //opt.updateProjectColumns(colName,tableName);
+
             }
             else
             {
-                Data_Storage.selectedColumns.put(columnName, Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
+                String tableName = Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString());
+                Data_Storage.selectedColumns.put(tableName+"."+columnName, tableName);
                 Optimize opt = new Optimize();
-                opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
+                //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
             }
         }
     }

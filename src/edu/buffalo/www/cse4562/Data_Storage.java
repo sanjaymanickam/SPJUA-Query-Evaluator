@@ -1,5 +1,7 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.schema.Column;
+
 import java.util.*;
 
 public class Data_Storage {
@@ -15,4 +17,7 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static HashMap<String, ArrayList<String>> project_columns = new HashMap<>();
+    static Long limit;
+    static ArrayList<Column> orderBy;
+    static ArrayList<String> orderBy_sort;
 }

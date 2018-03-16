@@ -1,11 +1,15 @@
 package edu.buffalo.www.cse4562;
 
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
+import javax.xml.crypto.Data;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,9 +19,14 @@ public class Select_Visitor {
     {
         selectBody = stmt;
         Expression expression;
+
         if(stmt instanceof PlainSelect)
         {
+            Data_Storage.limit = new Long("0");
+            Data_Storage.orderBy_sort = new ArrayList<>();
+            Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;
+
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
             Iterator_Interface main_from_item_iter = Data_Storage.oper;
@@ -69,11 +78,30 @@ public class Select_Visitor {
             {
                 Data_Storage.oper = join_iter;
             }
+            if(plainSelect.getLimit() != null){
+                Data_Storage.limit = plainSelect.getLimit().getRowCount();
+            }
+            if(plainSelect.getOrderByElements() !=null){
+                List<OrderByElement> orderBy = plainSelect.getOrderByElements();
+                Iterator orderby_iter = orderBy.iterator();
+                while(orderby_iter.hasNext()){
+                    OrderByElement o = (OrderByElement) orderby_iter.next();
+                    if(o instanceof OrderByElement){
+                        Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
+                        if(o.getExpression() instanceof Column){
+                            Data_Storage.orderBy.add((Column) o.getExpression());
+                        }
+                    }
+                }
+
+
+            }
             List<SelectItem> sel_items = plainSelect.getSelectItems();
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
             }
+            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.oper);
         }
         else if(stmt instanceof Union)
         {
