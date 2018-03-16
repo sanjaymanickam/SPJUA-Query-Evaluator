@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class Join2IteratorInterface implements Iterator_Interface{
@@ -23,11 +24,11 @@ public class Join2IteratorInterface implements Iterator_Interface{
                 read_file(iter2);
             Data_Storage.file_flag.put(iter2,false);
         }
-        if(Data_Storage.file_flag.get(iter2))
+        if(Data_Storage.file_flag.get(iter2) && Data_Storage.stored_file_iterators.get(iter2).hasNext())
         {
 
-            to_send.tuples.addAll(Data_Storage.file1_temp_tuple.tuples);
-            to_send.schema.addAll(Data_Storage.file1_temp_tuple.schema);
+            to_send.tuples.addAll(Data_Storage.file_temp_tuple.get(iter2).tuples);
+            to_send.schema.addAll(Data_Storage.file_temp_tuple.get(iter2).schema);
             if(to_send != null) {
                 if (Data_Storage.stored_file_iterators.get(iter2).hasNext()) {
                     temp_tuple = (Tuple) Data_Storage.stored_file_iterators.get(iter2).next();
@@ -57,10 +58,13 @@ public class Join2IteratorInterface implements Iterator_Interface{
             {
                 Data_Storage.stored_file_iterators.replace(iter2,Data_Storage.stored_files.get(iter2).iterator());
             }
-            Data_Storage.file1_temp_tuple = iter1.readOneTuple();
-            if(Data_Storage.file1_temp_tuple!=null) {
-                to_send.tuples.addAll(Data_Storage.file1_temp_tuple.tuples);
-                to_send.schema.addAll(Data_Storage.file1_temp_tuple.schema);
+            if(!Data_Storage.file_temp_tuple.containsKey(iter2))
+                Data_Storage.file_temp_tuple.put(iter2,iter1.readOneTuple());
+            else
+                Data_Storage.file_temp_tuple.replace(iter2,iter1.readOneTuple());
+            if(Data_Storage.file_temp_tuple.get(iter2)!=null) {
+                to_send.tuples.addAll(Data_Storage.file_temp_tuple.get(iter2).tuples);
+                to_send.schema.addAll(Data_Storage.file_temp_tuple.get(iter2).schema);
                 Tuple tup = (Tuple) Data_Storage.stored_file_iterators.get(iter2).next();
                 if(tup!=null) {
                     to_send.tuples.addAll(tup.tuples);

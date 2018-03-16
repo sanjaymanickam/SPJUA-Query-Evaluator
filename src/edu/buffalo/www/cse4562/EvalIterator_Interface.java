@@ -22,14 +22,14 @@ public class EvalIterator_Interface implements Iterator_Interface{
        Tuple tup;
         do{
             tup = iter.readOneTuple();
+            if(tup == null)
+            {
+                return null;
+            }
             tuple = tup.tuples;
             schema = tup.schema;
             final ArrayList<String> to_copy = tuple;
             final ArrayList<Column> schema_final = schema;
-            if(tuple == null)
-            {
-                return null;
-            }
             Eval eval = new Eval() {
                 @Override
                 public PrimitiveValue eval(Column column) {
@@ -73,7 +73,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
                 e.printStackTrace();
             }
         }while(tuple ==null);
-        System.out.println("EVAL");
+//        System.out.println("EVAL");
         Tuple ret_tuple = new Tuple(tuple,schema);
         ret_tuple.tuples = tuple;
         ret_tuple.schema =schema;

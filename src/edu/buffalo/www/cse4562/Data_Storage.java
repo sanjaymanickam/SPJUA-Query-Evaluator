@@ -11,7 +11,7 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,Boolean> file_flag = new HashMap<>();
     static int all_flag = 0;
     static HashMap<Iterator_Interface,Iterator> stored_file_iterators = new HashMap<>();
-    static Tuple file1_temp_tuple;
+    static HashMap<Iterator_Interface,Tuple> file_temp_tuple = new HashMap<>();
     static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static HashMap<String, ArrayList<String>> project_columns = new HashMap<>();

@@ -43,14 +43,12 @@ public class FileIterator_Interface implements Iterator_Interface{
         {
             str_split.add(str_tok.nextElement().toString());
         }
-        System.out.println("FILE");
         Iterator it = Data_Storage.tables.get(new_file).keySet().iterator();
         while(it.hasNext())
         {
             Column col = new Column(new Table(new_file),it.next().toString());
             schema.add(col);
         }
-        System.out.println("");
         return new Tuple(str_split,schema);
 //        return null;
     }
