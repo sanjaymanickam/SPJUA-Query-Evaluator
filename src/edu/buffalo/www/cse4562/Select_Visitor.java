@@ -40,7 +40,7 @@ public class Select_Visitor {
             if(plainSelect.getWhere()!=null) {
                 plainSelect.getWhere().accept(expr);
                 expression = expr.getExpr();
-                System.out.println("EXPRESSION : "+expression);
+//                System.out.println("EXPRESSION : "+expression);
                 Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
                 Expression expr_temp = expression;
 //                Optimize opt = new Optimize();

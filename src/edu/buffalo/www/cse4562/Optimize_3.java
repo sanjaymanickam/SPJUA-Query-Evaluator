@@ -110,7 +110,6 @@ public class Optimize_3 {
                 else
                     join_iter = new Join2IteratorInterface(join_iter,joins.get(i));
             }
-            System.out.println();
         }
     return null;
     }

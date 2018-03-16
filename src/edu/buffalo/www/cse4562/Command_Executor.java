@@ -34,7 +34,6 @@ public class Command_Executor {
                                 if (it.hasNext())
                                     System.out.print("|");
                             }
-                            System.out.println();
                             tuple = Data_Storage.oper.readOneTuple();
                         } while (tuple != null);
                     }

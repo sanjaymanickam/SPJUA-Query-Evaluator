@@ -24,7 +24,7 @@ public class SelectItem_Visitor {
         {
             SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;;
             String columnName = selectExpressionItem.getExpression().toString();
-            System.out.println("SELECTED COLUMNS : "+columnName);
+//            System.out.println("SELECTED COLUMNS : "+columnName);
             if(columnName.indexOf(".") != -1)
             {
                 String tableName;

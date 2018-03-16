@@ -105,6 +105,5 @@ public class Join2IteratorInterface implements Iterator_Interface{
                 temp_array.add(temp_tuple);
         }while(temp_tuple!= null);
         Data_Storage.stored_files.put(file,temp_array);
-        System.out.println();
     }
 }
