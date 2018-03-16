@@ -39,6 +39,7 @@ public class Select_Visitor {
                         join_iter = new Join2IteratorInterface(join_iter,Data_Storage.oper);
                     }
                 }
+                Data_Storage.oper = join_iter;
             }
             else
             {
