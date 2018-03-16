@@ -9,6 +9,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 public class From_Visitor {
     public static String table_name = null;
@@ -23,6 +24,12 @@ public class From_Visitor {
         else if(stmt instanceof SubSelect)
         {
             SubSelect subSelect = (SubSelect) stmt;
+            Iterator it = Data_Storage.selectedColumns.keySet().iterator();
+            while(it.hasNext())
+            {
+                StringTokenizer str_tok = new StringTokenizer(it.next().toString());
+//                str_tok.nextElement()
+            }
             Select_Visitor.ret_type(subSelect.getSelectBody());
         }
         else if(stmt instanceof Table)

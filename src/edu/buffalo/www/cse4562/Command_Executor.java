@@ -1,15 +1,13 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 
 public class Command_Executor {
     static String prompt = "$> ";
@@ -91,13 +89,21 @@ public class Command_Executor {
 
 
         }
-
+        int temp_i=0;
         if(Data_Storage.limit > 0) {
             int i = 0;
             while (i < Data_Storage.limit) {
                 Iterator<String> itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-                    System.out.print(itr.next().toString());
+                    Column col = schema.get(temp_i++);
+                    String temp = Data_Storage.tables.get(col.getTable().getName()).get(col.getColumnName());
+                    if(temp.equals("DOUBLE"))
+                    {
+                        System.out.println(new DoubleValue(itr.next()));
+                    }
+                    else {
+                        System.out.print(itr.next());
+                    }
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
