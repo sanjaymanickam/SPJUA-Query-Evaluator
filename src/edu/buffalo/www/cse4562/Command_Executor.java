@@ -31,27 +31,27 @@ public class Command_Executor {
                 Data_Storage.oper = null;
                 Data_Storage.limit = new Long("0");
                 Data_Storage.orderBy = null;
-
-                Visitor_Parse.ret_type(stmt);
-                if(Data_Storage.oper!=null) {
-//                        new Optimize_2().optimize();
-                    //new Optimize_3().optimize();
-                    Tuple tuple = Data_Storage.oper.readOneTuple();
-                    do {
-                        Iterator it = tuple.tuples.iterator();
-                            /*while (it.hasNext()) {
-                                System.out.print(it.next().toString());
-                                if (it.hasNext())
-                                    System.out.print("|");
-                            }
-                            System.out.println();*/
-                        result.add(tuple.tuples);
-                        schema = tuple.schema;
-                        tuple = Data_Storage.oper.readOneTuple();
-
-                    } while (tuple != null);
-                    sort(result,schema);
-                }
+                System.out.println(stmt);
+//                Visitor_Parse.ret_type(stmt);
+//                if(Data_Storage.oper!=null) {
+////                        new Optimize_2().optimize();
+//                    //new Optimize_3().optimize();
+//                    Tuple tuple = Data_Storage.oper.readOneTuple();
+//                    do {
+//                        Iterator it = tuple.tuples.iterator();
+//                            /*while (it.hasNext()) {
+//                                System.out.print(it.next().toString());
+//                                if (it.hasNext())
+//                                    System.out.print("|");
+//                            }
+//                            System.out.println();*/
+//                        result.add(tuple.tuples);
+//                        schema = tuple.schema;
+//                        tuple = Data_Storage.oper.readOneTuple();
+//
+//                    } while (tuple != null);
+//                    sort(result,schema);
+//                }
 
                 System.out.println(prompt);
                 System.out.flush();
