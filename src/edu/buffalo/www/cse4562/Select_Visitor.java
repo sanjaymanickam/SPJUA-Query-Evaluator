@@ -1,65 +1,112 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
-import javax.xml.crypto.Data;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Select_Visitor implements SelectVisitor {
-    static String table_name;
-    Expression expr = null;
-    Expression sel_expr=null;
-    List<String> schema;
-    @Override
-    public void visit(PlainSelect plainSelect) {
-        From_Visitor from_visitor = new From_Visitor();
-        plainSelect.getFromItem().accept(from_visitor);
-        table_name = from_visitor.retTableName();
-        schema = from_visitor.retSchema();
-        StringBuilder str = new StringBuilder(Data_Storage.dataDir.toString()).append("/").append(table_name).append(".dat");
-//        System.out.println(Data_Storage.subsel_flag);
-        if (Data_Storage.subsel_flag==0 && table_name != null) {
-            Data_Storage.oper = new File_IteratorInteface(new File(str.toString()));
-            Data_Storage.subsel_flag = 1;
-        }
-        Data_Storage.tablename = table_name;
-        Data_Storage.star_flag = 0;
-//        System.out.println("The Selected Columns are : " + columns);
-        Expr_Visitor expr_visitor = new Expr_Visitor();
-        if (plainSelect.getWhere() != null) {
-            plainSelect.getWhere().accept(expr_visitor);
-//            System.out.println("The Expression is : " + expr_visitor.getExpr());
-            expr = expr_visitor.getExpr();
-            Data_Storage.oper = new Eval_IteratorInteface(Data_Storage.oper,schema,expr, table_name);
-        }
-        SelectItem_Visitor select_Item = new SelectItem_Visitor();
-        List<SelectItem> columns = plainSelect.getSelectItems();
+public class Select_Visitor {
+    static SelectBody selectBody;
+    public static void ret_type(SelectBody stmt)
+    {
+        selectBody = stmt;
+        Expression expression;
 
+        if(stmt instanceof PlainSelect)
+        {
+            Data_Storage.limit = new Long("0");
+            Data_Storage.orderBy_sort = new ArrayList<>();
+            Data_Storage.orderBy = new ArrayList<>();
+            PlainSelect plainSelect = (PlainSelect) stmt;
 
-            for (SelectItem col : columns) {
-                col.accept(select_Item);
+            From_Visitor.ret_type(plainSelect.getFromItem());
+            List<Join> joins = plainSelect.getJoins();
+            Iterator_Interface main_from_item_iter = Data_Storage.oper;
+            Iterator_Interface join_iter = null;
+            if(joins!=null)
+            {
+                Iterator it = joins.iterator();
+                while(it.hasNext()) {
+//                     Join_Visitor.ret_type(Data_Storage.oper,(Join) it.next());
+                    Join join = (Join) it.next();
+                    From_Visitor.ret_type(join.getRightItem());
+                    if(join_iter==null) {
+                        join_iter = new Join2IteratorInterface(main_from_item_iter, Data_Storage.oper);
+                    }else {
+                        join_iter = new Join2IteratorInterface(join_iter,Data_Storage.oper);
+                    }
+                }
+                Data_Storage.oper = join_iter;
             }
-            sel_expr = select_Item.SelectitemExpr();
-        schema = select_Item.retSchema();
-    }
+            else
+            {
+                join_iter = Data_Storage.oper;
+            }
+            Expr_Visitor expr = new Expr_Visitor();
+            if(plainSelect.getWhere()!=null) {
+                plainSelect.getWhere().accept(expr);
+                expression = expr.getExpr();
+//                System.out.println("EXPRESSION : "+expression);
+                Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
+                Expression expr_temp = expression;
+//                Optimize opt = new Optimize();
+//                while(expr_temp != null){
+//                    if(expr_temp instanceof AndExpression)
+//                    {
+//                        AndExpression andExpression = (AndExpression) expr_temp;
+//                        opt.evaluate(andExpression.getRightExpression(), "Project");
+//                        expr_temp = andExpression.getLeftExpression();
+//                    }
+//                    else if(expr_temp instanceof OrExpression)
+//                    {
+//                        OrExpression orExpression = (OrExpression) expr_temp;
+//                        opt.evaluate(orExpression.getRightExpression(), "Project");
+//                        expr_temp = orExpression.getLeftExpression();
+//                    }
+//                    else
+//                    {
+//                        opt.evaluate(expr_temp, "Project");
+//                        expr_temp = null;
+//                    }
 
-    @Override
-    public void visit(Union union) {
+//                }
+            }
+            if(plainSelect.getLimit() != null){
+                Data_Storage.limit = plainSelect.getLimit().getRowCount();
+            }
+            if(plainSelect.getOrderByElements() !=null){
+                List<OrderByElement> orderBy = plainSelect.getOrderByElements();
+                Iterator orderby_iter = orderBy.iterator();
+                while(orderby_iter.hasNext()){
+                    OrderByElement o = (OrderByElement) orderby_iter.next();
+                    if(o instanceof OrderByElement){
+                        Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
+                        if(o.getExpression() instanceof Column){
+                            Data_Storage.orderBy.add((Column) o.getExpression());
+                        }
+                    }
+                }
 
-    }
 
-    public String retTableName() {
-        return table_name;
+            }
+            List<SelectItem> sel_items = plainSelect.getSelectItems();
+            for(SelectItem col : sel_items)
+            {
+                SelectItem_Visitor.ret_type(col);
+            }
+            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.oper);
+        }
+        else if(stmt instanceof Union)
+        {
+            Union union = (Union) stmt;
+            List<PlainSelect> plainSelects = union.getPlainSelects();
+        }
     }
-
-    public Expression retExpr() {
-        return expr;
+    public Iterator_Interface getChild()
+    {
+        return Data_Storage.oper;
     }
-    public Expression retSelectExpr() {return sel_expr;}
-    public List<String> retSchema(){return schema;}
 }

@@ -10,7 +10,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class Expr_Visitor implements ExpressionVisitor {
 
-    Expression expr;
+    Expression expr = null;
     @Override
     public void visit(NullValue nullValue) {
         expr = nullValue;
@@ -98,12 +98,12 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(Between between) {
-            expr = between;
+        expr = between;
     }
 
     @Override
     public void visit(EqualsTo equalsTo) {
-            expr = equalsTo;
+        expr = equalsTo;
     }
 
     @Override
@@ -158,37 +158,37 @@ public class Expr_Visitor implements ExpressionVisitor {
 
     @Override
     public void visit(CaseExpression caseExpression) {
-
+        expr = caseExpression;
     }
 
     @Override
     public void visit(WhenClause whenClause) {
-
+        expr = whenClause;
     }
 
     @Override
     public void visit(ExistsExpression existsExpression) {
-
+        expr = existsExpression;
     }
 
     @Override
     public void visit(AllComparisonExpression allComparisonExpression) {
-
+        expr = allComparisonExpression;
     }
 
     @Override
     public void visit(AnyComparisonExpression anyComparisonExpression) {
-
+        expr = anyComparisonExpression;
     }
 
     @Override
     public void visit(Concat concat) {
-
+        expr = concat;
     }
 
     @Override
     public void visit(Matches matches) {
-
+        expr = matches;
     }
 
     @Override
@@ -210,3 +210,4 @@ public class Expr_Visitor implements ExpressionVisitor {
         return expr;
     }
 }
+

@@ -4,55 +4,58 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SelectItemVisitor;
-import java.util.ArrayList;
-import java.util.List;
+import net.sf.jsqlparser.statement.select.SelectItem;
 
-public class SelectItem_Visitor implements SelectItemVisitor {
-    net.sf.jsqlparser.expression.Expression expr;
-    List<String> schema = new ArrayList<>();
-    @Override
-    public void visit(AllColumns allColumns) {
-        schema = Data_Storage.tableColumns.get(new Select_Visitor().retTableName());
-        expr = null;
-    }
+import java.util.StringTokenizer;
 
-    @Override
-    public void visit(AllTableColumns allTableColumns) {
-//        System.out.println("IN ALL TABLE COLUMNS");
-    }
-
-    @Override
-    public void visit(SelectExpressionItem selectExpressionItem) {
-        String columnName = selectExpressionItem.getExpression().toString();
-        if (columnName.indexOf(".") != -1) {
-            columnName = columnName.split("\\.")[1];
-            schema.add(columnName);
-        }
-        else if(selectExpressionItem.getAlias() != null) {
-//            System.out.println("Alias is " + selectExpressionItem.getAlias());
-            String type;
-            schema.add(selectExpressionItem.getAlias());
-            Select_Visitor s_visit = new Select_Visitor();
-            Data_Storage.selectedColumns.add(selectExpressionItem.getAlias());
-//            System.out.println(selectExpressionItem.getExpression());
-            type = Data_Storage.tables.get(s_visit.retTableName()).get(selectExpressionItem.getExpression().toString());
-            Data_Storage.tables.get(s_visit.retTableName()).put(selectExpressionItem.getAlias(),type);
-            Expr_Visitor expr_visitor = new Expr_Visitor();
-            selectExpressionItem.getExpression().accept(expr_visitor);
-            expr = expr_visitor.getExpr();
-            Data_Storage.oper = new Eval_IteratorInteface(Data_Storage.oper,schema,expr,s_visit.retTableName());
-
-        }
-        else {
-            schema.add(columnName);
-            expr = null;
-        }
-
-    }
-    public Expression SelectitemExpr()
+public class SelectItem_Visitor {
+    static Expression expr;
+    public static void ret_type(SelectItem stmt)
     {
-        return expr;
+        if(stmt instanceof AllColumns)
+        {
+            Data_Storage.all_flag = 1;
+        }
+        else if(stmt instanceof AllTableColumns)
+        {
+
+        }
+        else if(stmt instanceof SelectExpressionItem)
+        {
+            SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;;
+            String columnName = selectExpressionItem.getExpression().toString();
+            if(selectExpressionItem.getAlias()!= null)
+            {
+                expr = selectExpressionItem.getExpression();
+                Expr_Visitor expr_visitor = new Expr_Visitor();
+                expr.accept(expr_visitor);
+                if(expr_visitor.getExpr()!=null)
+                {
+                    Data_Storage.alias_table.put(selectExpressionItem.getAlias(), columnName);
+                    Data_Storage.selectedColumns.put(selectExpressionItem.getAlias(), Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
+                    Optimize opt = new Optimize();
+                    //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
+                }
+            }
+            else if(columnName.indexOf(".") != -1)
+            {
+                String tableName;
+                StringTokenizer strtok = new StringTokenizer(columnName,".");
+                tableName = strtok.nextElement().toString();
+                String colName = strtok.nextElement().toString();
+                Data_Storage.alias_table.put(columnName,colName);
+                Data_Storage.selectedColumns.put(columnName,tableName);
+                Optimize opt = new Optimize();
+                //opt.updateProjectColumns(colName,tableName);
+
+            }
+            else
+            {
+                String tableName = Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString());
+                Data_Storage.selectedColumns.put(tableName+"."+columnName, tableName);
+                Optimize opt = new Optimize();
+                //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
+            }
+        }
     }
-    public List<String> retSchema() {return schema;}
 }
