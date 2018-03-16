@@ -48,7 +48,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
                             return new LongValue(to_copy.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
                             return new StringValue(to_copy.get(position));
-                        } else if (data_type.equals("DECIMAL")) {
+                        } else if (data_type.equals("DOUBLE")) {
                             return new DoubleValue(to_copy.get(position));
                         } else if (data_type.equals("DATE")) {
                             return new DateValue(to_copy.get(position));
