@@ -16,6 +16,11 @@ public class JoinIterator_Interface implements Iterator_Interface{
     }
 
     @Override
+    public void setChild(Iterator_Interface iter) {
+
+    }
+
+    @Override
     public void reset() {
 
     }

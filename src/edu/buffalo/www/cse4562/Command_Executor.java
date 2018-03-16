@@ -25,7 +25,8 @@ public class Command_Executor {
                     Data_Storage.oper = null;
                     Visitor_Parse.ret_type(stmt);
                     if(Data_Storage.oper!=null) {
-//                        new Optimize().optimize();
+//                        new Optimize_2().optimize();
+                        new Optimize_3().optimize();
                         Tuple tuple = Data_Storage.oper.readOneTuple();
                         do {
                             Iterator it = tuple.tuples.iterator();
@@ -36,7 +37,7 @@ public class Command_Executor {
                             }
                             System.out.println();
                             tuple = Data_Storage.oper.readOneTuple();
-                        } while (Data_Storage.oper != null);
+                        } while (tuple != null);
                     }
                     System.out.println(prompt);
                     System.out.flush();

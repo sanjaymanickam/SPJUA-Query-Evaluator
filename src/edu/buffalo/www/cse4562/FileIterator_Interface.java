@@ -67,4 +67,9 @@ public class FileIterator_Interface implements Iterator_Interface{
     public Iterator_Interface getChild(){
         return null;
     }
+
+    @Override
+    public void setChild(Iterator_Interface iter) {
+
+    }
 }

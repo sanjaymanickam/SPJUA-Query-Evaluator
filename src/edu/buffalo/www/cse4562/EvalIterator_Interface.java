@@ -84,6 +84,9 @@ public class EvalIterator_Interface implements Iterator_Interface{
     public Iterator_Interface getChild() {
         return iter;
     }
+    public void setChild(Iterator_Interface iter){
+        this.iter = iter;
+    }
 
     @Override
     public void reset() {

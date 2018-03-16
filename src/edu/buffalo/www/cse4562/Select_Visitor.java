@@ -43,27 +43,27 @@ public class Select_Visitor {
                 System.out.println("EXPRESSION : "+expression);
                 Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
                 Expression expr_temp = expression;
-                Optimize opt = new Optimize();
-                while(expr_temp != null){
-                    if(expr_temp instanceof AndExpression)
-                    {
-                        AndExpression andExpression = (AndExpression) expr_temp;
-                        opt.evaluate(andExpression.getRightExpression(), "Project");
-                        expr_temp = andExpression.getLeftExpression();
-                    }
-                    else if(expr_temp instanceof OrExpression)
-                    {
-                        OrExpression orExpression = (OrExpression) expr_temp;
-                        opt.evaluate(orExpression.getRightExpression(), "Project");
-                        expr_temp = orExpression.getLeftExpression();
-                    }
-                    else
-                    {
-                        opt.evaluate(expr_temp, "Project");
-                        expr_temp = null;
-                    }
+//                Optimize opt = new Optimize();
+//                while(expr_temp != null){
+//                    if(expr_temp instanceof AndExpression)
+//                    {
+//                        AndExpression andExpression = (AndExpression) expr_temp;
+//                        opt.evaluate(andExpression.getRightExpression(), "Project");
+//                        expr_temp = andExpression.getLeftExpression();
+//                    }
+//                    else if(expr_temp instanceof OrExpression)
+//                    {
+//                        OrExpression orExpression = (OrExpression) expr_temp;
+//                        opt.evaluate(orExpression.getRightExpression(), "Project");
+//                        expr_temp = orExpression.getLeftExpression();
+//                    }
+//                    else
+//                    {
+//                        opt.evaluate(expr_temp, "Project");
+//                        expr_temp = null;
+//                    }
 
-                }
+//                }
             }
             else
             {
