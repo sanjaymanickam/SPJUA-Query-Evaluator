@@ -17,7 +17,7 @@ public class From_Visitor {
         {
             SubJoin subJoin = (SubJoin) stmt;
             Join join = subJoin.getJoin();
-            System.out.println(join.isSimple());
+//            System.out.println(join.isSimple());
         }
         else if(stmt instanceof SubSelect)
         {

@@ -12,8 +12,6 @@ public class ProjectColumn {
        while(expr != null){
            if(expr instanceof BinaryExpression) {
                BinaryExpression bin = (BinaryExpression) expr;
-               System.out.println(bin.getRightExpression().toString());
-               System.out.println(bin.getLeftExpression().toString());
            }
        }
     }

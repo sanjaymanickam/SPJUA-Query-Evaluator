@@ -503,7 +503,7 @@ if(lhs == null || rhs == null) return null;
         };
       Expression e = parser.SimpleExpression();
       PrimitiveValue ret = eval.eval(e);
-      System.out.println(ret.toString());
+//      System.out.println(ret.toString());
       
     }
   }

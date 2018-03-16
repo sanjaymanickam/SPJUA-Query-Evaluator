@@ -1,14 +1,9 @@
 package edu.buffalo.www.cse4562;
 
-import com.sun.tools.corba.se.idl.constExpr.Or;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +40,10 @@ public class Select_Visitor {
                     }
                 }
             }
+            else
+            {
+                join_iter = Data_Storage.oper;
+            }
             Expr_Visitor expr = new Expr_Visitor();
             if(plainSelect.getWhere()!=null) {
                 plainSelect.getWhere().accept(expr);
@@ -73,10 +72,6 @@ public class Select_Visitor {
 //                    }
 
 //                }
-            }
-            else
-            {
-                Data_Storage.oper = join_iter;
             }
             if(plainSelect.getLimit() != null){
                 Data_Storage.limit = plainSelect.getLimit().getRowCount();

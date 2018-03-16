@@ -119,7 +119,5 @@ public class Command_Executor {
                 }
 
             }
-            System.out.println(prompt);
-            System.out.flush();
         }
 }
