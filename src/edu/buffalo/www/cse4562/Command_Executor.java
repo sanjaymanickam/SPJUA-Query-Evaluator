@@ -162,7 +162,28 @@ public class Command_Executor {
             for(int i = 0;i< result.size();i++){
                 Iterator<String> itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-                    System.out.print(itr.next().toString());
+                    Column col = schema.get(temp_i++);
+                    String tableName =  col.getTable().getName();
+                    String col_name = col.getColumnName();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                        tableName =Data_Storage.table_alias.get(tableName);
+                    Column new_col = new Column(new Table(tableName),col_name);
+                    String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                    if(temp.equals("DOUBLE"))
+                    {
+                        DoubleValue d_value = new DoubleValue(itr.next().toString());
+                        System.out.print(d_value);
+                    }
+                    else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
+                    {
+                        System.out.print(new StringValue(itr.next().toString()));
+                    }
+                    else {
+                        System.out.print(itr.next());
+                    }
+//                    String temp = itr.next();
+//                    System.err.println(temp);
+//                    System.out.print(new DoubleValue(temp));
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
