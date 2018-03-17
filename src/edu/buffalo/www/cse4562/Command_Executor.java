@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -104,6 +105,10 @@ public class Command_Executor {
                     if(temp.equals("DOUBLE"))
                     {
                         System.out.println(new DoubleValue(itr.next()));
+                    }
+                    if(temp.equals("STRING"))
+                    {
+                        System.out.println(new StringValue(itr.next()));
                     }
                     else {
                         System.out.print(itr.next());
