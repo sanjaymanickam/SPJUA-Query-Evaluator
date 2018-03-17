@@ -32,9 +32,8 @@ public class Command_Executor {
 //                System.out.println(stmt);
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-//                        new Optimize_2().optimize();
-//                    Iterator_Interface iter = new Optimize_3().optimize();
-//                    Data_Storage.oper = iter;
+                    Iterator_Interface iter = new Optimize_3().optimize();
+                    Data_Storage.oper = iter;
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     do {
                         Iterator it = tuple.tuples.iterator();
@@ -95,15 +94,16 @@ public class Command_Executor {
             while (i < Data_Storage.limit) {
                 Iterator<String> itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-                    Column col = schema.get(temp_i++);
-                    String temp = Data_Storage.tables.get(col.getTable().getName()).get(col.getColumnName());
-                    if(temp.equals("DOUBLE"))
-                    {
-                        System.out.println(new DoubleValue(itr.next()));
-                    }
-                    else {
-                        System.out.print(itr.next());
-                    }
+//                    Column col = schema.get(temp_i++);
+//                    String temp = Data_Storage.tables.get(col.getTable().getName()).get(col.getColumnName());
+//                    if(temp.equals("DOUBLE"))
+//                    {
+//                        System.out.println(new DoubleValue(itr.next()));
+//                    }
+//                    else {
+//                        System.out.print(itr.next());
+//                    }
+                    System.out.println(new DoubleValue(itr.next()));
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }

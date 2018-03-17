@@ -19,14 +19,16 @@ public class Optimize_3 {
     Iterator_Interface to_ret = null;
     Iterator_Interface expr_before_join = null;
     Iterator_Interface join_iter = null;
+    ProjectionIterator_Interface projectionIterator_interface = null;
     Expression and_expr = null;
     public Iterator_Interface optimize()
     {
+        to_ret = Data_Storage.oper;
         while(Data_Storage.oper!= null)
         {
             if(Data_Storage.oper instanceof ProjectionIterator_Interface)
             {
-
+                projectionIterator_interface = (ProjectionIterator_Interface)Data_Storage.oper;
             }
             else if(Data_Storage.oper instanceof EvalIterator_Interface)
             {
@@ -111,7 +113,15 @@ public class Optimize_3 {
                     join_iter = new Join2IteratorInterface(join_iter,joins.get(i));
             }
         }
-    return null;
+        if(join_iter!=null) {
+            if (expr_before_join == null)
+                expr_before_join = join_iter;
+            return new ProjectionIterator_Interface(projectionIterator_interface.selectedColumns, expr_before_join);
+        }
+        else
+        {
+            return to_ret;
+        }
     }
 
     private void bin_eval(BinaryExpression binaryExpression) {

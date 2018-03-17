@@ -27,8 +27,13 @@ public class From_Visitor {
             Iterator it = Data_Storage.selectedColumns.keySet().iterator();
             while(it.hasNext())
             {
-                StringTokenizer str_tok = new StringTokenizer(it.next().toString());
-//                str_tok.nextElement()
+                String temp_it = it.next().toString();
+                if(temp_it.indexOf(".")!=-1) {
+                    StringTokenizer str_tok = new StringTokenizer(temp_it,".");
+                    String tablename = str_tok.nextElement().toString();
+                    String col_name = str_tok.nextElement().toString();
+                    Data_Storage.alias_table.put(new StringBuilder(stmt.getAlias()).append(".").append(col_name).toString(),temp_it);
+                }
             }
             Select_Visitor.ret_type(subSelect.getSelectBody());
         }

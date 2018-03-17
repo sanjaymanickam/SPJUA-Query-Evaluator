@@ -21,11 +21,16 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         ArrayList<Column> schema = new ArrayList<>();
         Tuple tup;
             tup = iter.readOneTuple();
+            System.err.println();
         if(tup!=null) {
             Iterator project_iter = selectedColumns.keySet().iterator();
             while (project_iter.hasNext()) {
                 String colName = project_iter.next().toString();
                 String tableName = null;
+                if(Data_Storage.alias_table.containsKey(colName))
+                {
+                    colName = Data_Storage.alias_table.get(colName);
+                }
                 if(colName.indexOf(".")!=-1) {
                     StringTokenizer str_tok = new StringTokenizer(colName, ".");
                     tableName = str_tok.nextElement().toString();
@@ -58,7 +63,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
 
     @Override
     public Iterator_Interface getChild() {
-        return null;
+        return iter;
     }
     public void setChild(Iterator_Interface iter){
         //this.iter = iter;
