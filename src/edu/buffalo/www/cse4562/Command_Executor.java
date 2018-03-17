@@ -104,11 +104,11 @@ public class Command_Executor {
                     String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
                     if(temp.equals("DOUBLE"))
                     {
-                        System.out.print(new DoubleValue(itr.next()));
+                        System.out.print(new DoubleValue(itr.next().toString()));
                     }
                     else if(temp.equals("STRING"))
                     {
-                        System.out.print(new StringValue(itr.next()));
+                        System.out.print(new StringValue(itr.next().toString()));
                     }
                     else {
                         System.out.print(itr.next());
