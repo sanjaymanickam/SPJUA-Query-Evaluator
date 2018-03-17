@@ -72,6 +72,13 @@ public class Optimize_3 {
                             } else if (binaryExpression.getLeftExpression() instanceof Column) {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
+                                if(file_name == null)
+                                {
+                                    if(Data_Storage.current_schema.containsKey(col.getColumnName()))
+                                    {
+                                        file_name = Data_Storage.current_schema.get(col.getColumnName());
+                                    }
+                                }
                                 if (Data_Storage.table_alias.containsKey(file_name))
                                     file_name = Data_Storage.table_alias.get(file_name);
                                 for (int i = 0; i < joins.size(); i++) {
@@ -92,6 +99,13 @@ public class Optimize_3 {
                         } else if (binaryExpression.getLeftExpression() instanceof Column) {
                             Column col = (Column) binaryExpression.getLeftExpression();
                             String file_name = col.getTable().getName();
+                            if(file_name == null)
+                            {
+                                if(Data_Storage.current_schema.containsKey(col.getColumnName()))
+                                {
+                                    file_name = Data_Storage.current_schema.get(col.getColumnName());
+                                }
+                            }
                             if (Data_Storage.table_alias.containsKey(file_name))
                                 file_name = Data_Storage.table_alias.get(file_name);
                             for (int i = 0; i < joins.size(); i++) {
