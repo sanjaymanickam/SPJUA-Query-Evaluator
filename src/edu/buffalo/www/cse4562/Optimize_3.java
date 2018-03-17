@@ -29,7 +29,10 @@ public class Optimize_3 {
         Data_Storage.oper = to_optimize;
         while (Data_Storage.oper != null) {
             if (Data_Storage.oper instanceof ProjectionIterator_Interface) {
+                if(projectionIterator_interface==null)
                 projectionIterator_interface = (ProjectionIterator_Interface) Data_Storage.oper;
+                else
+                   joins.add((ProjectionIterator_Interface)Data_Storage.oper);
             } else if (Data_Storage.oper instanceof EvalIterator_Interface) {
                 expressionList.add(((EvalIterator_Interface) Data_Storage.oper).condition);
             } else if (Data_Storage.oper instanceof Join2IteratorInterface) {
@@ -110,11 +113,17 @@ public class Optimize_3 {
                 joins.set(i, new Optimize_3().optimize(joins.get(i)));
             }
         }
-        for (int i = joins.size() - 1; i >= 0; i--) {
-            if (join_iter == null) {
-                join_iter = new Join2IteratorInterface(joins.get(i), joins.get((i--) - 1));
-            } else
-                join_iter = new Join2IteratorInterface(join_iter, joins.get(i));
+        if(joins.size()==1)
+        {
+            join_iter = joins.get(0);
+        }
+        else {
+            for (int i = joins.size() - 1; i >= 0; i--) {
+                if (join_iter == null) {
+                    join_iter = new Join2IteratorInterface(joins.get(i), joins.get((i--) - 1));
+                } else
+                    join_iter = new Join2IteratorInterface(join_iter, joins.get(i));
+            }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();
         while (expr_before_iter.hasNext()) {
@@ -123,6 +132,19 @@ public class Optimize_3 {
             } else
                 expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
         }
+//        while(expr_before_iter.hasNext())
+//        {
+//            String filename1,filename2;
+//            if(expr_before_iter instanceof BinaryExpression)
+//            {
+//                if((((BinaryExpression) expr_before_iter).getLeftExpression() instanceof Column) && (((BinaryExpression) expr_before_iter).getRightExpression() instanceof Column))
+//                {
+//                    filename1 = ((Column) ((BinaryExpression) expr_before_iter).getRightExpression()).getTable().getName();
+//                    filename1 = ((Column) ((BinaryExpression) expr_before_iter).getLeftExpression()).getTable().getName();
+//                }
+//            }
+//        }
+
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;

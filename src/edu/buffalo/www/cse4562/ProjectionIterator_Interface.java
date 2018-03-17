@@ -43,7 +43,6 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                 else {
                     tableName = Data_Storage.current_schema.get(colName);
                 }
-
                 /*while(str_tok.hasMoreElements())
                 {
                     colName = str_tok.nextElement().toString();
@@ -51,7 +50,6 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                 int position = tup.schema.indexOf(new Column(new Table(tableName), colName));
                 tuple.add(tup.tuples.get(position));
                 schema.add(tup.schema.get(position));
-
             }
             return new Tuple(tuple, schema);
         }
