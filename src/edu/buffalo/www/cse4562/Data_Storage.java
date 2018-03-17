@@ -21,4 +21,5 @@ public class Data_Storage {
     static Long limit;
     static ArrayList<Column> orderBy;
     static ArrayList<String> orderBy_sort;
+    static int join = 0;
 }

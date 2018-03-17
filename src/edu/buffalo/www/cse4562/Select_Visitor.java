@@ -26,6 +26,7 @@ public class Select_Visitor {
             Iterator_Interface join_iter = null;
             if(joins!=null)
             {
+                Data_Storage.join = 1;
                 Iterator it = joins.iterator();
                 while(it.hasNext()) {
 //                     Join_Visitor.ret_type(Data_Storage.oper,(Join) it.next());

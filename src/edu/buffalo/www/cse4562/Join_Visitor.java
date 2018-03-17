@@ -8,6 +8,7 @@ public class Join_Visitor {
     static Join join;
     static public void ret_type(Join join_item,Iterator_Interface iter)
     {
+
         join = join_item;
         if(join_item.getOnExpression()==null)
         {
