@@ -31,8 +31,10 @@ public class Optimize_3 {
             if (Data_Storage.oper instanceof ProjectionIterator_Interface) {
                 if(projectionIterator_interface==null)
                 projectionIterator_interface = (ProjectionIterator_Interface) Data_Storage.oper;
-                else
-                   joins.add((ProjectionIterator_Interface)Data_Storage.oper);
+                else {
+                    joins.add((ProjectionIterator_Interface) Data_Storage.oper);
+                    break;
+                }
             } else if (Data_Storage.oper instanceof EvalIterator_Interface) {
                 expressionList.add(((EvalIterator_Interface) Data_Storage.oper).condition);
             } else if (Data_Storage.oper instanceof Join2IteratorInterface) {

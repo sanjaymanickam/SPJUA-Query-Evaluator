@@ -43,6 +43,22 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                 else {
                     tableName = Data_Storage.current_schema.get(colName);
                 }
+                if(Data_Storage.alias_table.containsKey(colName)) {
+                    StringTokenizer stringTokenizer = new StringTokenizer(Data_Storage.alias_table.get(colName), ".");
+                 if(tableName==null)
+                 {
+                     tableName = stringTokenizer.nextElement().toString();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                    {
+                        tableName = Data_Storage.table_alias.get(tableName);
+                    }
+                 }
+                 else
+                 {
+                     stringTokenizer.nextElement().toString();
+                 }
+                    colName = stringTokenizer.nextElement().toString();
+                }
                 /*while(str_tok.hasMoreElements())
                 {
                     colName = str_tok.nextElement().toString();
