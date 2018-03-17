@@ -104,11 +104,11 @@ public class Command_Executor {
                     String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
                     if(temp.equals("DOUBLE"))
                     {
-                        System.out.println(new DoubleValue(itr.next()));
+                        System.out.print(new DoubleValue(itr.next()));
                     }
                     else if(temp.equals("STRING"))
                     {
-                        System.out.println(new StringValue(itr.next()));
+                        System.out.print(new StringValue(itr.next()));
                     }
                     else {
                         System.out.print(itr.next());
@@ -120,6 +120,7 @@ public class Command_Executor {
                         System.out.print("|");
                     }
                 }
+                temp_i=0;
                 i++;
                 System.out.println();
             }
