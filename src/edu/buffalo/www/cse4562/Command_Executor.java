@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 
 import java.io.InputStreamReader;
@@ -63,7 +64,12 @@ public class Command_Executor {
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
         for(int i=0;i<Data_Storage.orderBy.size();i++){
             Column c = Data_Storage.orderBy.get(i);
-            int position = schema.indexOf(c);
+            String tableName =  c.getTable().getName();
+            String col_name = c.getColumnName();
+            if(Data_Storage.table_alias.containsKey(tableName))
+                tableName =Data_Storage.table_alias.get(tableName);
+            Column col = new Column(new Table(tableName),col_name);
+            int position = schema.indexOf(col);
             if("true".equals(Data_Storage.orderBy_sort.get(i))){
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
                     @Override
@@ -88,18 +94,23 @@ public class Command_Executor {
             while (i < Data_Storage.limit) {
                 Iterator<String> itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-//                    Column col = schema.get(temp_i++);
-//                    String temp = Data_Storage.tables.get(col.getTable().getName()).get(col.getColumnName());
-//                    if(temp.equals("DOUBLE"))
-//                    {
-//                        System.out.println(new DoubleValue(itr.next()));
-//                    }
-//                    else {
-//                        System.out.print(itr.next());
-//                    }
-                    String temp = itr.next();
-                    System.err.println(temp);
-                    System.out.print(new DoubleValue(temp));
+                    Column col = schema.get(temp_i++);
+                    String tableName =  col.getTable().getName();
+                    String col_name = col.getColumnName();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                        tableName =Data_Storage.table_alias.get(tableName);
+                    Column new_col = new Column(new Table(tableName),col_name);
+                    String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                    if(temp.equals("DOUBLE"))
+                    {
+                        System.out.println(new DoubleValue(itr.next()));
+                    }
+                    else {
+                        System.out.print(itr.next());
+                    }
+//                    String temp = itr.next();
+//                    System.err.println(temp);
+//                    System.out.print(new DoubleValue(temp));
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
