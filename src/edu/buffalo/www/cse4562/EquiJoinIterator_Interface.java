@@ -3,7 +3,8 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.Expression;
 
-public class EquiJoinIterator_Interface implements Iterator_Interface{
+public class
+EquiJoinIterator_Interface implements Iterator_Interface{
 
     Iterator_Interface fileName1,fileName2;
     Expression condition;

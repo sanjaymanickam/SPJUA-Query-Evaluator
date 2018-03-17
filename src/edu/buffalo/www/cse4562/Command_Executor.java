@@ -7,6 +7,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 
+import javax.xml.crypto.Data;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
@@ -34,8 +35,8 @@ public class Command_Executor {
 //                System.out.println(stmt);
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-                    Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
-                    Data_Storage.oper = iter;
+                   // Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
+                    //Data_Storage.oper = iter;
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     do {
                         Iterator it = tuple.tuples.iterator();
@@ -67,14 +68,34 @@ public class Command_Executor {
             Column c = Data_Storage.orderBy.get(i);
             String tableName =  c.getTable().getName();
             String col_name = c.getColumnName();
+
+            if(Data_Storage.alias_table.containsKey(c.toString())){
+                col_name = Data_Storage.alias_table.get(c.toString());
+            }
             if(Data_Storage.table_alias.containsKey(tableName))
+            {
                 tableName =Data_Storage.table_alias.get(tableName);
+            }else{
+                tableName = Data_Storage.current_schema.get(col_name);
+            }
+
             Column col = new Column(new Table(tableName),col_name);
             int position = schema.indexOf(col);
+
+            String DataType = Data_Storage.tables.get(tableName).get(col_name);
             if("true".equals(Data_Storage.orderBy_sort.get(i))){
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
+                        if(DataType.equals("DOUBLE")){
+                            Double value1 = new Double(one.get(position));
+                            Double value2 = new Double(two.get(position));
+                            if(value1 < value2){
+                                return -1;
+                            }else{
+                                return 1;
+                            }
+                        }
                         return one.get(position).compareTo(two.get(position));
                     }
                 });
@@ -82,6 +103,15 @@ public class Command_Executor {
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
+                        if(DataType.equals("DOUBLE")){
+                            Double value1 = new Double(two.get(position));
+                            Double value2 = new Double(one.get(position));
+                            if(value1 < value2){
+                                return -1;
+                            }else{
+                                return 1;
+                            }
+                        }
                         return two.get(position).compareTo(one.get(position));
                     }
                 });
@@ -89,41 +119,43 @@ public class Command_Executor {
 
 
         }
+
         int temp_i=0;
-        if(Data_Storage.limit > 0) {
+        if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
             int i = 0;
             while (i < Data_Storage.limit) {
-                Iterator<String> itr = result.get(i).iterator();
-                while (itr.hasNext()) {
-                    Column col = schema.get(temp_i++);
-                    String tableName =  col.getTable().getName();
-                    String col_name = col.getColumnName();
-                    if(Data_Storage.table_alias.containsKey(tableName))
-                        tableName =Data_Storage.table_alias.get(tableName);
-                    Column new_col = new Column(new Table(tableName),col_name);
-                    String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
-                    if(temp.equals("DOUBLE"))
-                    {
-                        System.out.print(new DoubleValue(itr.next().toString()));
-                    }
-                    else if(temp.equals("STRING"))
-                    {
-                        System.out.print(new StringValue(itr.next().toString()));
-                    }
-                    else {
-                        System.out.print(itr.next());
-                    }
+                    Iterator<String> itr = result.get(i).iterator();
+                    while (itr.hasNext()) {
+                        Column col = schema.get(temp_i++);
+                        String tableName =  col.getTable().getName();
+                        String col_name = col.getColumnName();
+                        if(Data_Storage.table_alias.containsKey(tableName))
+                            tableName =Data_Storage.table_alias.get(tableName);
+                        Column new_col = new Column(new Table(tableName),col_name);
+                        String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                        if(temp.equals("DOUBLE"))
+                        {
+                            DoubleValue d_value = new DoubleValue(itr.next());
+                            System.out.print(d_value);
+                        }
+                        else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
+                        {
+                            System.out.print(new StringValue(itr.next().toString()));
+                        }
+                        else {
+                            System.out.print(itr.next());
+                        }
 //                    String temp = itr.next();
 //                    System.err.println(temp);
 //                    System.out.print(new DoubleValue(temp));
-                    if (itr.hasNext()) {
-                        System.out.print("|");
+                        if (itr.hasNext()) {
+                            System.out.print("|");
+                        }
                     }
+                    temp_i=0;
+                    i++;
+                    System.out.println();
                 }
-                temp_i=0;
-                i++;
-                System.out.println();
-            }
         }else{
             for(int i = 0;i< result.size();i++){
                 Iterator<String> itr = result.get(i).iterator();
