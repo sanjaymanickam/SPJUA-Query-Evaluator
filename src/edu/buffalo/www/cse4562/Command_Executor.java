@@ -101,40 +101,40 @@ public class Command_Executor {
 
         }
         int temp_i=0;
-        if(Data_Storage.limit > 0) {
+        if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
             int i = 0;
             while (i < Data_Storage.limit) {
-                Iterator<String> itr = result.get(i).iterator();
-                while (itr.hasNext()) {
-                    Column col = schema.get(temp_i++);
-                    String tableName =  col.getTable().getName();
-                    String col_name = col.getColumnName();
-                    if(Data_Storage.table_alias.containsKey(tableName))
-                        tableName =Data_Storage.table_alias.get(tableName);
-                    Column new_col = new Column(new Table(tableName),col_name);
-                    String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
-                    if(temp.equals("DOUBLE"))
-                    {
-                        System.out.print(new DoubleValue(itr.next()));
-                    }
-                    else if(temp.equals("STRING"))
-                    {
-                        System.out.print(new StringValue(itr.next()));
-                    }
-                    else {
-                        System.out.print(itr.next());
-                    }
+                    Iterator<String> itr = result.get(i).iterator();
+                    while (itr.hasNext()) {
+                        Column col = schema.get(temp_i++);
+                        String tableName =  col.getTable().getName();
+                        String col_name = col.getColumnName();
+                        if(Data_Storage.table_alias.containsKey(tableName))
+                            tableName =Data_Storage.table_alias.get(tableName);
+                        Column new_col = new Column(new Table(tableName),col_name);
+                        String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                        if(temp.equals("DOUBLE"))
+                        {
+                            System.out.print(new DoubleValue(itr.next()));
+                        }
+                        else if(temp.equals("STRING"))
+                        {
+                            System.out.print(new StringValue(itr.next()));
+                        }
+                        else {
+                            System.out.print(itr.next());
+                        }
 //                    String temp = itr.next();
 //                    System.err.println(temp);
 //                    System.out.print(new DoubleValue(temp));
-                    if (itr.hasNext()) {
-                        System.out.print("|");
+                        if (itr.hasNext()) {
+                            System.out.print("|");
+                        }
                     }
+                    temp_i=0;
+                    i++;
+                    System.out.println();
                 }
-                temp_i=0;
-                i++;
-                System.out.println();
-            }
         }else{
             for(int i = 0;i< result.size();i++){
                 Iterator<String> itr = result.get(i).iterator();
