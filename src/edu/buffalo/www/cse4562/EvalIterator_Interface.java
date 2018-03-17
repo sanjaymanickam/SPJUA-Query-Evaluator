@@ -65,7 +65,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
                         tableName = Data_Storage.table_alias.get(tableName);
                     }
                     String data_type = Data_Storage.tables.get(tableName).get(col_name);
-                        if (data_type.equals("INT")) {
+                        if (data_type.equals("INTEGER")) {
                             return new LongValue(to_copy.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
                             return new StringValue(to_copy.get(position));

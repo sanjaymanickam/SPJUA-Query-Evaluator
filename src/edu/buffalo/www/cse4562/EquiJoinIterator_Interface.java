@@ -5,19 +5,21 @@ import net.sf.jsqlparser.expression.Expression;
 
 public class EquiJoinIterator_Interface implements Iterator_Interface{
 
-    String fileName1,fileName2;
+    Iterator_Interface fileName1,fileName2;
     Expression condition;
-    public EquiJoinIterator_Interface(String fileName1,String fileName2,Expression condition)
+    public EquiJoinIterator_Interface(Iterator_Interface fileName1,Iterator_Interface fileName2)
     {
         this.fileName1 = fileName1;
         this.fileName2 = fileName2;
-        this.condition = condition;
-        System.out.println("EQUIJOIN");
     }
     @Override
     public Tuple readOneTuple() {
-        System.out.println("IN READ ONE TUPLE OF EQUIJOIN");
-        return null;
+        Tuple tup1 = fileName1.readOneTuple();
+        Tuple tup2 = fileName2.readOneTuple();
+        Tuple to_send = tup1;
+        to_send.schema.addAll(tup2.schema);
+        to_send.tuples.addAll(tup2.tuples);
+        return to_send;
     }
 
     @Override
