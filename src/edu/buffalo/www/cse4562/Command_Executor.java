@@ -23,6 +23,7 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
+                System.err.println(stmt);
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -89,7 +90,7 @@ public class Command_Executor {
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
                         if(DataType.equals("DOUBLE")){
                             Double value1 = new Double(one.get(position));
-                            Double value2 = new Double(one.get(position));
+                            Double value2 = new Double(two.get(position));
                             if(value1 < value2){
                                 return -1;
                             }else{
@@ -104,7 +105,7 @@ public class Command_Executor {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
                         if(DataType.equals("DOUBLE")){
-                            Double value1 = new Double(one.get(position));
+                            Double value1 = new Double(two.get(position));
                             Double value2 = new Double(one.get(position));
                             if(value1 < value2){
                                 return -1;
