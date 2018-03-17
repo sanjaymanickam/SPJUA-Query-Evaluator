@@ -7,6 +7,7 @@ import net.sf.jsqlparser.schema.Table;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
@@ -43,9 +44,15 @@ public class EvalIterator_Interface implements Iterator_Interface{
                     {
                         col_name = column.getColumnName();
                     }
-                    Column col;
+                    Column col = null;
                     if(Data_Storage.table_alias.containsKey(column.getTable().getName())) {
                         col = new Column(new Table(Data_Storage.table_alias.get(column.getTable().getName())),col_name);
+                    }
+                    else if(Data_Storage.alias_table.containsKey(column.toString()))
+                    {
+                        StringTokenizer str_tok = new StringTokenizer(Data_Storage.alias_table.get(column.toString()),".");
+                        String tableName = str_tok.nextElement().toString();
+                        col = new Column(new Table(tableName),column.getColumnName());
                     }
                     else
                     {

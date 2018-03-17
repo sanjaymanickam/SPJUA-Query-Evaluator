@@ -24,6 +24,7 @@ public class From_Visitor {
         else if(stmt instanceof SubSelect)
         {
             SubSelect subSelect = (SubSelect) stmt;
+            Select_Visitor.ret_type(subSelect.getSelectBody());
             Iterator it = Data_Storage.selectedColumns.keySet().iterator();
             while(it.hasNext())
             {
@@ -32,10 +33,16 @@ public class From_Visitor {
                     StringTokenizer str_tok = new StringTokenizer(temp_it,".");
                     String tablename = str_tok.nextElement().toString();
                     String col_name = str_tok.nextElement().toString();
-                    Data_Storage.alias_table.put(new StringBuilder(stmt.getAlias()).append(".").append(col_name).toString(),temp_it);
+//                    Data_Storage.alias_table.put(new StringBuilder(stmt.getAlias()).append(".").append(col_name).toString(),te;mp_it);
+                    if(Data_Storage.table_alias.containsKey(tablename))
+                        tablename = Data_Storage.table_alias.get(tablename);
+                    Iterator iterate = Data_Storage.tables.get(tablename).keySet().iterator();
+                    while(iterate.hasNext()) {
+                        String col_name_temp = iterate.next().toString();
+                        Data_Storage.alias_table.put(stmt.getAlias().concat(".").concat(col_name_temp),tablename.concat(".").concat(col_name_temp));
+                    }
                 }
             }
-            Select_Visitor.ret_type(subSelect.getSelectBody());
         }
         else if(stmt instanceof Table)
         {
