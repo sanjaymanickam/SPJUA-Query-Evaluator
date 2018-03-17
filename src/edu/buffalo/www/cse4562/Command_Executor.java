@@ -23,6 +23,7 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
+                System.err.println(stmt);
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -45,7 +46,6 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
 
                     } while (tuple != null);
-
                     sort(result,schema);
                 }
 
@@ -65,6 +65,14 @@ public class Command_Executor {
         }
     }
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
+        System.err.println("Before Sort");
+        for(int i = 0;i<result.size();i++){
+            ArrayList<String> tuple = result.get(i);
+            for(int j = 0;j<tuple.size();j++){
+                System.err.println(tuple.get(j));
+            }
+            System.err.println("-----------------");
+        }
         for(int i=0;i<Data_Storage.orderBy.size();i++){
             Column c = Data_Storage.orderBy.get(i);
             String tableName =  c.getTable().getName();
@@ -100,7 +108,18 @@ public class Command_Executor {
 
 
         }
+        System.err.println("After Sort");
+        for(int i = 0;i<result.size();i++){
+            ArrayList<String> tuple = result.get(i);
+            for(int j = 0;j<tuple.size();j++){
+                System.err.println(tuple.get(j));
+            }
+            System.err.println("-----------------");
+        }
         int temp_i=0;
+        System.err.println("LIMIT : "+Data_Storage.limit);
+        System.err.println("ORDER BY "+Data_Storage.orderBy.get(0).toString());
+        System.err.println("ORDER BY "+Data_Storage.orderBy_sort.get(0).toString());
         if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
             int i = 0;
             while (i < Data_Storage.limit) {
