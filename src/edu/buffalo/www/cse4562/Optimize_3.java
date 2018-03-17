@@ -25,7 +25,6 @@ public class Optimize_3 {
         List<Expression> beforeExpressionList = new ArrayList<>();
         Iterator_Interface join_iter = null;
         ProjectionIterator_Interface projectionIterator_interface = null;
-        Expression and_expr = null;
         to_ret = to_optimize;
         Data_Storage.oper = to_optimize;
         while (Data_Storage.oper != null) {

@@ -58,8 +58,9 @@ public class Join2IteratorInterface implements Iterator_Interface{
             {
                 Data_Storage.stored_file_iterators.replace(iter2,Data_Storage.stored_files.get(iter2).iterator());
             }
-            if(!Data_Storage.file_temp_tuple.containsKey(iter2))
-                Data_Storage.file_temp_tuple.put(iter2,iter1.readOneTuple());
+            if(!Data_Storage.file_temp_tuple.containsKey(iter2)) {
+                Data_Storage.file_temp_tuple.put(iter2, iter1.readOneTuple());
+            }
             else
                 Data_Storage.file_temp_tuple.replace(iter2,iter1.readOneTuple());
             if(Data_Storage.file_temp_tuple.get(iter2)!=null) {

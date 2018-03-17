@@ -4,9 +4,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Select_Visitor {
     static SelectBody selectBody;
@@ -98,7 +96,8 @@ public class Select_Visitor {
             {
                 SelectItem_Visitor.ret_type(col);
             }
-            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.selectedColumns,Data_Storage.oper);
+            LinkedHashMap<String,String> new_hashmap = new LinkedHashMap<>(Data_Storage.selectedColumns);
+            Data_Storage.oper = new ProjectionIterator_Interface(new_hashmap,Data_Storage.oper);
         }
         else if(stmt instanceof Union)
         {
