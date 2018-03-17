@@ -7,6 +7,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 
+import javax.xml.crypto.Data;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
@@ -34,8 +35,8 @@ public class Command_Executor {
 //                System.out.println(stmt);
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-                    Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
-                    Data_Storage.oper = iter;
+                   // Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
+                    //Data_Storage.oper = iter;
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     do {
                         Iterator it = tuple.tuples.iterator();
@@ -44,6 +45,7 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
 
                     } while (tuple != null);
+
                     sort(result,schema);
                 }
 
@@ -67,8 +69,17 @@ public class Command_Executor {
             Column c = Data_Storage.orderBy.get(i);
             String tableName =  c.getTable().getName();
             String col_name = c.getColumnName();
+
+            if(Data_Storage.alias_table.containsKey(c.toString())){
+                col_name = Data_Storage.alias_table.get(c.toString());
+            }
             if(Data_Storage.table_alias.containsKey(tableName))
+            {
                 tableName =Data_Storage.table_alias.get(tableName);
+            }else{
+                tableName = Data_Storage.current_schema.get(col_name);
+            }
+
             Column col = new Column(new Table(tableName),col_name);
             int position = schema.indexOf(col);
             if("true".equals(Data_Storage.orderBy_sort.get(i))){
