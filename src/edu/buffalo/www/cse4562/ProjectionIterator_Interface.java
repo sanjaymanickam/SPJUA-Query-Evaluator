@@ -21,7 +21,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         ArrayList<Column> schema = new ArrayList<>();
         Tuple tup;
             tup = iter.readOneTuple();
-            System.err.println();
+//            System.err.println();
         if(tup!=null) {
             Iterator project_iter = selectedColumns.keySet().iterator();
             while (project_iter.hasNext()) {

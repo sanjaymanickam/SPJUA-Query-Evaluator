@@ -32,17 +32,11 @@ public class Command_Executor {
 //                System.out.println(stmt);
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-//                    Iterator_Interface iter = new Optimize_3().optimize();
-//                    Data_Storage.oper = iter;
+                    Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
+                    Data_Storage.oper = iter;
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     do {
                         Iterator it = tuple.tuples.iterator();
-                            /*while (it.hasNext()) {
-                                System.out.print(it.next().toString());
-                                if (it.hasNext())
-                                    System.out.print("|");
-                            }
-                            System.out.println();*/
                         result.add(tuple.tuples);
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
