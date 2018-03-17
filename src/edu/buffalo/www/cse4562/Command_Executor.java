@@ -103,7 +103,9 @@ public class Command_Executor {
 //                    else {
 //                        System.out.print(itr.next());
 //                    }
-                    System.out.println(new DoubleValue(itr.next()));
+                    String temp = itr.next();
+                    System.err.println(temp);
+                    System.out.print(new DoubleValue(temp));
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
