@@ -106,7 +106,7 @@ public class Command_Executor {
                     {
                         System.out.println(new DoubleValue(itr.next()));
                     }
-                    if(temp.equals("STRING"))
+                    else if(temp.equals("STRING"))
                     {
                         System.out.println(new StringValue(itr.next()));
                     }
