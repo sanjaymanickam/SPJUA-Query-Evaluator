@@ -40,13 +40,13 @@ public class Command_Executor {
                         Data_Storage.oper = iter;
                     }
                     Tuple tuple = Data_Storage.oper.readOneTuple();
-                    do {
+                    while (tuple != null){
                         Iterator it = tuple.tuples.iterator();
                         result.add(tuple.tuples);
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
 
-                    } while (tuple != null);
+                    }
                     sort(result,schema);
                 }
 
@@ -188,6 +188,7 @@ public class Command_Executor {
                         System.out.print("|");
                     }
                 }
+                temp_i=0;
                 System.out.println();
             }
 
