@@ -135,7 +135,7 @@ public class Command_Executor {
                         String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
                         if(temp.equals("DOUBLE"))
                         {
-                            DoubleValue d_value = new DoubleValue(itr.next());
+                            DoubleValue d_value = new DoubleValue(itr.next().toString());
                             System.out.print(d_value);
                         }
                         else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
