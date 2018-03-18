@@ -69,7 +69,6 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                     position = tup.schema.indexOf(new Column(new Table(tableName), colName));
                     test.add(new Column(new Table(tableName), colName));
                 }
-
                 tuple.add(tup.tuples.get(position));
                 schema.add(tup.schema.get(position));
                 System.err.println(tup);
