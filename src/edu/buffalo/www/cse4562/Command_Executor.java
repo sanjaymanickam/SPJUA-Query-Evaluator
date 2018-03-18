@@ -6,8 +6,6 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-
-import javax.xml.crypto.Data;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;

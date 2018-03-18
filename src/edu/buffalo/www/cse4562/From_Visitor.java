@@ -26,6 +26,7 @@ public class From_Visitor {
             SubSelect subSelect = (SubSelect) stmt;
             Select_Visitor.ret_type(subSelect.getSelectBody());
             Iterator it = Data_Storage.selectedColumns.keySet().iterator();
+            Data_Storage.from_alias = subSelect.getAlias();
             if(subSelect.getAlias()!=null) {
                 while (it.hasNext()) {
                     String temp_it = it.next().toString();
