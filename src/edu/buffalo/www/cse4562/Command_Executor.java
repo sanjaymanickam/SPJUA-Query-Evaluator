@@ -23,7 +23,6 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
-                System.out.println(stmt);
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
