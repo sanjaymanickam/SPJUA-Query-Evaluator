@@ -3,10 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class ProjectionIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
@@ -24,6 +21,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
 //            System.err.println();
         if(tup!=null) {
             Iterator project_iter = selectedColumns.keySet().iterator();
+            HashSet<Column> test = new HashSet<>();
             while (project_iter.hasNext()) {
                 String colName = project_iter.next().toString();
                 String tableName = null;
@@ -63,7 +61,15 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                 {
                     colName = str_tok.nextElement().toString();
                 }*/
-                int position = tup.schema.indexOf(new Column(new Table(tableName), colName));
+                int position;
+                if(test.contains(new Column(new Table(tableName), colName))){
+                    position = tup.schema.lastIndexOf(new Column(new Table(tableName), colName));
+                    test.remove(new Column(new Table(tableName), colName));
+                }else{
+                    position = tup.schema.indexOf(new Column(new Table(tableName), colName));
+                    test.add(new Column(new Table(tableName), colName));
+                }
+
                 tuple.add(tup.tuples.get(position));
                 schema.add(tup.schema.get(position));
             }
