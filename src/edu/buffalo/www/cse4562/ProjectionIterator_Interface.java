@@ -72,6 +72,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
 
                 tuple.add(tup.tuples.get(position));
                 schema.add(tup.schema.get(position));
+                System.err.println(tup);
             }
             return new Tuple(tuple, schema);
         }
