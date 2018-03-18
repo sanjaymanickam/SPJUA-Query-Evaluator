@@ -86,6 +86,7 @@ public class Optimize_3 {
                                         FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
                                         if (fileIterator_interface.new_file.equals(file_name)) {
                                             joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                            break;
                                         }
                                     }
                                 }
