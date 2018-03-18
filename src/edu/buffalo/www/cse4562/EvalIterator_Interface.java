@@ -7,6 +7,7 @@ import net.sf.jsqlparser.schema.Table;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 public class EvalIterator_Interface implements Iterator_Interface{
@@ -21,6 +22,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
     public Tuple readOneTuple() {
        ArrayList<String> tuple;
        ArrayList<Column> schema;
+        HashSet<Column> test = new HashSet<>();
        Tuple tup;
         do{
             tup = iter.readOneTuple();
@@ -58,7 +60,15 @@ public class EvalIterator_Interface implements Iterator_Interface{
                     {
                         col = column;
                     }
-                    int position =schema_final.indexOf(col);
+                    int position;
+                    if(test.contains(col)){
+                        position = schema_final.lastIndexOf(col);
+                        test.remove(col);
+                    }
+                    else{
+                        position =schema_final.indexOf(col);
+                        test.add(col);
+                    }
                     String tableName = schema_final.get(position).getTable().getName();
                     if(Data_Storage.table_alias.containsKey(tableName))
                     {
@@ -80,6 +90,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
                 }
             };
             try{
+                test.clear();
                 PrimitiveValue pr = eval.eval(condition);
                 if(pr == BooleanValue.FALSE) {
                   tuple = null;
