@@ -19,7 +19,6 @@ public class Select_Visitor {
             Data_Storage.orderBy_sort = new ArrayList<>();
             Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;
-
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
             Iterator_Interface main_from_item_iter = Data_Storage.oper;
@@ -29,7 +28,6 @@ public class Select_Visitor {
                 Data_Storage.join = 1;
                 Iterator it = joins.iterator();
                 while(it.hasNext()) {
-//                     Join_Visitor.ret_type(Data_Storage.oper,(Join) it.next());
                     Join join = (Join) it.next();
                     From_Visitor.ret_type(join.getRightItem());
                     if(join_iter==null) {
@@ -48,30 +46,7 @@ public class Select_Visitor {
             if(plainSelect.getWhere()!=null) {
                 plainSelect.getWhere().accept(expr);
                 expression = expr.getExpr();
-//                System.out.println("EXPRESSION : "+expression);
                 Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
-                Expression expr_temp = expression;
-//                Optimize opt = new Optimize();
-//                while(expr_temp != null){
-//                    if(expr_temp instanceof AndExpression)
-//                    {
-//                        AndExpression andExpression = (AndExpression) expr_temp;
-//                        opt.evaluate(andExpression.getRightExpression(), "Project");
-//                        expr_temp = andExpression.getLeftExpression();
-//                    }
-//                    else if(expr_temp instanceof OrExpression)
-//                    {
-//                        OrExpression orExpression = (OrExpression) expr_temp;
-//                        opt.evaluate(orExpression.getRightExpression(), "Project");
-//                        expr_temp = orExpression.getLeftExpression();
-//                    }
-//                    else
-//                    {
-//                        opt.evaluate(expr_temp, "Project");
-//                        expr_temp = null;
-//                    }
-
-//                }
             }
             if(plainSelect.getLimit() != null){
                 Data_Storage.limit = plainSelect.getLimit().getRowCount();
@@ -95,6 +70,7 @@ public class Select_Visitor {
             Data_Storage.selectedColumns.clear();
             for(SelectItem col : sel_items)
             {
+
                 SelectItem_Visitor.ret_type(col);
             }
             LinkedHashMap<String,String> new_hashmap = new LinkedHashMap<>(Data_Storage.selectedColumns);

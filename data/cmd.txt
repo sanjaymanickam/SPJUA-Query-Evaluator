@@ -1,22 +1,4 @@
-
-
-
-
-
-
-
-
 SELECT D.C_NAME, D.N_NAME FROM (SELECT C.*, N.N_NAME, R.R_NAME FROM CUSTOMER C, NATION N, REGION R) D, ORDERS O, LINEITEM L ORDER BY D.C_NAME LIMIT 5;
-
-
-
-
-
-
-
-
-
-
 CREATE TABLE R(A INT,B INT,C STRING,D DATE);
 CREATE TABLE S(E INT,F INT,G STRING);
 CREATE TABLE T(H INT,I INT,J STRING);
@@ -32,9 +14,9 @@ SELECT X.*,Y.A,Z.A FROM R Z,S Y,T X WHERE Z.A = Y.A AND Z.A < 5;
 SELECT Q.B,Q.F FROM (SELECT X.*,Y.A,Z.A FROM R Z,S Y,T X WHERE Z.A = Y.A AND Z.A < 5) Q,S,T ORDER BY Q.B;
 
 SELECT Q.B,Q.F FROM (SELECT X.*,Y.A,Z.A FROM R Z,S Y,T X WHERE Z.A = Y.A AND Z.A < 5) Q,S,T WHERE Q.H = S.H;
-
-SELECT R.A,R.B,R.C FROM R,S WHERE R.A >= 3 AND R.B >=2
-
+java -cp /src/: jar:/lib/evallib-1.0. jar:/lib/jsqlparser-1.0.0.jar edu.buffalo.www.cse4562.Main --data data/
+SELECrT R.A,R.B,R.C FROM R,S WHERE R.A >= 3 AND R.B >=2
+find /src/ -name \*.java -print > compile.list
 
 SELECT S.G AS P FROM R,S ORDER BY R.A LIMIT 2;
 

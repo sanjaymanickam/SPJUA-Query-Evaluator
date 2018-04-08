@@ -37,44 +37,25 @@ public class EvalIterator_Interface implements Iterator_Interface{
             Eval eval = new Eval() {
                 @Override
                 public PrimitiveValue eval(Column column) {
-                    String col_name;
-                    if((col_name =Data_Storage.alias_table.get(column.getColumnName())) != null)
-                    {
-
-                    }
+                    String col_name = column.getColumnName();
+                    String tableName=null;
+                    String origtableName = null;
+                    if(Data_Storage.alias_table.containsKey(col_name))
+                        col_name = Data_Storage.alias_table.get(col_name);
+                    if(column.getTable().getName()==null)
+                        tableName = Data_Storage.current_schema.get(col_name);
                     else
-                    {
-                        col_name = column.getColumnName();
-                    }
-                    Column col = null;
-                    if(Data_Storage.table_alias.containsKey(column.getTable().getName())) {
-                        col = new Column(new Table(Data_Storage.table_alias.get(column.getTable().getName())),col_name);
-                    }
-                    else if(Data_Storage.alias_table.containsKey(column.toString()))
-                    {
-                        StringTokenizer str_tok = new StringTokenizer(Data_Storage.alias_table.get(column.toString()),".");
-                        String tableName = str_tok.nextElement().toString();
-                        col = new Column(new Table(tableName),column.getColumnName());
-                    }
-                    else
-                    {
-                        col = column;
-                    }
-                    int position;
-                    if(test.contains(col)){
-                        position = schema_final.lastIndexOf(col);
-                        test.remove(col);
-                    }
-                    else{
-                        position =schema_final.indexOf(col);
-                        test.add(col);
-                    }
-                    String tableName = schema_final.get(position).getTable().getName();
+                        tableName = column.getTable().getName();
+                    int position = schema_final.indexOf(new Column(new Table(tableName),col_name));
                     if(Data_Storage.table_alias.containsKey(tableName))
                     {
-                        tableName = Data_Storage.table_alias.get(tableName);
+                        origtableName = Data_Storage.table_alias.get(tableName);
                     }
-                    String data_type = Data_Storage.tables.get(tableName).get(col_name);
+                    else
+                    {
+                        origtableName = tableName;
+                    }
+                    String data_type = Data_Storage.tables.get(origtableName).get(col_name);
                         if (data_type.equals("INTEGER")) {
                             return new LongValue(to_copy.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
@@ -86,7 +67,6 @@ public class EvalIterator_Interface implements Iterator_Interface{
                         } else {
                             return null;
                         }
-
                 }
             };
             try{
@@ -124,4 +104,5 @@ public class EvalIterator_Interface implements Iterator_Interface{
     public void reset() {
 
     }
+
 }

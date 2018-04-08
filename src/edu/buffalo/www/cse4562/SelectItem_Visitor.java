@@ -30,7 +30,9 @@ public class SelectItem_Visitor {
             Iterator key_iterator = linkedHashMap.keySet().iterator();
             while(key_iterator.hasNext())
             {
-                Data_Storage.selectedColumns.put(new StringBuilder(tableName).append(".").append(key_iterator.next().toString()).toString(),tableName);
+                String to_append = key_iterator.next().toString();
+                Data_Storage.selectedColumns.put(new StringBuilder(tableName).append(".").append(to_append).toString(),tableName);
+                Data_Storage.project_array.add(to_append);
             }
         }
         else if(stmt instanceof SelectExpressionItem)
@@ -39,15 +41,21 @@ public class SelectItem_Visitor {
             String columnName = selectExpressionItem.getExpression().toString();
             if(selectExpressionItem.getAlias()!= null)
             {
+                if(columnName.indexOf(".") != -1)
+                {
+                    String tableName;
+                    StringTokenizer strtok = new StringTokenizer(columnName,".");
+                    tableName = strtok.nextElement().toString();
+                    String colName = strtok.nextElement().toString();
+                    Data_Storage.project_array.add(colName);
+                }
                 expr = selectExpressionItem.getExpression();
                 Expr_Visitor expr_visitor = new Expr_Visitor();
                 expr.accept(expr_visitor);
                 if(expr_visitor.getExpr()!=null)
                 {
-                    Data_Storage.alias_table.put(selectExpressionItem.getAlias(), columnName);
+                    Data_Storage.alias_table.put(columnName,selectExpressionItem.getAlias());
                     Data_Storage.selectedColumns.put(selectExpressionItem.getAlias(), Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
-                    Optimize opt = new Optimize();
-                    //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
                 }
             }
             else if(columnName.indexOf(".") != -1)
@@ -56,18 +64,16 @@ public class SelectItem_Visitor {
                 StringTokenizer strtok = new StringTokenizer(columnName,".");
                 tableName = strtok.nextElement().toString();
                 String colName = strtok.nextElement().toString();
-                Data_Storage.alias_table.put(columnName,colName);
+                Data_Storage.project_array.add(colName);
+//                Data_Storage.alias_table.put(columnName,colName);
                 Data_Storage.selectedColumns.put(columnName,tableName);
-                Optimize opt = new Optimize();
-                //opt.updateProjectColumns(colName,tableName);
 
             }
             else
             {
                 String tableName = Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString());
+                Data_Storage.project_array.add(columnName);
                 Data_Storage.selectedColumns.put(tableName+"."+columnName, tableName);
-                Optimize opt = new Optimize();
-                //opt.updateProjectColumns(columnName, Data_Storage.current_schema.get(columnName));
             }
         }
     }

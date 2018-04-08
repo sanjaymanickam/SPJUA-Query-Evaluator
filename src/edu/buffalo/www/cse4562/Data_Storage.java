@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 
 import java.util.*;
 
@@ -17,10 +18,18 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,Tuple> file_temp_tuple = new HashMap<>();
     static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
-    static HashMap<String, ArrayList<String>> project_columns = new HashMap<>();
     static Long limit;
     static ArrayList<Column> orderBy;
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;
     static int join = 0;
+    static ArrayList<String> project_array = new ArrayList<>();
+    static Column stringSplitter(String colName)
+    {
+        String tableName;
+        StringTokenizer str_tok = new StringTokenizer(colName, ".");
+        tableName = str_tok.nextElement().toString();
+        colName = str_tok.nextElement().toString();
+        return new Column(new Table(tableName),colName);
+    }
 }

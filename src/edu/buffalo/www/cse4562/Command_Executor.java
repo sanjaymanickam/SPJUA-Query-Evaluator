@@ -24,19 +24,21 @@ public class Command_Executor {
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
-                Data_Storage.project_columns.clear();
                 Data_Storage.operator_map.clear();
                 Data_Storage.current_schema.clear();
                 Data_Storage.oper = null;
                 Data_Storage.limit = new Long("0");
                 Data_Storage.orderBy = null;
-//                System.out.println(stmt);
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
+                    Set<String> temp_set = new HashSet<>();
+                    temp_set.addAll(Data_Storage.project_array);
+                    Data_Storage.project_array.clear();
+                    Data_Storage.project_array.addAll(temp_set);
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     while (tuple != null){
                         Iterator it = tuple.tuples.iterator();
@@ -119,45 +121,12 @@ public class Command_Executor {
 
 
         }
-
         int temp_i=0;
+        int size_to_iter =  result.size();
         if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
-            int i = 0;
-            while (i < Data_Storage.limit) {
-                    Iterator<String> itr = result.get(i).iterator();
-                    while (itr.hasNext()) {
-                        Column col = schema.get(temp_i++);
-                        String tableName =  col.getTable().getName();
-                        String col_name = col.getColumnName();
-                        if(Data_Storage.table_alias.containsKey(tableName))
-                            tableName =Data_Storage.table_alias.get(tableName);
-                        Column new_col = new Column(new Table(tableName),col_name);
-                        String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
-                        if(temp.equals("DOUBLE"))
-                        {
-                            DoubleValue d_value = new DoubleValue(itr.next().toString());
-                            System.out.print(d_value);
-                        }
-                        else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
-                        {
-                            System.out.print(new StringValue(itr.next().toString()));
-                        }
-                        else {
-                            System.out.print(itr.next());
-                        }
-//                    String temp = itr.next();
-//                    System.err.println(temp);
-//                    System.out.print(new DoubleValue(temp));
-                        if (itr.hasNext()) {
-                            System.out.print("|");
-                        }
-                    }
-                    temp_i=0;
-                    i++;
-                    System.out.println();
-                }
-        }else{
-            for(int i = 0;i< result.size();i++){
+            size_to_iter = Data_Storage.limit.intValue();
+        }
+            for(int i = 0;i<size_to_iter;i++){
                 Iterator<String> itr = result.get(i).iterator();
                 while (itr.hasNext()) {
                     Column col = schema.get(temp_i++);
@@ -179,17 +148,12 @@ public class Command_Executor {
                     else {
                         System.out.print(itr.next());
                     }
-//                    String temp = itr.next();
-//                    System.err.println(temp);
-//                    System.out.print(new DoubleValue(temp));
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
                 }
                 temp_i=0;
                 System.out.println();
-            }
-
         }
     }
 }

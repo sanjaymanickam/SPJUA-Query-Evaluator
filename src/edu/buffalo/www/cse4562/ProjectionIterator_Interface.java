@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ProjectionIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
-    HashMap<String,String> selectedColumns = new HashMap<>();
+    HashMap<String,String> selectedColumns;
     public ProjectionIterator_Interface(HashMap<String,String> selectedColumns, Iterator_Interface iter){
         this.iter = iter;
         this.selectedColumns = selectedColumns;
@@ -16,59 +16,53 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
     public Tuple readOneTuple() {
         ArrayList<String> tuple = new ArrayList<>();
         ArrayList<Column> schema = new ArrayList<>();
+        Column col;
+        String origColName=null,aliasColName,origTableName=null,aliasTableName;
         Tuple tup;
             tup = iter.readOneTuple();
-//            System.err.println();
         if(tup!=null) {
             Iterator project_iter = selectedColumns.keySet().iterator();
-            HashSet<Column> test = new HashSet<>();
             while (project_iter.hasNext()) {
-                String colName = project_iter.next().toString();
-                String tableName = null;
-                if(Data_Storage.alias_table.containsKey(colName))
-                {
-                    colName = Data_Storage.alias_table.get(colName);
+                String tableName = null,colName;
+                colName = project_iter.next().toString();
+                if (colName.indexOf(".") != -1) {
+                    col = Data_Storage.stringSplitter(colName);
+                    tableName  = col.getTable().getName();
+                    colName = col.getColumnName();
                 }
-                if(colName.indexOf(".")!=-1) {
-                    StringTokenizer str_tok = new StringTokenizer(colName, ".");
-                    tableName = str_tok.nextElement().toString();
-                    colName = str_tok.nextElement().toString();
-                }
-                if(Data_Storage.table_alias.containsKey(tableName))
-                {
-                 tableName = Data_Storage.table_alias.get(tableName);
-                }
-                else {
-                    tableName = Data_Storage.current_schema.get(colName);
-                }
-                if(Data_Storage.alias_table.containsKey(colName)) {
-                    StringTokenizer stringTokenizer = new StringTokenizer(Data_Storage.alias_table.get(colName), ".");
-                 if(tableName==null)
-                 {
-                     tableName = stringTokenizer.nextElement().toString();
-                    if(Data_Storage.table_alias.containsKey(tableName))
+                if (Data_Storage.alias_table.containsValue(colName)) {
+
+                     Set set = Data_Storage.alias_table.entrySet();
+                     Iterator set_iterator  = set.iterator();
+                     while(set_iterator.hasNext())
+                     {
+                       Map.Entry entry =(Map.Entry) set_iterator.next();
+                       if(entry.getValue().equals(colName)) {
+                            origColName = entry.getKey().toString();
+                       }
+
+                     }
+                    aliasColName  = colName;
+                    if(origColName.indexOf(".")!=-1)
                     {
-                        tableName = Data_Storage.table_alias.get(tableName);
+                        col = Data_Storage.stringSplitter(origColName);
+                        origTableName = col.getTable().getName();
+                        origColName = col.getColumnName();
                     }
-                 }
-                 else
-                 {
-                     stringTokenizer.nextElement().toString();
-                 }
-                    colName = stringTokenizer.nextElement().toString();
                 }
-                /*while(str_tok.hasMoreElements())
+                else
                 {
-                    colName = str_tok.nextElement().toString();
-                }*/
-                int position;
-                if(test.contains(new Column(new Table(tableName), colName))){
-                    position = tup.schema.lastIndexOf(new Column(new Table(tableName), colName));
-                    test.remove(new Column(new Table(tableName), colName));
-                }else{
-                    position = tup.schema.indexOf(new Column(new Table(tableName), colName));
-                    test.add(new Column(new Table(tableName), colName));
+                    origColName = colName;
+                    aliasColName = origColName;
                 }
+                   if (Data_Storage.table_alias.containsKey(origTableName)) {
+                        aliasTableName = origTableName;
+                        origTableName = Data_Storage.table_alias.get(origTableName);
+                    } else {
+                        aliasTableName = null;
+                        origTableName = Data_Storage.current_schema.get(colName);
+                    }
+                int position = tup.schema.indexOf(new Column(new Table(aliasTableName),origColName));
                 tuple.add(tup.tuples.get(position));
                 schema.add(tup.schema.get(position));
             }

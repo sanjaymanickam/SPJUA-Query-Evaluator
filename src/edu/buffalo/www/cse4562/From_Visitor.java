@@ -34,14 +34,9 @@ public class From_Visitor {
                         StringTokenizer str_tok = new StringTokenizer(temp_it, ".");
                         String tablename = str_tok.nextElement().toString();
                         String col_name = str_tok.nextElement().toString();
-//                    Data_Storage.alias_table.put(new StringBuilder(stmt.getAlias()).append(".").append(col_name).toString(),te;mp_it);
                         if (Data_Storage.table_alias.containsKey(tablename))
                             tablename = Data_Storage.table_alias.get(tablename);
-                        Iterator iterate = Data_Storage.tables.get(tablename).keySet().iterator();
-                        while (iterate.hasNext()) {
-                            String col_name_temp = iterate.next().toString();
-                            Data_Storage.alias_table.put(subSelect.getAlias().concat(".").concat(col_name_temp), tablename.concat(".").concat(col_name_temp));
-                        }
+                        Data_Storage.table_alias.put(subSelect.getAlias(),tablename);
                     }
                 }
             }
@@ -54,13 +49,12 @@ public class From_Visitor {
                 {
                     Data_Storage.table_alias.put(table.getAlias(),table_name);
                 }
-                Data_Storage.oper = new FileIterator_Interface(table_name);
+                Data_Storage.oper = new FileIterator_Interface(table_name,table.getAlias());
                 ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
                 Iterator it = cols.iterator();
                 while(it.hasNext()){
                     Data_Storage.current_schema.put(it.next().toString(),table_name);
                 }
-                Data_Storage.project_columns.put(table_name,new ArrayList<String>());
         }
     }
 

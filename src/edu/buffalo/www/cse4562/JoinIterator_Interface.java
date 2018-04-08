@@ -1,8 +1,5 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.statement.select.FromItem;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class JoinIterator_Interface implements Iterator_Interface{
     @Override
