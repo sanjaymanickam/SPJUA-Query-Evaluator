@@ -53,8 +53,12 @@ public class SelectItem_Visitor {
                     if(expr instanceof BinaryExpression)
                     {
                         BinaryExpression binaryExpression = (BinaryExpression) expr;
-                          binaryExpression.getRightExpression();
-
+                        Data_Storage.selectedColumns.put(binaryExpression.getRightExpression().toString(),Data_Storage.current_schema.get(binaryExpression.getRightExpression()));
+                        expr = ((BinaryExpression) expr).getRightExpression();
+                    }
+                    else
+                    {
+                        Data_Storage.selectedColumns.put(expr.toString(),Data_Storage.current_schema.get(expr));
                     }
                 }
                 Data_Storage.aggregate_operations.add(func);
