@@ -46,21 +46,6 @@ public class SelectItem_Visitor {
             if(selectExpressionItem.getExpression() instanceof Function)
             {
                 Function func = (Function) selectExpressionItem.getExpression();
-                List<Expression> expressionList = func.getParameters().getExpressions();
-                Expression expr = expressionList.get(0);
-                while(expr!=null)
-                {
-                    if(expr instanceof BinaryExpression)
-                    {
-                        BinaryExpression binaryExpression = (BinaryExpression) expr;
-                        Data_Storage.selectedColumns.put(binaryExpression.getRightExpression().toString(),Data_Storage.current_schema.get(binaryExpression.getRightExpression()));
-                        expr = ((BinaryExpression) expr).getRightExpression();
-                    }
-                    else
-                    {
-                        Data_Storage.selectedColumns.put(expr.toString(),Data_Storage.current_schema.get(expr));
-                    }
-                }
                 Data_Storage.aggregate_operations.add(func);
             }
             else if(selectExpressionItem.getAlias()!= null)

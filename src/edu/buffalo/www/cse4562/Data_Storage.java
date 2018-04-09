@@ -24,6 +24,7 @@ public class Data_Storage {
     static ArrayList<Column> orderBy;
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;
+    static int aggregateflag = 0;
     static int join = 0;
     static List<Column> groupByColumn;
     static List<Function> aggregate_operations = new ArrayList<>();
