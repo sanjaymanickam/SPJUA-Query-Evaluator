@@ -29,6 +29,7 @@ public class Data_Storage {
     static List<Column> groupByColumn;
     static List<Function> aggregate_operations = new ArrayList<>();
     static ArrayList<String> project_array = new ArrayList<>();
+    static ArrayList<Column> aggregate = new ArrayList<>();
     static Column stringSplitter(String colName)
     {
         String tableName;

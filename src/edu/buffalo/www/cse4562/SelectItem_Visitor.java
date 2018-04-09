@@ -4,6 +4,7 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
@@ -46,6 +47,13 @@ public class SelectItem_Visitor {
             if(selectExpressionItem.getExpression() instanceof Function)
             {
                 Function func = (Function) selectExpressionItem.getExpression();
+                System.out.println(func.getName());
+                ExpressionList exprList = func.getParameters();
+                Iterator itr = exprList.getExpressions().iterator();
+                while(itr.hasNext()){
+                    Expression agg_expr = (Expression) itr.next();
+                    handleExpression(agg_expr);
+                }
                 Data_Storage.aggregate_operations.add(func);
             }
             else if(selectExpressionItem.getAlias()!= null)
@@ -85,5 +93,20 @@ public class SelectItem_Visitor {
                 Data_Storage.selectedColumns.put(tableName+"."+columnName, tableName);
             }
         }
+    }
+    public static void handleExpression(Expression agg_expr){
+        if(agg_expr instanceof Column){
+            Column col = (Column) agg_expr;
+            if(!Data_Storage.aggregate.contains(col)){
+                Data_Storage.aggregate.add(col);
+            }
+
+            return;
+        }
+        if(agg_expr instanceof BinaryExpression){
+            handleExpression(((BinaryExpression) agg_expr).getLeftExpression());
+            handleExpression(((BinaryExpression) agg_expr).getRightExpression());
+        }
+
     }
 }
