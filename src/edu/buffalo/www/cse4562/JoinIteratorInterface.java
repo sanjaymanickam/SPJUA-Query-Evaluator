@@ -3,13 +3,13 @@ package edu.buffalo.www.cse4562;
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
-public class Join2IteratorInterface implements Iterator_Interface{
+public class JoinIteratorInterface implements Iterator_Interface{
 
     public Iterator_Interface iter1,iter2;
     String table1,table2;
     Tuple to_send = new Tuple();
     Tuple temp_tuple = new Tuple();
-    public Join2IteratorInterface(Iterator_Interface iter1,Iterator_Interface iter2)
+    public JoinIteratorInterface(Iterator_Interface iter1, Iterator_Interface iter2)
     {
         this.iter1 = iter1;
         this.iter2 = iter2;

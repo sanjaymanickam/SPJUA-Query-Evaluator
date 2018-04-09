@@ -32,7 +32,7 @@ public class Command_Executor {
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
-                        Iterator_Interface iter = new Optimize_3().optimize(Data_Storage.oper);
+                        Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
                     Set<String> temp_set = new HashSet<>();
@@ -45,8 +45,8 @@ public class Command_Executor {
                         result.add(tuple.tuples);
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
-
                     }
+                    GroupByAggregate.groupBy(result,schema);
                     sort(result,schema);
                 }
 

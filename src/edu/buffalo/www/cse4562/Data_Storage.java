@@ -1,5 +1,7 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
@@ -23,6 +25,8 @@ public class Data_Storage {
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;
     static int join = 0;
+    static List<Column> groupByColumn;
+    static List<Function> aggregate_operations = new ArrayList<>();
     static ArrayList<String> project_array = new ArrayList<>();
     static Column stringSplitter(String colName)
     {

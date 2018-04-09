@@ -1,6 +1,9 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
@@ -8,6 +11,7 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class SelectItem_Visitor {
@@ -37,9 +41,25 @@ public class SelectItem_Visitor {
         }
         else if(stmt instanceof SelectExpressionItem)
         {
-            SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;;
+            SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;
             String columnName = selectExpressionItem.getExpression().toString();
-            if(selectExpressionItem.getAlias()!= null)
+            if(selectExpressionItem.getExpression() instanceof Function)
+            {
+                Function func = (Function) selectExpressionItem.getExpression();
+                List<Expression> expressionList = func.getParameters().getExpressions();
+                Expression expr = expressionList.get(0);
+                while(expr!=null)
+                {
+                    if(expr instanceof BinaryExpression)
+                    {
+                        BinaryExpression binaryExpression = (BinaryExpression) expr;
+                          binaryExpression.getRightExpression();
+
+                    }
+                }
+                Data_Storage.aggregate_operations.add(func);
+            }
+            else if(selectExpressionItem.getAlias()!= null)
             {
                 if(columnName.indexOf(".") != -1)
                 {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Optimize_3 {
+public class Optimize {
 
 
     void add_projections(String col_name)
@@ -36,11 +36,11 @@ public class Optimize_3 {
                 }
             } else if (Data_Storage.oper instanceof EvalIterator_Interface) {
                 expressionList.add(((EvalIterator_Interface) Data_Storage.oper).condition);
-            } else if (Data_Storage.oper instanceof Join2IteratorInterface) {
-                Iterator_Interface temp_iter = ((Join2IteratorInterface) Data_Storage.oper).iter2;
-                joins.add(((Join2IteratorInterface) Data_Storage.oper).iter2);
-                if (!(((Join2IteratorInterface) Data_Storage.oper).iter1 instanceof Join2IteratorInterface)) {
-                    joins.add(((Join2IteratorInterface) Data_Storage.oper).iter1);
+            } else if (Data_Storage.oper instanceof JoinIteratorInterface) {
+                Iterator_Interface temp_iter = ((JoinIteratorInterface) Data_Storage.oper).iter2;
+                joins.add(((JoinIteratorInterface) Data_Storage.oper).iter2);
+                if (!(((JoinIteratorInterface) Data_Storage.oper).iter1 instanceof JoinIteratorInterface)) {
+                    joins.add(((JoinIteratorInterface) Data_Storage.oper).iter1);
                     break;
                 }
             }
@@ -147,7 +147,7 @@ public class Optimize_3 {
         }
         for (int i = 0; i < joins.size(); i++) {
             if (joins.get(i) instanceof ProjectionIterator_Interface) {
-                joins.set(i, new Optimize_3().optimize(joins.get(i)));
+                joins.set(i, new Optimize().optimize(joins.get(i)));
             }
         }
         if(joins.size()==1)
@@ -157,9 +157,9 @@ public class Optimize_3 {
         else {
             for (int i = joins.size() - 1; i >= 0; i--) {
                 if (join_iter == null) {
-                    join_iter = new Join2IteratorInterface(joins.get(i), joins.get((i--) - 1));
+                    join_iter = new JoinIteratorInterface(joins.get(i), joins.get((i--) - 1));
                 } else
-                    join_iter = new Join2IteratorInterface(join_iter, joins.get(i));
+                    join_iter = new JoinIteratorInterface(join_iter, joins.get(i));
             }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();

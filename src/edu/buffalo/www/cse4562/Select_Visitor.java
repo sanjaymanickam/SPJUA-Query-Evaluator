@@ -31,9 +31,9 @@ public class Select_Visitor {
                     Join join = (Join) it.next();
                     From_Visitor.ret_type(join.getRightItem());
                     if(join_iter==null) {
-                        join_iter = new Join2IteratorInterface(main_from_item_iter, Data_Storage.oper);
+                        join_iter = new JoinIteratorInterface(main_from_item_iter, Data_Storage.oper);
                     }else {
-                        join_iter = new Join2IteratorInterface(join_iter,Data_Storage.oper);
+                        join_iter = new JoinIteratorInterface(join_iter,Data_Storage.oper);
                     }
                 }
                 Data_Storage.oper = join_iter;
@@ -63,6 +63,9 @@ public class Select_Visitor {
                         }
                     }
                 }
+             if(plainSelect.getGroupByColumnReferences() != null){
+                Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
+             }
 
 
             }
