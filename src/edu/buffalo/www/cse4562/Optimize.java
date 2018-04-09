@@ -57,29 +57,52 @@ public class Optimize {
                         if(((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getLeftExpression() instanceof Column)
                         {
                             Column col =(Column)((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getLeftExpression();
-                            add_projections(col.getColumnName());
+//                            add_projections(col.getColumnName());
                         }
                         if(((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getRightExpression() instanceof Column)
                         {
                             Column col =(Column)((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getRightExpression();
-                            add_projections(col.getColumnName());
+//                            add_projections(col.getColumnName());
                         }
                     }
                     if(((BinaryExpression) expr).getRightExpression() instanceof Column )
                     {
                         Column col = (Column) ((BinaryExpression) expr).getRightExpression();
-                        add_projections(col.getColumnName());
+//                        add_projections(col.getColumnName());
                     }
                     if(((BinaryExpression) expr).getLeftExpression() instanceof  Column)
                     {
                         Column col = (Column) ((BinaryExpression) expr).getLeftExpression();
-                        add_projections(col.getColumnName());
+//                        add_projections(col.getColumnName());
                     }
 
                     if (expr instanceof OrExpression) {
                         beforeExpressionList.add(expr);
                     } else if (expr instanceof AndExpression) {
                         if (((AndExpression) expr).getRightExpression() instanceof OrExpression) {
+                            Expression temp = expr;
+                            while(temp!=null)
+                            {
+                                if(temp instanceof BinaryExpression)
+                                {
+                                    BinaryExpression binaryExpression = (BinaryExpression) temp;
+                                    if(binaryExpression.getLeftExpression() instanceof Column)
+                                    {
+                                        Column col = (Column) binaryExpression.getLeftExpression();
+//                                        add_projections(col.getColumnName());
+                                    }
+                                    if(binaryExpression.getRightExpression() instanceof Column)
+                                    {
+                                        Column col = (Column) binaryExpression.getRightExpression();
+//                                        add_projections(col.getColumnName());
+                                    }
+                                    temp = ((BinaryExpression) temp).getLeftExpression();
+                                }
+                                else
+                                {
+                                    temp = null;
+                                }
+                            }
                             beforeExpressionList.add(((AndExpression) expr).getRightExpression());
                         } else if (((AndExpression) expr).getRightExpression() instanceof BinaryExpression) {
                             BinaryExpression binaryExpression = (BinaryExpression) ((AndExpression) expr).getRightExpression();
@@ -89,7 +112,7 @@ public class Optimize {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
                                 String col_name = col.getColumnName();
-                                //add_projections(file_name,col_name);
+//                                add_projections(file_name,col_name);
                                 if(file_name == null)
                                 {
                                     if(Data_Storage.current_schema.containsKey(col.getColumnName()))
@@ -150,6 +173,7 @@ public class Optimize {
                 joins.set(i, new Optimize().optimize(joins.get(i)));
             }
         }
+
         if(joins.size()==1)
         {
             join_iter = joins.get(0);

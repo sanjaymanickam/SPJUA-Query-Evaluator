@@ -47,6 +47,7 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                     GroupByAggregate.groupBy(result,schema);
+
                     sort(result,schema);
                 }
 

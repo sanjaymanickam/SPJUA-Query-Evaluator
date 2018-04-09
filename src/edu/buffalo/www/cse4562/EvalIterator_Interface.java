@@ -77,8 +77,9 @@ public class EvalIterator_Interface implements Iterator_Interface{
                 }
                 else
                 {
-                    if(pr != BooleanValue.TRUE && pr != null)
+                    if(pr != BooleanValue.TRUE && pr != null) {
                         tuple.add(pr.toString());
+                    }
                 }
             }catch(SQLException e)
             {

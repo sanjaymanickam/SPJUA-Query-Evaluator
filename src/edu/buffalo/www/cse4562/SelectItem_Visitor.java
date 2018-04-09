@@ -100,7 +100,9 @@ public class SelectItem_Visitor {
             if(!Data_Storage.aggregate.contains(col)){
                 Data_Storage.aggregate.add(col);
             }
-
+            if(!Data_Storage.project_array.contains(col.getColumnName())){
+                Data_Storage.project_array.add(col.getColumnName());
+            }
             return;
         }
         if(agg_expr instanceof BinaryExpression){

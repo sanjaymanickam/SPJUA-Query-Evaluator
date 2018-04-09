@@ -1,9 +1,11 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
+import javax.xml.crypto.Data;
 import java.util.*;
 
 public class Select_Visitor {
@@ -46,6 +48,7 @@ public class Select_Visitor {
             if(plainSelect.getWhere()!=null) {
                 plainSelect.getWhere().accept(expr);
                 expression = expr.getExpr();
+                add_to_project_array(expression);
                 Data_Storage.oper = new EvalIterator_Interface(join_iter,expression);
             }
             if(plainSelect.getLimit() != null){
@@ -59,7 +62,9 @@ public class Select_Visitor {
                     if(o instanceof OrderByElement){
                         Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
                         if(o.getExpression() instanceof Column){
-                            Data_Storage.orderBy.add((Column) o.getExpression());
+                            Column col = (Column) o.getExpression();
+                            Data_Storage.orderBy.add(col);
+                            Data_Storage.project_array.add(col.getColumnName());
                         }
                     }
                 }
@@ -83,6 +88,20 @@ public class Select_Visitor {
         {
             Union union = (Union) stmt;
             List<PlainSelect> plainSelects = union.getPlainSelects();
+        }
+    }
+    static void add_to_project_array(Expression agg_expr)
+    {
+        if(agg_expr instanceof Column){
+            Column col = (Column) agg_expr;
+            if(!Data_Storage.project_array.contains(col)){
+                Data_Storage.project_array.add(col.getColumnName());
+            }
+            return;
+        }
+        if(agg_expr instanceof BinaryExpression){
+            add_to_project_array(((BinaryExpression) agg_expr).getLeftExpression());
+            add_to_project_array(((BinaryExpression) agg_expr).getRightExpression());
         }
     }
     public Iterator_Interface getChild()
