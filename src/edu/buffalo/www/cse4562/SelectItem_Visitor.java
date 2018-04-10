@@ -5,11 +5,13 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+import javax.xml.crypto.Data;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +48,8 @@ public class SelectItem_Visitor {
             String columnName = selectExpressionItem.getExpression().toString();
             if(selectExpressionItem.getExpression() instanceof Function)
             {
+                Data_Storage.selectedColumns.put(columnName,null);
+                Data_Storage.aggregateflag = 1;
                 Function func = (Function) selectExpressionItem.getExpression();
                 System.out.println(func.getName());
                 ExpressionList exprList = func.getParameters();
@@ -103,6 +107,9 @@ public class SelectItem_Visitor {
             if(!Data_Storage.project_array.contains(col.getColumnName())){
                 Data_Storage.project_array.add(col.getColumnName());
             }
+            String colName = col.getColumnName();
+            String tableName = Data_Storage.current_schema.get(colName);
+            Data_Storage.columns_needed_for_aggregate.put(new Column(new Table(tableName),colName).toString(),tableName);
             return;
         }
         if(agg_expr instanceof BinaryExpression){

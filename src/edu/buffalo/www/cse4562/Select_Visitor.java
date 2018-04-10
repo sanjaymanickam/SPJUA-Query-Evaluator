@@ -69,16 +69,14 @@ public class Select_Visitor {
                     }
                 }
              if(plainSelect.getGroupByColumnReferences() != null){
+                    Data_Storage.groupbyflag = 1;
                 Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
              }
-
-
             }
             List<SelectItem> sel_items = plainSelect.getSelectItems();
             Data_Storage.selectedColumns.clear();
             for(SelectItem col : sel_items)
             {
-
                 SelectItem_Visitor.ret_type(col);
             }
             LinkedHashMap<String,String> new_hashmap = new LinkedHashMap<>(Data_Storage.selectedColumns);

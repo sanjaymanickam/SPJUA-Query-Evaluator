@@ -12,6 +12,7 @@ public class Data_Storage {
     static HashMap<String,String> alias_table = new HashMap<>();
     static HashMap<String,String> table_alias = new HashMap<>();
     static LinkedHashMap<String,String> selectedColumns = new LinkedHashMap<>();
+    static HashMap<String,String> columns_needed_for_aggregate = new HashMap<>();
     static HashMap<String,String> current_schema = new HashMap<>();
     static Iterator_Interface oper = null;
     static HashMap<Iterator_Interface,Boolean> file_flag = new HashMap<>();
@@ -25,6 +26,8 @@ public class Data_Storage {
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;
     static int aggregateflag = 0;
+    static int groupbyflag = 0;
+    static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupby_resultset;
     static int join = 0;
     static List<Column> groupByColumn;
     static List<Function> aggregate_operations = new ArrayList<>();

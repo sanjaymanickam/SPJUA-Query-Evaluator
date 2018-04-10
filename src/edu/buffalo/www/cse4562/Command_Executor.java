@@ -12,6 +12,7 @@ import java.util.*;
 
 public class Command_Executor {
     static String prompt = "$> ";
+    static LinkedHashMap<String,Tuple> aggregate_result;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -46,9 +47,15 @@ public class Command_Executor {
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-                    GroupByAggregate.groupBy(result,schema);
-
+                    if(Data_Storage.groupbyflag==1) {
+                        Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
+                    }
+                    if(Data_Storage.aggregateflag==1)
+                    {
+                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+                    }
                     sort(result,schema);
+                    group_by_print(aggregate_result,result,schema);
                 }
 
                 System.out.println(prompt);
@@ -58,12 +65,6 @@ public class Command_Executor {
         catch(Exception e)
         {
             e.printStackTrace();
-        }
-    }
-    public void project(Tuple tuple){
-        Iterator tuple_itr = tuple.tuples.iterator();
-        while(tuple_itr.hasNext()){
-
         }
     }
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
@@ -156,5 +157,9 @@ public class Command_Executor {
                 temp_i=0;
                 System.out.println();
         }
+    }
+    static void group_by_print(LinkedHashMap<String,Tuple> aggregate_result,ArrayList<ArrayList<String>> result,ArrayList<Column> schema)
+    {
+
     }
 }

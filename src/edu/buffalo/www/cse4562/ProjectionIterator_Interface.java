@@ -21,11 +21,10 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         String origColName=null,aliasColName,origTableName=null,aliasTableName;
         Tuple tup;
             tup = iter.readOneTuple();
+        String tableName = null, colName;
         if(tup!=null) {
-            if(Data_Storage.aggregateflag==0) {
                 Iterator project_iter = selectedColumns.keySet().iterator();
                 while (project_iter.hasNext()) {
-                    String tableName = null, colName;
                     colName = project_iter.next().toString();
                     if (colName.indexOf(".") != -1) {
                         col = Data_Storage.stringSplitter(colName);
@@ -60,14 +59,23 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                         origTableName = Data_Storage.current_schema.get(colName);
                     }
                     int position = tup.schema.indexOf(new Column(new Table(aliasTableName), origColName));
-                    tuple.add(tup.tuples.get(position));
-                    schema.add(tup.schema.get(position));
-                }
-            }
-            else
-            {
-                tuple.addAll(tup.tuples);
-                schema.addAll(tup.schema);
+                    if(position!=-1) {
+                        tuple.add(tup.tuples.get(position));
+                        schema.add(tup.schema.get(position));
+                    }
+                    Iterator aggr_iter = Data_Storage.columns_needed_for_aggregate.keySet().iterator();
+                    while(aggr_iter.hasNext())
+                    {
+                        colName = aggr_iter.next().toString();
+                        if (colName.indexOf(".") != -1) {
+                            col = Data_Storage.stringSplitter(colName);
+                            tableName = col.getTable().getName();
+                            colName = col.getColumnName();
+                        }
+                        int pos = tup.schema.indexOf(new Column(new Table(tableName), colName));
+                        tuple.add(tup.tuples.get(pos));
+                        schema.add(tup.schema.get(pos));
+                    }
             }
             return new Tuple(tuple, schema);
         }
