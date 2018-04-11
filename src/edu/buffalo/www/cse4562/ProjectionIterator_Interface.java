@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ProjectionIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
-    HashMap<String,String> selectedColumns;
-    public ProjectionIterator_Interface(HashMap<String,String> selectedColumns, Iterator_Interface iter){
+    ArrayList<Column> selectedColumns = new ArrayList<>();
+    public ProjectionIterator_Interface(ArrayList<Column> selectedColumns, Iterator_Interface iter){
         this.iter = iter;
         this.selectedColumns = selectedColumns;
     }
@@ -23,7 +23,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
             tup = iter.readOneTuple();
         String tableName = null, colName;
         if(tup!=null) {
-                Iterator project_iter = selectedColumns.keySet().iterator();
+                Iterator project_iter = selectedColumns.iterator();
                 while (project_iter.hasNext()) {
                     colName = project_iter.next().toString();
                     if (colName.indexOf(".") != -1) {
@@ -63,7 +63,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                         tuple.add(tup.tuples.get(position));
                         schema.add(tup.schema.get(position));
                     }
-                    Iterator aggr_iter = Data_Storage.columns_needed_for_aggregate.keySet().iterator();
+                    /*Iterator aggr_iter = Data_Storage.columns_needed_for_aggregate.keySet().iterator();
                     while(aggr_iter.hasNext())
                     {
                         colName = aggr_iter.next().toString();
@@ -75,7 +75,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                         int pos = tup.schema.indexOf(new Column(new Table(tableName), colName));
                         tuple.add(tup.tuples.get(pos));
                         schema.add(tup.schema.get(pos));
-                    }
+                    }*/
             }
             return new Tuple(tuple, schema);
         }

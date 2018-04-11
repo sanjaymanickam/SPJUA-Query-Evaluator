@@ -79,8 +79,7 @@ public class Select_Visitor {
             {
                 SelectItem_Visitor.ret_type(col);
             }
-            LinkedHashMap<String,String> new_hashmap = new LinkedHashMap<>(Data_Storage.selectedColumns);
-            Data_Storage.oper = new ProjectionIterator_Interface(new_hashmap,Data_Storage.oper);
+            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.projectionColumns,Data_Storage.oper);
         }
         else if(stmt instanceof Union)
         {

@@ -12,7 +12,7 @@ import java.util.*;
 
 public class Command_Executor {
     static String prompt = "$> ";
-    static LinkedHashMap<String,Tuple> aggregate_result;
+    static LinkedHashMap<String,ArrayList<String>> aggregate_result;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -47,15 +47,16 @@ public class Command_Executor {
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-                    if(Data_Storage.groupbyflag==1) {
-                        Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
-                    }
+
+
+                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     if(Data_Storage.aggregateflag==1)
                     {
                         aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
-                    sort(result,schema);
-                    group_by_print(aggregate_result,result,schema);
+
+                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
+                    //group_by_print(aggregate_result,result,schema);
                 }
 
                 System.out.println(prompt);
@@ -67,8 +68,8 @@ public class Command_Executor {
             e.printStackTrace();
         }
     }
-    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
-        for(int i=0;i<Data_Storage.orderBy.size();i++){
+    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
+        /*for(int i=0;i<Data_Storage.orderBy.size();i++){
             Column c = Data_Storage.orderBy.get(i);
             String tableName =  c.getTable().getName();
             String col_name = c.getColumnName();
@@ -84,8 +85,8 @@ public class Command_Executor {
             }
 
             Column col = new Column(new Table(tableName),col_name);
-            int position = schema.indexOf(col);
-
+            //int position = schema.indexOf(col);
+            int position = schema.indexOf(col_name);
             String DataType = Data_Storage.tables.get(tableName).get(col_name);
             if("true".equals(Data_Storage.orderBy_sort.get(i))){
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
@@ -122,16 +123,21 @@ public class Command_Executor {
             }
 
 
-        }
+        }*/
         int temp_i=0;
         int size_to_iter =  result.size();
         if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
             size_to_iter = Data_Storage.limit.intValue();
         }
             for(int i = 0;i<size_to_iter;i++){
-                Iterator<String> itr = result.get(i).iterator();
+                Iterator itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-                    Column col = schema.get(temp_i++);
+                    String colname = schema.get(temp_i++);
+                    System.out.print(itr.next().toString());
+                    if (itr.hasNext()) {
+                        System.out.print("|");
+                    }
+                    /*Column col = schema.get(temp_i++);
                     String tableName =  col.getTable().getName();
                     String col_name = col.getColumnName();
                     if(Data_Storage.table_alias.containsKey(tableName))
@@ -152,7 +158,7 @@ public class Command_Executor {
                     }
                     if (itr.hasNext()) {
                         System.out.print("|");
-                    }
+                    }*/
                 }
                 temp_i=0;
                 System.out.println();

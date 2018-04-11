@@ -45,13 +45,13 @@ public class SelectItem_Visitor {
         else if(stmt instanceof SelectExpressionItem)
         {
             SelectExpressionItem selectExpressionItem = (SelectExpressionItem) stmt;
+            Data_Storage.finalColumns.add(selectExpressionItem);
             String columnName = selectExpressionItem.getExpression().toString();
             if(selectExpressionItem.getExpression() instanceof Function)
             {
                 Data_Storage.selectedColumns.add(new Column(new Table(),columnName));
                 Data_Storage.aggregateflag = 1;
                 Function func = (Function) selectExpressionItem.getExpression();
-                System.out.println(func.getName());
                 ExpressionList exprList = func.getParameters();
                 Iterator itr = exprList.getExpressions().iterator();
                 while(itr.hasNext()){
@@ -59,8 +59,11 @@ public class SelectItem_Visitor {
                     handleExpression(agg_expr);
                 }
                 Data_Storage.aggregate_operations.add(func);
+            }else if(selectExpressionItem.getExpression() instanceof Column){
+                Column col = (Column) selectExpressionItem.getExpression();
+                Data_Storage.projectionColumns.add(col);
             }
-            else if(selectExpressionItem.getAlias()!= null)
+            if(selectExpressionItem.getAlias()!= null)
             {
                 if(columnName.indexOf(".") != -1)
                 {
@@ -101,14 +104,18 @@ public class SelectItem_Visitor {
     public static void handleExpression(Expression agg_expr){
         if(agg_expr instanceof Column){
             Column col = (Column) agg_expr;
-            if(!Data_Storage.aggregate.contains(col)){
+            /*if(!Data_Storage.aggregate.contains(col)){
                 Data_Storage.aggregate.add(col);
+            }*/
+            if(!Data_Storage.projectionColumns.contains(col)){
+                Data_Storage.projectionColumns.add(col);
             }
             if(!Data_Storage.project_array.contains(col.getColumnName())){
                 Data_Storage.project_array.add(col.getColumnName());
             }
             String colName = col.getColumnName();
             String tableName = Data_Storage.current_schema.get(colName);
+
             Data_Storage.columns_needed_for_aggregate.put(new Column(new Table(tableName),colName).toString(),tableName);
             return;
         }

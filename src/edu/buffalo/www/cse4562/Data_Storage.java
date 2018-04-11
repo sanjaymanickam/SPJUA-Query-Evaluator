@@ -4,6 +4,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
 import java.util.*;
 
@@ -33,6 +34,13 @@ public class Data_Storage {
     static List<Function> aggregate_operations = new ArrayList<>();
     static ArrayList<String> project_array = new ArrayList<>();
     static ArrayList<Column> aggregate = new ArrayList<>();
+    static ArrayList<Function> aggregateFunctions = new ArrayList<>();
+
+    static ArrayList<Column> projectionColumns = new ArrayList<>();
+    static ArrayList<SelectExpressionItem> finalColumns = new ArrayList<>();
+    static ArrayList<String> finalSchema = new ArrayList<>();
+
+
     static Column stringSplitter(String colName)
     {
         String tableName;

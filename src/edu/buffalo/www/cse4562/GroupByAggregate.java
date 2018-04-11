@@ -2,6 +2,7 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.schema.Column;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -12,33 +13,35 @@ public class GroupByAggregate {
 
         public static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupBy(ArrayList<ArrayList<String>> tuple, ArrayList<Column> schema){
             Tuple tup = new Tuple();
-            Column col1 = Data_Storage.groupByColumn.get(0);
-            Column col2 = null;
-            Column col3 = null;
-            if(Data_Storage.groupByColumn.size() > 1){
-                col2 = Data_Storage.groupByColumn.get(1);
-            }
-            if(Data_Storage.groupByColumn.size() > 2){
-                col3 = Data_Storage.groupByColumn.get(2);
-            }
+            ArrayList<Integer> positions = new ArrayList<>();
             LinkedHashMap<String,ArrayList<ArrayList<String>>> resultSet = new LinkedHashMap<>();
-            position1 = schema.indexOf(col1);
-            if(col2 != null){
-                position2 = schema.indexOf(col2);
+            if(Data_Storage.groupbyflag == 0){
+                resultSet.put("1",tuple);
+                return resultSet;
             }
-            if(col3 != null){
-                position3 = schema.indexOf(col3);
+            for(int i=0;i<Data_Storage.groupByColumn.size();i++){
+                Column col = Data_Storage.groupByColumn.get(i);
+                positions.add(schema.indexOf(col));
             }
+
             for(int i=0;i<tuple.size();i++){
-                String key = (col3 != null)?(tuple.get(i).get(position1) + "," +tuple.get(i).get(position2)+"," +tuple.get(i).get(position3)):(col2!=null)? (tuple.get(i).get(position1) + "," +tuple.get(i).get(position2)) : tuple.get(i).get(position1);
+                String key = "";
+                for(int j=0;j<positions.size();j++){
+                    if(j == positions.size() - 1){
+                        key = key + tuple.get(i).get(positions.get(j));
+                    }else{
+                        key = key + tuple.get(i).get(positions.get(j))+",";
+                    }
+                }
                 if(resultSet.containsKey(key)){
                     resultSet.get(key).add(tuple.get(i));
                 }else{
-                     ArrayList<ArrayList<String>> temp = new ArrayList<>();
-                     temp.add(tuple.get(i));
+                    ArrayList<ArrayList<String>> temp = new ArrayList<>();
+                    temp.add(tuple.get(i));
                     resultSet.put(key,temp);
                 }
             }
+
             return resultSet;
         }
 }

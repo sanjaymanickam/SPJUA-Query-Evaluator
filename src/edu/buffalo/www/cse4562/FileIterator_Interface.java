@@ -10,6 +10,7 @@ public class FileIterator_Interface implements Iterator_Interface{
     BufferedReader read;
     String new_file;
     String aliastableName;
+    HashMap<String, ArrayList<Column>> schemaMap = new HashMap<>();
     public FileIterator_Interface(String new_file,String aliastableName) {
         this.new_file = new_file;
         this.aliastableName = aliastableName;
@@ -36,6 +37,7 @@ public class FileIterator_Interface implements Iterator_Interface{
         if (new_line == null) {
             return null;
         }
+
         ArrayList<String> str_split =new ArrayList<>();
         StringTokenizer str_tok = new StringTokenizer(new_line,"|");
         while(str_tok.hasMoreElements())
