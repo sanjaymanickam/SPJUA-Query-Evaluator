@@ -11,7 +11,7 @@ public class Data_Storage {
     static HashMap<String,LinkedHashMap<String,String>> tables = new HashMap<>();
     static HashMap<String,String> alias_table = new HashMap<>();
     static HashMap<String,String> table_alias = new HashMap<>();
-    static LinkedHashMap<String,String> selectedColumns = new LinkedHashMap<>();
+    static ArrayList<Column> selectedColumns = new ArrayList<>();
     static HashMap<String,String> columns_needed_for_aggregate = new HashMap<>();
     static HashMap<String,String> current_schema = new HashMap<>();
     static Iterator_Interface oper = null;

@@ -38,7 +38,7 @@ public class SelectItem_Visitor {
             while(key_iterator.hasNext())
             {
                 String to_append = key_iterator.next().toString();
-                Data_Storage.selectedColumns.put(new StringBuilder(tableName).append(".").append(to_append).toString(),tableName);
+                Data_Storage.selectedColumns.add(new Column(new Table(tableName),to_append));
                 Data_Storage.project_array.add(to_append);
             }
         }
@@ -48,7 +48,7 @@ public class SelectItem_Visitor {
             String columnName = selectExpressionItem.getExpression().toString();
             if(selectExpressionItem.getExpression() instanceof Function)
             {
-                Data_Storage.selectedColumns.put(columnName,null);
+                Data_Storage.selectedColumns.add(new Column(new Table(),columnName));
                 Data_Storage.aggregateflag = 1;
                 Function func = (Function) selectExpressionItem.getExpression();
                 System.out.println(func.getName());
@@ -76,7 +76,7 @@ public class SelectItem_Visitor {
                 if(expr_visitor.getExpr()!=null)
                 {
                     Data_Storage.alias_table.put(columnName,selectExpressionItem.getAlias());
-                    Data_Storage.selectedColumns.put(selectExpressionItem.getAlias(), Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString()));
+                    Data_Storage.selectedColumns.add(new Column(new Table(Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString())),selectExpressionItem.getAlias()));
                 }
             }
             else if(columnName.indexOf(".") != -1)
@@ -87,14 +87,14 @@ public class SelectItem_Visitor {
                 String colName = strtok.nextElement().toString();
                 Data_Storage.project_array.add(colName);
 //                Data_Storage.alias_table.put(columnName,colName);
-                Data_Storage.selectedColumns.put(columnName,tableName);
+                Data_Storage.selectedColumns.add(new Column(new Table(tableName),colName));
 
             }
             else
             {
                 String tableName = Data_Storage.current_schema.get(selectExpressionItem.getExpression().toString());
                 Data_Storage.project_array.add(columnName);
-                Data_Storage.selectedColumns.put(tableName+"."+columnName, tableName);
+                Data_Storage.selectedColumns.add(new Column(new Table(tableName),columnName));
             }
         }
     }
