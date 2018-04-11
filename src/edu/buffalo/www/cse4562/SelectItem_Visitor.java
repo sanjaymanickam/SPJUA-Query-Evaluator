@@ -48,9 +48,9 @@ public class SelectItem_Visitor {
             String columnName = selectExpressionItem.getExpression().toString();
             if(selectExpressionItem.getExpression() instanceof Function)
             {
-                Data_Storage.selectedColumns.add(new Column(new Table(),columnName));
                 Data_Storage.aggregateflag = 1;
                 Function func = (Function) selectExpressionItem.getExpression();
+                Data_Storage.selectedColumns.add(new Column(new Table(),func.toString()));
                 System.out.println(func.getName());
                 ExpressionList exprList = func.getParameters();
                 Iterator itr = exprList.getExpressions().iterator();

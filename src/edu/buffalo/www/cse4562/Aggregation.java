@@ -69,13 +69,13 @@ public class Aggregation {
             }
         }
         ArrayList<Tuple> to_send = new ArrayList<>();
-        Iterator selected_columns = Data_Storage.selectedColumns.keySet().iterator();
+        Iterator selected_columns = Data_Storage.selectedColumns.iterator();
         int i = 0;
         while(i<result.size()) {
             Tuple to_add = new Tuple();
             to_add.tuples = new ArrayList<>();
             to_add.schema = new ArrayList<>();
-            for(int t=0;t<Data_Storage.selectedColumns.keySet().size();i++)
+            for(int t=0;t<Data_Storage.selectedColumns.size();i++)
             {
                 int pos;
                 String next_col_name = selected_columns.next().toString();
