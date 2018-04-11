@@ -69,7 +69,7 @@ public class Command_Executor {
         }
     }
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
-        /*for(int i=0;i<Data_Storage.orderBy.size();i++){
+        for(int i=0;i<Data_Storage.orderBy.size();i++){
             Column c = Data_Storage.orderBy.get(i);
             String tableName =  c.getTable().getName();
             String col_name = c.getColumnName();
@@ -87,7 +87,13 @@ public class Command_Executor {
             Column col = new Column(new Table(tableName),col_name);
             //int position = schema.indexOf(col);
             int position = schema.indexOf(col_name);
-            String DataType = Data_Storage.tables.get(tableName).get(col_name);
+            String DataType;
+            if(tableName != null){
+                DataType = Data_Storage.tables.get(tableName).get(col_name);
+            }else{
+                DataType = "DOUBLE";
+            }
+
             if("true".equals(Data_Storage.orderBy_sort.get(i))){
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
                     @Override
@@ -123,7 +129,7 @@ public class Command_Executor {
             }
 
 
-        }*/
+        }
         int temp_i=0;
         int size_to_iter =  result.size();
         if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {

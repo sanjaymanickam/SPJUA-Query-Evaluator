@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 public class SelectItem_Visitor {
     static Expression expr;
+    static String table_name;
     public static void ret_type(SelectItem stmt)
     {
         if(stmt instanceof AllColumns)
@@ -57,6 +58,9 @@ public class SelectItem_Visitor {
                 while(itr.hasNext()){
                     Expression agg_expr = (Expression) itr.next();
                     handleExpression(agg_expr);
+                    if(selectExpressionItem.getAlias() != null){
+                        Data_Storage.columns_needed_for_aggregate.put(selectExpressionItem.getAlias(),table_name);
+                    }
                 }
                 Data_Storage.aggregate_operations.add(func);
             }else if(selectExpressionItem.getExpression() instanceof Column){
@@ -115,7 +119,7 @@ public class SelectItem_Visitor {
             }
             String colName = col.getColumnName();
             String tableName = Data_Storage.current_schema.get(colName);
-
+            table_name = tableName;
             Data_Storage.columns_needed_for_aggregate.put(new Column(new Table(tableName),colName).toString(),tableName);
             return;
         }
