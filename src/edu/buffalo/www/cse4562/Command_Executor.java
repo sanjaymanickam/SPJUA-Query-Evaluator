@@ -52,7 +52,7 @@ public class Command_Executor {
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     if(Data_Storage.aggregateflag==1)
                     {
-                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
 
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
