@@ -9,6 +9,7 @@ import net.sf.jsqlparser.statement.Statement;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class Command_Executor {
     static String prompt = "$> ";
@@ -28,7 +29,7 @@ public class Command_Executor {
                 Data_Storage.operator_map.clear();
                 Data_Storage.current_schema.clear();
                 Data_Storage.oper = null;
-                Data_Storage.limit = new Long("0");
+                Data_Storage.limit = Long.parseLong("0");
                 Data_Storage.orderBy = null;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
@@ -47,8 +48,7 @@ public class Command_Executor {
                         schema = tuple.schema;
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-
-
+                    Column col = new Column();
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     if(Data_Storage.aggregateflag==1)
                     {
@@ -56,7 +56,7 @@ public class Command_Executor {
                     }
 
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
-                    //group_by_print(aggregate_result,result,schema);
+//                    group_by_print(aggregate_result,result,schema);
                 }
 
                 System.out.println(prompt);
@@ -85,7 +85,6 @@ public class Command_Executor {
             }
 
             Column col = new Column(new Table(tableName),col_name);
-            //int position = schema.indexOf(col);
             int position = schema.indexOf(col_name);
             String DataType;
             if(tableName != null){
@@ -99,8 +98,8 @@ public class Command_Executor {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
                         if(DataType.equals("DOUBLE")){
-                            Double value1 = new Double(one.get(position));
-                            Double value2 = new Double(two.get(position));
+                            Double value1 = Double.parseDouble(one.get(position));
+                            Double value2 = Double.parseDouble(two.get(position));
                             if(value1 < value2){
                                 return -1;
                             }else{
@@ -115,7 +114,7 @@ public class Command_Executor {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
                         if(DataType.equals("DOUBLE")){
-                            Double value1 = new Double(two.get(position));
+                            Double value1 = Double.parseDouble(two.get(position));
                             Double value2 = new Double(one.get(position));
                             if(value1 < value2){
                                 return -1;
