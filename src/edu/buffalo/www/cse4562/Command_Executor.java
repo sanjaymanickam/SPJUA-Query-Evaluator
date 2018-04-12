@@ -6,6 +6,8 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.Select;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
@@ -14,6 +16,7 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 public class Command_Executor {
     static String prompt = "$> ";
     static LinkedHashMap<String,ArrayList<String>> aggregate_result;
+    static int flag =  0;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -23,6 +26,14 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
+                if(stmt instanceof Select){
+                    if(flag == 0){
+                        System.out.println(prompt);
+                        System.out.println(prompt);
+                        System.out.println(prompt);
+                        flag = 1;
+                    }
+                }
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -52,7 +63,7 @@ public class Command_Executor {
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     if(Data_Storage.aggregateflag==1)
                     {
-                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
 
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);

@@ -45,20 +45,8 @@ public class FileIterator_Interface implements Iterator_Interface{
             str_split.add(str_tok.nextElement().toString());
         }
         Iterator it = Data_Storage.tables.get(new_file).keySet().iterator();
-        if(schemaMap.containsKey(new_file)){
-            schema = schemaMap.get(new_file);
-        }else{
-            while(it.hasNext())
-            {
-                Column col = new Column(new Table(new_file),it.next().toString());
-                schema.add(col);
-            }
-            schemaMap.put(new_file,schema);
-        }
-
-        //return new Tuple(str_split,schema);
-        //Iterator iter_string = str_split.iterator();
-        //String col_name;
+        Iterator iter_string = str_split.iterator();
+        String col_name;
         ArrayList<String> to_send = new ArrayList<>();
 //        if(Data_Storage.table_alias.containsValue(new_file))
 //        {
@@ -74,7 +62,7 @@ public class FileIterator_Interface implements Iterator_Interface{
 //        }
         if(aliastableName==null)
             aliastableName = new_file;
-        /*while(it.hasNext())
+        while(it.hasNext())
         {
             col_name = it.next().toString();
             //if(Data_Storage.join == 1) {
@@ -92,8 +80,8 @@ public class FileIterator_Interface implements Iterator_Interface{
                 schema.add(col);
                 to_send.add(iter_string.next().toString());
             }*/
-        //}
-        return new Tuple(str_split,schema);
+        }
+        return new Tuple(to_send,schema);
     }
 
     @Override

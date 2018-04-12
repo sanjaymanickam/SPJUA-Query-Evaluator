@@ -24,12 +24,12 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static Long limit;
+    static Eval eval;
     static ArrayList<Column> orderBy;
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;
     static int aggregateflag = 0;
     static int groupbyflag = 0;
-    static Eval eval;
     static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupby_resultset;
     static int join = 0;
     static List<Column> groupByColumn;
