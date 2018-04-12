@@ -20,7 +20,13 @@ public class JoinIteratorInterface implements Iterator_Interface{
     public Tuple readOneTuple() {
         to_send.schema = new ArrayList<>();
         to_send.tuples = new ArrayList<>();
-        if(iter1 instanceof FileIterator_Interface) {
+        if(iter1 instanceof JoinIteratorInterface) {
+            Tuple temp = iter1.readOneTuple();
+            to_send.tuples.addAll(temp.tuples);
+            to_send.schema.addAll(temp.schema);
+        }
+        else
+        {
             if (!Data_Storage.stored_files.containsKey(iter1)) {
                 read_file(iter1);
                 iterator_file1 = Data_Storage.stored_files.get(iter1).iterator();
@@ -29,18 +35,10 @@ public class JoinIteratorInterface implements Iterator_Interface{
             iterator_file1 = Data_Storage.stored_files.get(iter1).iterator();
             if(iterator_file1.hasNext())
             {
-                {
-                    Tuple temp = (Tuple)iterator_file1.next();
-                    to_send.tuples.addAll(temp.tuples);
-                    to_send.schema.addAll(temp.schema);
-                }
+                Tuple temp = (Tuple)iterator_file1.next();
+                to_send.tuples.addAll(temp.tuples);
+                to_send.schema.addAll(temp.schema);
             }
-        }
-        else
-        {
-            Tuple temp = iter1.readOneTuple();
-            to_send.tuples.addAll(temp.tuples);
-            to_send.schema.addAll(temp.schema);
         }
         if (!Data_Storage.stored_files.containsKey(iter2)) {
             read_file(iter2);
@@ -50,11 +48,9 @@ public class JoinIteratorInterface implements Iterator_Interface{
         iterator_file2 = Data_Storage.stored_files.get(iter2).iterator();
         if(iterator_file2.hasNext())
         {
-            {
                 Tuple temp = (Tuple)iterator_file2.next();
                 to_send.tuples.addAll(temp.tuples);
                 to_send.schema.addAll(temp.schema);
-            }
         }
         return to_send;
     }
