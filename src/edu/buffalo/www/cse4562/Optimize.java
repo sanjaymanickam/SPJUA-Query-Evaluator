@@ -264,10 +264,6 @@ public class Optimize {
                 ((AndExpression) expr).setRightExpression(expr_list.get(0));
             }
 //            joins.set(hashjoin_names.indexOf(tableName),null);
-            if(col1.getTable().getName().equals(tableName))
-            {
-
-            }
         }
         if(joins.size()==1)
         {

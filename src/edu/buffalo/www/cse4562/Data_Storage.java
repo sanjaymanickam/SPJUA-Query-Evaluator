@@ -32,6 +32,7 @@ public class Data_Storage {
     static int groupbyflag = 0;
     static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupby_resultset;
     static int join = 0;
+    static Tuple temp_tuple = new Tuple();
     static List<Column> groupByColumn;
     static List<Function> aggregate_operations = new ArrayList<>();
     static ArrayList<String> project_array = new ArrayList<>();
