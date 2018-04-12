@@ -17,7 +17,7 @@ public class Select_Visitor {
 
         if(stmt instanceof PlainSelect)
         {
-            Data_Storage.limit = new Long("0");
+            Data_Storage.limit = Long.parseLong("0");
             Data_Storage.orderBy_sort = new ArrayList<>();
             Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;

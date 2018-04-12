@@ -1,5 +1,6 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
@@ -28,6 +29,7 @@ public class Data_Storage {
     static String from_alias = null;
     static int aggregateflag = 0;
     static int groupbyflag = 0;
+    static Eval eval;
     static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupby_resultset;
     static int join = 0;
     static List<Column> groupByColumn;

@@ -113,43 +113,7 @@ public class Aggregation {
 
             }
         }
-
-
-
         return result_tosend;
-
-
-        /*ArrayList<Tuple> to_send = new ArrayList<>();
-        Iterator selected_columns = Data_Storage.selectedColumns.iterator();
-        int i = 0;
-        while(i<result.size()) {
-            Tuple to_add = new Tuple();
-            to_add.tuples = new ArrayList<>();
-            to_add.schema = new ArrayList<>();
-            for(int t=0;t<Data_Storage.selectedColumns.size();i++)
-            {
-                int pos;
-                String next_col_name = selected_columns.next().toString();
-                Column to_check = new Column();
-                if(next_col_name.indexOf(".")!=-1) {
-                    StringTokenizer strtok = new StringTokenizer(next_col_name, ".");
-                    String table_name = strtok.nextElement().toString();
-                    String col_name = strtok.nextElement().toString();
-                    to_check = new Column(new Table(table_name), col_name);
-                }
-                if (schema.contains(to_check)) {
-                    to_add.tuples.add(result.get(i).get(schema.indexOf(to_check)));
-                    to_add.schema.add(schema.get(schema.indexOf(to_check)));
-                } else {
-                    if(result_tosend.get(i).schema.contains(to_check))
-                    {
-
-                    }
-                }
-            }
-            i++;
-        }*/
-
     }
     static void aggregate_func(Double primitiveValue, String oper)
     {

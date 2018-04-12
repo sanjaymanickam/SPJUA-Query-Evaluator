@@ -34,7 +34,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
             schema = tup.schema;
             final ArrayList<String> to_copy = tuple;
             final ArrayList<Column> schema_final = schema;
-            Eval eval = new Eval() {
+             Data_Storage.eval = new Eval() {
                 @Override
                 public PrimitiveValue eval(Column column) {
                     String col_name = column.getColumnName();
@@ -71,7 +71,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
             };
             try{
                 test.clear();
-                PrimitiveValue pr = eval.eval(condition);
+                PrimitiveValue pr = Data_Storage.eval.eval(condition);
                 if(pr == BooleanValue.FALSE) {
                   tuple = null;
                 }
