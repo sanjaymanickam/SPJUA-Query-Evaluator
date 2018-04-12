@@ -1,7 +1,5 @@
 package edu.buffalo.www.cse4562;
 
-import java.io.File;
-import java.io.FileInputStream;
 
 public class Main {
     public static void main(String[] args) {
