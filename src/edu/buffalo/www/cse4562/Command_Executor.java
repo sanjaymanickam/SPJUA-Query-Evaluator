@@ -22,13 +22,17 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
-                System.err.println(stmt.toString());
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
                 Data_Storage.operator_map.clear();
                 Data_Storage.current_schema.clear();
                 Data_Storage.oper = null;
+
+                Data_Storage.finalColumns.clear();
+                Data_Storage.projectionColumns.clear();
+                Data_Storage.finalSchema.clear();
+                Data_Storage.groupbyflag = 0;
                 Data_Storage.limit = new Long("0");
                 Data_Storage.orderBy = null;
                 Visitor_Parse.ret_type(stmt);

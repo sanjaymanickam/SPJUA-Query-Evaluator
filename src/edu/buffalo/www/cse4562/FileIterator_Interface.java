@@ -65,7 +65,7 @@ public class FileIterator_Interface implements Iterator_Interface{
         while(it.hasNext())
         {
             col_name = it.next().toString();
-            if(Data_Storage.join == 1) {
+            //if(Data_Storage.join == 1) {
                 if (Data_Storage.project_array.contains(col_name)) {
                     Column col = new Column(new Table(aliastableName), col_name);
                     schema.add(col);
@@ -73,13 +73,13 @@ public class FileIterator_Interface implements Iterator_Interface{
                 } else {
                     iter_string.next();
                 }
-            }
-            else
+            //}
+            /*else
             {
                 Column col = new Column(new Table(aliastableName), col_name);
                 schema.add(col);
                 to_send.add(iter_string.next().toString());
-            }
+            }*/
         }
         return new Tuple(to_send,schema);
     }

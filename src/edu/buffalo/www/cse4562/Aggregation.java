@@ -15,12 +15,12 @@ import java.util.StringTokenizer;
 public class Aggregation {
     static Double SUM = 0.0,AVG =0.0;
     static Integer COUNT = 0;
-    static LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
+
 
     static ArrayList<ArrayList<String>> tosend = new ArrayList<>();
     static ArrayList<String> tosend_schema = new ArrayList<>();
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result,LinkedHashMap<String,ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
-
+         LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
         Iterator iter_key = tuple.keySet().iterator();
         while(iter_key.hasNext()) //groups
         {
