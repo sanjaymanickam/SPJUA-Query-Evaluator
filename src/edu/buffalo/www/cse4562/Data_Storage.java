@@ -37,7 +37,6 @@ public class Data_Storage {
     static ArrayList<String> project_array = new ArrayList<>();
     static ArrayList<Column> aggregate = new ArrayList<>();
     static ArrayList<Function> aggregateFunctions = new ArrayList<>();
-
     static ArrayList<Column> projectionColumns = new ArrayList<>();
     static ArrayList<SelectExpressionItem> finalColumns = new ArrayList<>();
     static ArrayList<String> finalSchema = new ArrayList<>();
