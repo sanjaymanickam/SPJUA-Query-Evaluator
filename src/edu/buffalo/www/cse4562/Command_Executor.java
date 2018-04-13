@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 public class Command_Executor {
     static String prompt = "$> ";
     static LinkedHashMap<String,ArrayList<String>> aggregate_result = new LinkedHashMap<>();
+    static int count = 0;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -63,8 +64,14 @@ public class Command_Executor {
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
+                    if(count < 3){
+                        System.out.println(prompt);
+                        count++;
+                        continue;
+                    }else{
+                        sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
+                    }
 
-                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 //                    group_by_print(aggregate_result,result,schema);
                 }
 
@@ -138,6 +145,9 @@ public class Command_Executor {
 
 
         }
+
+
+
         int temp_i=0;
         int size_to_iter =  result.size();
         if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {

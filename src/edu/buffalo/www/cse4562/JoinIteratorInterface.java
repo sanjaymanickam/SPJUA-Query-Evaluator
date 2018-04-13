@@ -74,13 +74,13 @@ public class JoinIteratorInterface implements Iterator_Interface{
             iterator_file2 = Data_Storage.stored_file_iterators.get(iter2);
             if (iterator_file2.hasNext()) {
                 Tuple temp = (Tuple) iterator_file2.next();
-                if(temp.tuples.size() > 0){
                     if (temp != null && to_send != null) {
-                        to_send.tuples.addAll(temp.tuples);
-                        to_send.schema.addAll(temp.schema);
+                        if(temp.tuples.size() > 0){
+                            to_send.tuples.addAll(temp.tuples);
+                            to_send.schema.addAll(temp.schema);
+                        }
                         Data_Storage.stored_file_iterators.replace(iter2, iterator_file2);
                     }
-                }
 
             } else {
                 Data_Storage.file_temp_tuple.remove(iter1);
