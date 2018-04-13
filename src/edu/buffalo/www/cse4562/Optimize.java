@@ -167,6 +167,8 @@ public class Optimize {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
                                 String col_name = col.getColumnName();
+                                String aliastableName = new String("");
+                                aliastableName = aliastableName+file_name;
                                 if(file_name == null)
                                 {
                                     if(Data_Storage.current_schema.containsKey(col.getColumnName()))
@@ -179,9 +181,18 @@ public class Optimize {
                                 for (int i = 0; i < joins.size(); i++) {
                                     if (joins.get(i) instanceof FileIterator_Interface) {
                                         FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
-                                        if (fileIterator_interface.new_file.equals(file_name)) {
-                                            joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
-                                            break;
+                                        if(fileIterator_interface.aliastableName!= null) {
+                                            if (fileIterator_interface.new_file.equals(file_name) && fileIterator_interface.aliastableName.equals(aliastableName)) {
+                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                                break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (fileIterator_interface.new_file.equals(file_name)) {
+                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -228,19 +239,26 @@ public class Optimize {
                 joins.set(i, new Optimize().optimize(joins.get(i)));
             }
         }
-        while(before_join_iterator.hasNext())
+        for(int q=0;q<beforeExpressionList.size();q++)
         {
-            Expression expr =(Expression) before_join_iterator.next();
+            Expression expr =(Expression) beforeExpressionList.get(q);
             if(expr instanceof BinaryExpression)
             {
                 if(((BinaryExpression) expr).getLeftExpression() instanceof Column && ((BinaryExpression) expr).getRightExpression() instanceof Column)
                 {
+                    beforeExpressionList.remove(beforeExpressionList.indexOf(expr));
                     Column left_col = (Column)((BinaryExpression) expr).getLeftExpression();
                     Column right_col = (Column)((BinaryExpression) expr).getRightExpression();
                     join_names1.add(left_col);
-                    join_name1_table.add(left_col.getTable().getName());
+                    String tableName1 = left_col.getTable().getName();
+                    if(Data_Storage.table_alias.containsKey(tableName1))
+                        tableName1 = Data_Storage.table_alias.get(tableName1);
+                    join_name1_table.add(tableName1);
                     join_names2.add(right_col);
-                    join_name2_table.add(right_col.getTable().getName());
+                    String tableName2 = right_col.getTable().getName();
+                    if(Data_Storage.table_alias.containsKey(tableName2))
+                        tableName2 = Data_Storage.table_alias.get(tableName2);
+                    join_name2_table.add(tableName1);
                     join_condition.add(expr);
                 }
             }
@@ -311,19 +329,13 @@ public class Optimize {
             }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();
-//        while (expr_before_iter.hasNext()) {
-//            if(expr_before_iter.)
-//            {
-//
-//            }
-//            else {
-//                if (expr_before_join == null) {
-//                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
-//                } else {
-//                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
-//                }
-//            }
-//        }
+        while (expr_before_iter.hasNext()) {
+                if (expr_before_join == null) {
+                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
+                } else {
+                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
+                }
+        }
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;
