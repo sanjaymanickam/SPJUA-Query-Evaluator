@@ -20,8 +20,11 @@ public class Optimize {
         Iterator_Interface expr_before_join = null;
         List<Expression> beforeExpressionList = new ArrayList<>();
         Iterator_Interface join_iter = null;
+        ArrayList<String> right_table = new ArrayList<>();
         ArrayList<Column> join_names1 = new ArrayList<>();
         ArrayList<Column> join_names2 = new ArrayList<>();
+        ArrayList<String> join_name1_table  = new ArrayList<>();
+        ArrayList<String> join_name2_table = new ArrayList<>();
         ArrayList<Expression> join_condition = new ArrayList<>();
         ProjectionIterator_Interface projectionIterator_interface = null;
         ArrayList<String> hashjoin_names = new ArrayList<>();
@@ -164,7 +167,6 @@ public class Optimize {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
                                 String col_name = col.getColumnName();
-//                                add_projections(file_name,col_name);
                                 if(file_name == null)
                                 {
                                     if(Data_Storage.current_schema.containsKey(col.getColumnName()))
@@ -236,7 +238,9 @@ public class Optimize {
                     Column left_col = (Column)((BinaryExpression) expr).getLeftExpression();
                     Column right_col = (Column)((BinaryExpression) expr).getRightExpression();
                     join_names1.add(left_col);
+                    join_name1_table.add(left_col.getTable().getName());
                     join_names2.add(right_col);
+                    join_name2_table.add(right_col.getTable().getName());
                     join_condition.add(expr);
                 }
             }
@@ -273,17 +277,53 @@ public class Optimize {
             for (int i = joins.size() - 1; i >= 0; i--) {
                 if (join_iter == null) {
                         join_iter = new JoinIteratorInterface(joins.get(i), joins.get((i--) - 1));
-                } else
+                        for(int t = 0;t<join_name1_table.size();t++)
+                        {
+                            if((join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
+                                    (join_name2_table.get(t).equals(hashjoin_names.get(t+1))&&join_name1_table.get(t).equals(hashjoin_names.get(t))))
+                            {
+                                join_iter = new EvalIterator_Interface(join_iter, join_condition.get(i));
+                                break;
+                            }
+                        }
+//                    if(join_name1_table.contains(hashjoin_names.get(i)))
+//                    {
+//                        if(join_name2_table.get(join_name1_table.indexOf(hashjoin_names.get(i))).equals(hashjoin_names.get(i+1))) {
+//                            int pos = join_name1_table.indexOf(hashjoin_names.get(i));
+//
+//                        }
+//                    }
+//                    else if(join_name2_table.contains(hashjoin_names.get(i)))
+//                    {
+//                        if(join_name1_table.get(join_name2_table.indexOf(hashjoin_names.get(i))).equals(hashjoin_names.get(i+1))) {
+//                            int pos = join_name2_table.indexOf(hashjoin_names.get(i));
+//                            join_iter = new EvalIterator_Interface(join_iter, join_condition.get(pos));
+//                        }
+//                    }
+                } else {
                     join_iter = new JoinIteratorInterface(join_iter, joins.get(i));
+                    if(join_name1_table.contains(hashjoin_names.get(i))||join_name2_table.contains(hashjoin_names.get(i)))
+                    {
+                        int pos = join_name1_table.contains(hashjoin_names.get(i))? join_name1_table.indexOf(hashjoin_names.get(i)):join_name2_table.indexOf(hashjoin_names.get(i));
+                        join_iter = new EvalIterator_Interface(join_iter,join_condition.get(pos));
+                    }
+                }
             }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();
-        while (expr_before_iter.hasNext()) {
-            if (expr_before_join == null) {
-                expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
-            } else
-                expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
-        }
+//        while (expr_before_iter.hasNext()) {
+//            if(expr_before_iter.)
+//            {
+//
+//            }
+//            else {
+//                if (expr_before_join == null) {
+//                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
+//                } else {
+//                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
+//                }
+//            }
+//        }
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;

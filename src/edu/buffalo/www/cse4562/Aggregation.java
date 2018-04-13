@@ -70,7 +70,10 @@ public class Aggregation {
                             public Iterator_Interface getChild() {
                                 return null;
                             }
+                            @Override
+                            public void print(){
 
+                            }
                             @Override
                             public void setChild(Iterator_Interface iter) {
 

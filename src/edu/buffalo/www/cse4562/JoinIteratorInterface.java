@@ -105,7 +105,12 @@ public class JoinIteratorInterface implements Iterator_Interface{
     public void reset() {
 
     }
+    @Override
+    public void print()
+    {
+        System.out.println(iter1.toString()+" "+iter2.toString());
 
+    }
     void read_file(Iterator_Interface file){
         Tuple temp_tuple;
         ArrayList<Tuple> temp_array = new ArrayList<>(100000);

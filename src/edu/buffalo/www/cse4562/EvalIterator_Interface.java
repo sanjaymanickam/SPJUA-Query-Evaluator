@@ -104,6 +104,11 @@ public class EvalIterator_Interface implements Iterator_Interface{
     }
 
     @Override
+    public void print()
+    {
+        System.out.println("EvalIterator"+condition+" ");
+    }
+    @Override
     public void reset() {
 
     }

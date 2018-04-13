@@ -14,6 +14,11 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         this.selectedColumns = selectedColumns;
     }
     @Override
+    public void print()
+    {
+
+    }
+    @Override
     public Tuple readOneTuple() {
         ArrayList<String> tuple = new ArrayList<>();
         ArrayList<Column> schema = new ArrayList<>();

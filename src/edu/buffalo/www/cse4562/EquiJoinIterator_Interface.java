@@ -27,7 +27,10 @@ EquiJoinIterator_Interface implements Iterator_Interface{
             public Tuple readOneTuple() {
                 return to_send_final;
             }
+            @Override
+            public void print(){
 
+            }
             @Override
             public Iterator_Interface getChild() {
                 return null;
@@ -55,7 +58,10 @@ EquiJoinIterator_Interface implements Iterator_Interface{
     @Override
     public void setChild(Iterator_Interface iter) {
     }
-
+    public void print()
+    {
+        System.out.println();
+    }
     @Override
     public void reset() {
 

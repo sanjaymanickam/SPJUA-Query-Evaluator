@@ -104,6 +104,11 @@ public class FileIterator_Interface implements Iterator_Interface{
         }
     }
     @Override
+    public void print()
+    {
+        System.out.println("FileIterator"+new_file);
+    }
+    @Override
     public Iterator_Interface getChild(){
         return null;
     }
