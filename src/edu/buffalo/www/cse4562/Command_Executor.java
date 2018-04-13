@@ -43,13 +43,13 @@ public class Command_Executor {
                 Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-                    System.err.println(count);
+                    /*System.err.println(count);
                     if(count < 3){
                         System.err.println("query1 over");
                         System.out.println(prompt);
                         count++;
                         continue;
-                    }
+                    }*/
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
@@ -89,8 +89,9 @@ public class Command_Executor {
         }
     }
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
-        for(int i=0;i<Data_Storage.orderBy.size();i++){
-            Column c = Data_Storage.orderBy.get(i);
+
+            int ct=0;
+            Column c = Data_Storage.orderBy.get(ct);
             String tableName =  c.getTable().getName();
             String col_name = c.getColumnName();
 
@@ -113,14 +114,16 @@ public class Command_Executor {
                 DataType = "DOUBLE";
             }
 
-            if("true".equals(Data_Storage.orderBy_sort.get(i))){
+            if("true".equals(Data_Storage.orderBy_sort.get(ct))){
                 Collections.sort(result, new Comparator<ArrayList<String>>() {
                     @Override
                     public int compare(ArrayList<String> one, ArrayList<String> two) {
                         if(DataType.equals("DOUBLE")){
                             Double value1 = Double.parseDouble(one.get(position));
                             Double value2 = Double.parseDouble(two.get(position));
-                            if(value1 < value2){
+                            if(value1 == value2){
+
+                            }else if(value1 < value2){
                                 return -1;
                             }else{
                                 return 1;
@@ -146,9 +149,6 @@ public class Command_Executor {
                     }
                 });
             }
-
-
-        }
 
 
 
