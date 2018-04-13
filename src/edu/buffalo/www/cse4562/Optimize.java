@@ -33,7 +33,7 @@ public class Optimize {
         while (Data_Storage.oper != null) {
             if (Data_Storage.oper instanceof ProjectionIterator_Interface) {
                 if(projectionIterator_interface==null)
-                     projectionIterator_interface = (ProjectionIterator_Interface) Data_Storage.oper;
+                    projectionIterator_interface = (ProjectionIterator_Interface) Data_Storage.oper;
                 else {
                     joins.add(Data_Storage.oper);
                     break;
@@ -115,27 +115,27 @@ public class Optimize {
                             OrExpression new_expr = (OrExpression) ((AndExpression) expr).getRightExpression();
                             BinaryExpression binaryExpression_left = (BinaryExpression) new_expr.getLeftExpression();
                             BinaryExpression binaryExpression_right = (BinaryExpression) new_expr.getRightExpression();
-                                if (binaryExpression_left.getLeftExpression() instanceof Column && binaryExpression_right.getLeftExpression() instanceof Column) {
-                                    Column left = (Column) binaryExpression_left.getLeftExpression();
-                                    Column right = (Column) binaryExpression_right.getLeftExpression();
-                                    if (left.getTable().getName().equals(right.getTable().getName())) {
-                                        for (int i = 0; i < joins.size(); i++) {
-                                            if(hashjoin_names.get(i).equals(left.getTable().getName())) {
-                                                if (joins.get(i) instanceof FileIterator_Interface) {
-                                                     FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
-                                                     joins.set(i, new EvalIterator_Interface(fileIterator_interface, new_expr));
-                                                     break;
-                                                }
-                                                else if(joins.get(i) instanceof EvalIterator_Interface){
-                                                    joins.set(i,new EvalIterator_Interface(joins.get(i),new_expr));
-                                                }
+                            if (binaryExpression_left.getLeftExpression() instanceof Column && binaryExpression_right.getLeftExpression() instanceof Column) {
+                                Column left = (Column) binaryExpression_left.getLeftExpression();
+                                Column right = (Column) binaryExpression_right.getLeftExpression();
+                                if (left.getTable().getName().equals(right.getTable().getName())) {
+                                    for (int i = 0; i < joins.size(); i++) {
+                                        if(hashjoin_names.get(i).equals(left.getTable().getName())) {
+                                            if (joins.get(i) instanceof FileIterator_Interface) {
+                                                FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
+                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, new_expr));
+                                                break;
+                                            }
+                                            else if(joins.get(i) instanceof EvalIterator_Interface){
+                                                joins.set(i,new EvalIterator_Interface(joins.get(i),new_expr));
                                             }
                                         }
                                     }
                                 }
-                                else {
-                                    beforeExpressionList.add(((AndExpression) expr).getRightExpression());
-                                }
+                            }
+                            else {
+                                beforeExpressionList.add(((AndExpression) expr).getRightExpression());
+                            }
 //                            while(temp!=null)
 //                            {
 //                                if(temp instanceof BinaryExpression)
@@ -167,8 +167,6 @@ public class Optimize {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
                                 String col_name = col.getColumnName();
-                                String aliastableName = new String("");
-                                aliastableName = aliastableName+file_name;
                                 if(file_name == null)
                                 {
                                     if(Data_Storage.current_schema.containsKey(col.getColumnName()))
@@ -181,18 +179,9 @@ public class Optimize {
                                 for (int i = 0; i < joins.size(); i++) {
                                     if (joins.get(i) instanceof FileIterator_Interface) {
                                         FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
-                                        if(fileIterator_interface.aliastableName!= null) {
-                                            if (fileIterator_interface.new_file.equals(file_name) && fileIterator_interface.aliastableName.equals(aliastableName)) {
-                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
-                                                break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (fileIterator_interface.new_file.equals(file_name)) {
-                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
-                                                break;
-                                            }
+                                        if (fileIterator_interface.new_file.equals(file_name)) {
+                                            joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                            break;
                                         }
                                     }
                                 }
@@ -239,26 +228,19 @@ public class Optimize {
                 joins.set(i, new Optimize().optimize(joins.get(i)));
             }
         }
-        for(int q=0;q<beforeExpressionList.size();q++)
+        while(before_join_iterator.hasNext())
         {
-            Expression expr =(Expression) beforeExpressionList.get(q);
+            Expression expr =(Expression) before_join_iterator.next();
             if(expr instanceof BinaryExpression)
             {
                 if(((BinaryExpression) expr).getLeftExpression() instanceof Column && ((BinaryExpression) expr).getRightExpression() instanceof Column)
                 {
-                    beforeExpressionList.remove(beforeExpressionList.indexOf(expr));
                     Column left_col = (Column)((BinaryExpression) expr).getLeftExpression();
                     Column right_col = (Column)((BinaryExpression) expr).getRightExpression();
                     join_names1.add(left_col);
-                    String tableName1 = left_col.getTable().getName();
-                    if(Data_Storage.table_alias.containsKey(tableName1))
-                        tableName1 = Data_Storage.table_alias.get(tableName1);
-                    join_name1_table.add(tableName1);
+                    join_name1_table.add(left_col.getTable().getName());
                     join_names2.add(right_col);
-                    String tableName2 = right_col.getTable().getName();
-                    if(Data_Storage.table_alias.containsKey(tableName2))
-                        tableName2 = Data_Storage.table_alias.get(tableName2);
-                    join_name2_table.add(tableName1);
+                    join_name2_table.add(right_col.getTable().getName());
                     join_condition.add(expr);
                 }
             }
@@ -294,16 +276,16 @@ public class Optimize {
         else {
             for (int i = joins.size() - 1; i >= 0; i--) {
                 if (join_iter == null) {
-                        join_iter = new JoinIteratorInterface(joins.get(i), joins.get((i--) - 1));
-                        for(int t = 0;t<join_name1_table.size();t++)
+                    join_iter = new JoinIteratorInterface(joins.get(i), joins.get((i--) - 1));
+                    for(int t = 0;t<join_name1_table.size();t++)
+                    {
+                        if((join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
+                                (join_name2_table.get(t).equals(hashjoin_names.get(t+1))&&join_name1_table.get(t).equals(hashjoin_names.get(t))))
                         {
-                            if((join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
-                                    (join_name2_table.get(t).equals(hashjoin_names.get(t+1))&&join_name1_table.get(t).equals(hashjoin_names.get(t))))
-                            {
-                                join_iter = new EvalIterator_Interface(join_iter, join_condition.get(i));
-                                break;
-                            }
+                            join_iter = new EvalIterator_Interface(join_iter, join_condition.get(i));
+                            break;
                         }
+                    }
 //                    if(join_name1_table.contains(hashjoin_names.get(i)))
 //                    {
 //                        if(join_name2_table.get(join_name1_table.indexOf(hashjoin_names.get(i))).equals(hashjoin_names.get(i+1))) {
@@ -329,13 +311,19 @@ public class Optimize {
             }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();
-        while (expr_before_iter.hasNext()) {
-                if (expr_before_join == null) {
-                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
-                } else {
-                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
-                }
-        }
+//        while (expr_before_iter.hasNext()) {
+//            if(expr_before_iter.)
+//            {
+//
+//            }
+//            else {
+//                if (expr_before_join == null) {
+//                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
+//                } else {
+//                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
+//                }
+//            }
+//        }
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;
