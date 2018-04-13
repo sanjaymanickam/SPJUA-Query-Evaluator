@@ -43,13 +43,13 @@ public class Command_Executor {
                 Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-                    /*System.err.println(count);
+                    System.err.println(count);
                     if(count < 3){
                         System.err.println("query1 over");
                         System.out.println(prompt);
                         count++;
                         continue;
-                    }*/
+                    }
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
