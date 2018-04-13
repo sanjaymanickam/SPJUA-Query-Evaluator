@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 
 public class Command_Executor {
     static String prompt = "$> ";
-    static LinkedHashMap<String,ArrayList<String>> aggregate_result;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -26,6 +25,7 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
+                LinkedHashMap<String,ArrayList<String>> aggregate_result = new LinkedHashMap<>();
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -34,11 +34,11 @@ public class Command_Executor {
                 Data_Storage.oper = null;
                 Data_Storage.limit = Long.parseLong("0");
                 Data_Storage.orderBy = null;
-                /*Data_Storage.groupbyflag = 0;
+                Data_Storage.groupbyflag = 0;
                 Data_Storage.aggregateflag = 0;
                 Data_Storage.finalColumns.clear();
                 Data_Storage.projectionColumns.clear();
-                Data_Storage.finalSchema.clear();*/
+                Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
@@ -145,7 +145,7 @@ public class Command_Executor {
             for(int i = 0;i<size_to_iter;i++){
                 Iterator itr = result.get(i).iterator();
                 while (itr.hasNext()) {
-                    String colname = schema.get(temp_i++);
+                    //String colname = schema.get(temp_i++);
                     System.out.print(itr.next().toString());
                     if (itr.hasNext()) {
                         System.out.print("|");
