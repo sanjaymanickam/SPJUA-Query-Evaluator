@@ -17,13 +17,13 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 public class Command_Executor {
     static String prompt = "$> ";
     static LinkedHashMap<String,ArrayList<String>> aggregate_result = new LinkedHashMap<>();
-    static int count = 0;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
         System.out.flush();
         Reader in = new InputStreamReader(System.in);
         CCJSqlParser parser = new CCJSqlParser(in);
+        int count = 0;
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
@@ -73,10 +73,8 @@ public class Command_Executor {
 
 //                    group_by_print(aggregate_result,result,schema);
                 }
-                if(count >= 3){
-                    System.out.println(prompt);
-                }
 
+                System.out.println(prompt);
                 System.out.flush();
             }
         }
