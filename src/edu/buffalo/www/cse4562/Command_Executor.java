@@ -54,10 +54,10 @@ public class Command_Executor {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-                    while(Data_Storage.oper!=null){
-                        Data_Storage.oper.print();
-                        Data_Storage.oper = Data_Storage.oper.getChild();
-                    }
+//                    while(Data_Storage.oper!=null){
+//                        Data_Storage.oper.print();
+//                        Data_Storage.oper = Data_Storage.oper.getChild();
+//                    }
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
