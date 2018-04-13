@@ -51,8 +51,11 @@ public class JoinIteratorInterface implements Iterator_Interface{
                     if (iterator_file1.hasNext()) {
                         Tuple temp = (Tuple) iterator_file1.next();
                         Data_Storage.file_temp_tuple.put(iter1, new Tuple(new ArrayList<>(temp.tuples),new ArrayList<>(temp.schema)));
-                        to_send.tuples.addAll(temp.tuples);
-                        to_send.schema.addAll(temp.schema);
+                        if(temp.tuples.size() > 0){
+                            to_send.tuples.addAll(temp.tuples);
+                            to_send.schema.addAll(temp.schema);
+                        }
+
                         Data_Storage.stored_file_iterators.replace(iter1, iterator_file1);
                     } else {
                         to_send = null;
@@ -71,11 +74,14 @@ public class JoinIteratorInterface implements Iterator_Interface{
             iterator_file2 = Data_Storage.stored_file_iterators.get(iter2);
             if (iterator_file2.hasNext()) {
                 Tuple temp = (Tuple) iterator_file2.next();
-                if (temp != null && to_send != null) {
-                    to_send.tuples.addAll(temp.tuples);
-                    to_send.schema.addAll(temp.schema);
-                    Data_Storage.stored_file_iterators.replace(iter2, iterator_file2);
+                if(temp.tuples.size() > 0){
+                    if (temp != null && to_send != null) {
+                        to_send.tuples.addAll(temp.tuples);
+                        to_send.schema.addAll(temp.schema);
+                        Data_Storage.stored_file_iterators.replace(iter2, iterator_file2);
+                    }
                 }
+
             } else {
                 Data_Storage.file_temp_tuple.remove(iter1);
                 Data_Storage.stored_file_iterators.put(iter2, Data_Storage.stored_files.get(iter2).iterator());
