@@ -68,14 +68,15 @@ public class Command_Executor {
                         System.out.println(prompt);
                         count++;
                         continue;
-                    }else{
-                        sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
                     }
+                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 
 //                    group_by_print(aggregate_result,result,schema);
                 }
+                if(count >= 3){
+                    System.out.println(prompt);
+                }
 
-                System.out.println(prompt);
                 System.out.flush();
             }
         }
