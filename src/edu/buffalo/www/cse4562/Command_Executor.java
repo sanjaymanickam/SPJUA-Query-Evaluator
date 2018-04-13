@@ -90,65 +90,68 @@ public class Command_Executor {
     }
     public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
 
-            int ct=0;
-            Column c = Data_Storage.orderBy.get(ct);
-            String tableName =  c.getTable().getName();
-            String col_name = c.getColumnName();
+            if(Data_Storage.orderBy.size() > 0){
+                int ct=0;
+                Column c = Data_Storage.orderBy.get(ct);
+                String tableName =  c.getTable().getName();
+                String col_name = c.getColumnName();
 
-            if(Data_Storage.alias_table.containsKey(c.toString())){
-                col_name = Data_Storage.alias_table.get(c.toString());
-            }
-            if(Data_Storage.table_alias.containsKey(tableName))
-            {
-                tableName =Data_Storage.table_alias.get(tableName);
-            }else{
-                tableName = Data_Storage.current_schema.get(col_name);
-            }
+                if(Data_Storage.alias_table.containsKey(c.toString())){
+                    col_name = Data_Storage.alias_table.get(c.toString());
+                }
+                if(Data_Storage.table_alias.containsKey(tableName))
+                {
+                    tableName =Data_Storage.table_alias.get(tableName);
+                }else{
+                    tableName = Data_Storage.current_schema.get(col_name);
+                }
 
-            Column col = new Column(new Table(tableName),col_name);
-            int position = schema.indexOf(col_name);
-            String DataType;
-            if(tableName != null){
-                DataType = Data_Storage.tables.get(tableName).get(col_name);
-            }else{
-                DataType = "DOUBLE";
-            }
+                Column col = new Column(new Table(tableName),col_name);
+                int position = schema.indexOf(col_name);
+                String DataType;
+                if(tableName != null){
+                    DataType = Data_Storage.tables.get(tableName).get(col_name);
+                }else{
+                    DataType = "DOUBLE";
+                }
 
-            if("true".equals(Data_Storage.orderBy_sort.get(ct))){
-                Collections.sort(result, new Comparator<ArrayList<String>>() {
-                    @Override
-                    public int compare(ArrayList<String> one, ArrayList<String> two) {
-                        if(DataType.equals("DOUBLE")){
-                            Double value1 = Double.parseDouble(one.get(position));
-                            Double value2 = Double.parseDouble(two.get(position));
-                            if(value1 == value2){
+                if("true".equals(Data_Storage.orderBy_sort.get(ct))){
+                    Collections.sort(result, new Comparator<ArrayList<String>>() {
+                        @Override
+                        public int compare(ArrayList<String> one, ArrayList<String> two) {
+                            if(DataType.equals("DOUBLE")){
+                                Double value1 = Double.parseDouble(one.get(position));
+                                Double value2 = Double.parseDouble(two.get(position));
+                                if(value1 == value2){
 
-                            }else if(value1 < value2){
-                                return -1;
-                            }else{
-                                return 1;
+                                }else if(value1 < value2){
+                                    return -1;
+                                }else{
+                                    return 1;
+                                }
                             }
+                            return one.get(position).compareTo(two.get(position));
                         }
-                        return one.get(position).compareTo(two.get(position));
-                    }
-                });
-            }else{
-                Collections.sort(result, new Comparator<ArrayList<String>>() {
-                    @Override
-                    public int compare(ArrayList<String> one, ArrayList<String> two) {
-                        if(DataType.equals("DOUBLE")){
-                            Double value1 = Double.parseDouble(two.get(position));
-                            Double value2 = new Double(one.get(position));
-                            if(value1 < value2){
-                                return -1;
-                            }else{
-                                return 1;
+                    });
+                }else{
+                    Collections.sort(result, new Comparator<ArrayList<String>>() {
+                        @Override
+                        public int compare(ArrayList<String> one, ArrayList<String> two) {
+                            if(DataType.equals("DOUBLE")){
+                                Double value1 = Double.parseDouble(two.get(position));
+                                Double value2 = new Double(one.get(position));
+                                if(value1 < value2){
+                                    return -1;
+                                }else{
+                                    return 1;
+                                }
                             }
+                            return two.get(position).compareTo(one.get(position));
                         }
-                        return two.get(position).compareTo(one.get(position));
-                    }
-                });
+                    });
+                }
             }
+
 
 
 
