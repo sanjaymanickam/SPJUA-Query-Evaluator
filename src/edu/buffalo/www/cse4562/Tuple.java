@@ -14,4 +14,8 @@ public class Tuple {
         this.schema = schema;
         this.tuples = tuples;
     }
+    public void copy()
+    {
+
+    }
 }

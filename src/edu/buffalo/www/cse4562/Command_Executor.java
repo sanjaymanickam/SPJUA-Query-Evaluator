@@ -66,7 +66,7 @@ public class Command_Executor {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
 
-//                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
+                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 //                    group_by_print(aggregate_result,result,schema);
                 }
 

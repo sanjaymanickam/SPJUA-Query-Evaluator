@@ -10,8 +10,9 @@ public class JoinIteratorInterface implements Iterator_Interface{
     String table1,table2;
     Tuple to_send = new Tuple();
     Tuple temp_tuple = new Tuple();
-    Tuple temp_tuple_1 = new Tuple();
+    Tuple temp_tuple_1 =null;
     Iterator iterator_file1,iterator_file2;
+    int flag= 0;
     public JoinIteratorInterface(Iterator_Interface iter1, Iterator_Interface iter2)
     {
         this.iter1 = iter1;
@@ -21,71 +22,64 @@ public class JoinIteratorInterface implements Iterator_Interface{
     public Tuple readOneTuple() {
         to_send.schema = new ArrayList<>();
         to_send.tuples = new ArrayList<>();
-        if(iter1 instanceof JoinIteratorInterface) {
-            if(temp_tuple_1.tuples!=null)
-            {
-                Tuple temp = iter1.readOneTuple();
-                if(temp!=null) {
-                    Data_Storage.temp_tuple = temp;
-                    to_send.tuples.addAll(temp.tuples);
-                    to_send.schema.addAll(temp.schema);
-                }
-                else {
-                    to_send =null;
-                }
-            }
-            else
-            {
-                to_send = Data_Storage.temp_tuple;
-            }
-        }
-        else
-        {
-            if(temp_tuple_1.tuples!=null) {
-                if (!Data_Storage.stored_files.containsKey(iter1)) {
-                    read_file(iter1);
-                    iterator_file1 = Data_Storage.stored_files.get(iter1).iterator();
-                    Data_Storage.stored_file_iterators.put(iter1, iterator_file1);
-                }
-                iterator_file1 = Data_Storage.stored_file_iterators.get(iter1);
-                if (iterator_file1.hasNext()) {
-                    Tuple temp = (Tuple) iterator_file1.next();
-                    to_send.tuples.addAll(temp.tuples);
-                    to_send.schema.addAll(temp.schema);
-                    Data_Storage.stored_file_iterators.replace(iter1, iterator_file1);
+            if (iter1 instanceof JoinIteratorInterface) {
+                if (!Data_Storage.file_temp_tuple.containsKey(iter1)) {
+                    Tuple temp = iter1.readOneTuple();
+                    if (temp != null) {
+                        Data_Storage.temp_tuple = temp;
+                        Data_Storage.file_temp_tuple.put(iter1, temp);
+                        to_send.tuples.addAll(temp.tuples);
+                        to_send.schema.addAll(temp.schema);
+                    } else {
+                        to_send = null;
+                    }
                 } else {
-                    temp_tuple_1.tuples = null;
-                    to_send = null;
+                    to_send.tuples.addAll(Data_Storage.file_temp_tuple.get(iter1).tuples);
+                    to_send.schema.addAll(Data_Storage.file_temp_tuple.get(iter1).schema);
+                }
+            } else {
+                if (!Data_Storage.file_temp_tuple.containsKey(iter1)) {
+                    if (!Data_Storage.stored_files.containsKey(iter1)) {
+                        read_file(iter1);
+                        iterator_file1 = Data_Storage.stored_files.get(iter1).iterator();
+                        Data_Storage.stored_file_iterators.put(iter1, iterator_file1);
+                    }
+                    iterator_file1 = Data_Storage.stored_file_iterators.get(iter1);
+                    if (iterator_file1.hasNext()) {
+                        Tuple temp = (Tuple) iterator_file1.next();
+                        Data_Storage.file_temp_tuple.put(iter1, new Tuple(new ArrayList<>(temp.tuples),new ArrayList<>(temp.schema)));
+                        to_send.tuples.addAll(temp.tuples);
+                        to_send.schema.addAll(temp.schema);
+                        Data_Storage.stored_file_iterators.replace(iter1, iterator_file1);
+                    } else {
+                        to_send = null;
+                    }
+                } else {
+                    to_send.tuples.addAll(Data_Storage.file_temp_tuple.get(iter1).tuples);
+                    to_send.schema.addAll(Data_Storage.file_temp_tuple.get(iter1).schema);
                 }
             }
-            else
-            {
-                to_send = temp_tuple_1;
+            do {
+                flag=0;
+            if (!Data_Storage.stored_files.containsKey(iter2)) {
+                read_file(iter2);
+                iterator_file2 = Data_Storage.stored_files.get(iter2).iterator();
+                Data_Storage.stored_file_iterators.put(iter2, iterator_file2);
             }
-        }
-        if (!Data_Storage.stored_files.containsKey(iter2)) {
-            read_file(iter2);
-            iterator_file2 = Data_Storage.stored_files.get(iter2).iterator();
-            Data_Storage.stored_file_iterators.put(iter2, iterator_file2);
-        }
-        iterator_file2 = Data_Storage.stored_file_iterators.get(iter2);
-        if(iterator_file2.hasNext())
-        {
-                Tuple temp = (Tuple)iterator_file2.next();
-                if(temp!=null && to_send!=null) {
+            iterator_file2 = Data_Storage.stored_file_iterators.get(iter2);
+            if (iterator_file2.hasNext()) {
+                Tuple temp = (Tuple) iterator_file2.next();
+                if (temp != null && to_send != null) {
                     to_send.tuples.addAll(temp.tuples);
                     to_send.schema.addAll(temp.schema);
-                    Data_Storage.stored_file_iterators.replace(iter1, iterator_file2);
+                    Data_Storage.stored_file_iterators.replace(iter2, iterator_file2);
                 }
-                else
-                {
-                    to_send =null;
-                }
-        }
-        else
-        {
-            to_send = null;
-        }
+            } else {
+                Data_Storage.file_temp_tuple.remove(iter1);
+                Data_Storage.stored_file_iterators.put(iter2, Data_Storage.stored_files.get(iter2).iterator());
+                flag=1;
+            }
+        }while(flag==1);
         return to_send;
     }
 

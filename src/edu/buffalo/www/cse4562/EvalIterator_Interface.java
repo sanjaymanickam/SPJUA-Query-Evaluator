@@ -20,18 +20,20 @@ public class EvalIterator_Interface implements Iterator_Interface{
     }
     @Override
     public Tuple readOneTuple() {
-       ArrayList<String> tuple;
-       ArrayList<Column> schema;
+       ArrayList<String> tuple = null;
+       ArrayList<Column> schema = null;
         HashSet<Column> test = new HashSet<>();
        Tuple tup;
         do{
             tup = iter.readOneTuple();
             if(tup == null)
             {
-                return null;
+               return null;
             }
-            tuple = tup.tuples;
-            schema = tup.schema;
+            else {
+                tuple = tup.tuples;
+                schema = tup.schema;
+            }
             final ArrayList<String> to_copy = tuple;
             final ArrayList<Column> schema_final = schema;
              Data_Storage.eval = new Eval() {
