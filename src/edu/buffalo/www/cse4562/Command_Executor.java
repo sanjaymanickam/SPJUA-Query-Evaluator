@@ -64,12 +64,14 @@ public class Command_Executor {
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
+                    System.err.println(count);
                     if(count < 3){
                         System.err.println("query1 over");
                         System.out.println(prompt);
                         count++;
                         continue;
                     }
+                    System.err.println("here?");
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 
 //                    group_by_print(aggregate_result,result,schema);
