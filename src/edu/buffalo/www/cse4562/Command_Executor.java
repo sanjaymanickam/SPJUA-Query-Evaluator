@@ -34,11 +34,11 @@ public class Command_Executor {
                 Data_Storage.oper = null;
                 Data_Storage.limit = Long.parseLong("0");
                 Data_Storage.orderBy = null;
-                Data_Storage.groupbyflag = 0;
+                /*Data_Storage.groupbyflag = 0;
                 Data_Storage.aggregateflag = 0;
                 Data_Storage.finalColumns.clear();
                 Data_Storage.projectionColumns.clear();
-                Data_Storage.finalSchema.clear();
+                Data_Storage.finalSchema.clear();*/
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
