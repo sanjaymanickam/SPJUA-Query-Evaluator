@@ -29,9 +29,11 @@ public class Aggregation {
             while(iter_func.hasNext())
             {
                 String columnName = "";
+                Column finalCol = null;
                 SelectExpressionItem selitem = (SelectExpressionItem) iter_func.next();
                 if(selitem.getExpression() instanceof Column){
                     Column col = (Column) selitem.getExpression();
+                    finalCol = col;
                     columnName = col.getColumnName();
                     int position = schema.indexOf(col);
                     if(result_tosend.containsKey(key))
@@ -49,6 +51,7 @@ public class Aggregation {
                 }else if(selitem.getExpression() instanceof Function){
                     if(selitem.getAlias() != null){
                         columnName = selitem.getAlias();
+                        finalCol = new Column(new Table(null),selitem.getAlias());
                     }
                     Function func = (Function) selitem.getExpression();
                     String oper_to_perform = func.getName();
@@ -107,8 +110,8 @@ public class Aggregation {
                     COUNT = 0;
 
                 }
-                if(!Data_Storage.finalSchema.contains(columnName)){
-                    Data_Storage.finalSchema.add(columnName);
+                if(!Data_Storage.finalSchema.contains(finalCol)){
+                    Data_Storage.finalSchema.add(finalCol);
                 }
 
             }

@@ -40,7 +40,7 @@ public class Data_Storage {
     static ArrayList<Function> aggregateFunctions = new ArrayList<>();
     static ArrayList<Column> projectionColumns = new ArrayList<>();
     static ArrayList<SelectExpressionItem> finalColumns = new ArrayList<>();
-    static ArrayList<String> finalSchema = new ArrayList<>();
+    static ArrayList<Column> finalSchema = new ArrayList<>();
 
 
     static Column stringSplitter(String colName)

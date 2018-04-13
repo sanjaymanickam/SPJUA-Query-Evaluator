@@ -88,7 +88,7 @@ public class Command_Executor {
             e.printStackTrace();
         }
     }
-    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
+    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
 
             if(Data_Storage.orderBy.size() > 0){
                 int ct=0;
@@ -107,7 +107,7 @@ public class Command_Executor {
                 }
 
                 Column col = new Column(new Table(tableName),col_name);
-                int position = schema.indexOf(col_name);
+                int position = schema.indexOf(col);
                 String DataType;
                 if(tableName != null){
                     DataType = Data_Storage.tables.get(tableName).get(col_name);
@@ -163,8 +163,32 @@ public class Command_Executor {
             for(int i = 0;i<size_to_iter;i++){
                 Iterator itr = result.get(i).iterator();
                 while (itr.hasNext()) {
+                    Column col = schema.get(temp_i++);
+                    String tableName =  col.getTable().getName();
+                    String col_name = col.getColumnName();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                        tableName =Data_Storage.table_alias.get(tableName);
+                    if(Data_Storage.current_schema.containsKey(col_name)){
+                        tableName = Data_Storage.current_schema.get(col_name);
+                    }
+                    Column new_col = new Column(new Table(tableName),col_name);
+                    String temp = "DOUBLE";
+                    if(tableName != null){
+                        temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                    }
                     //String colname = schema.get(temp_i++);
-                    System.out.print(itr.next().toString());
+                    if(temp.equals("DOUBLE"))
+                    {
+                        DoubleValue d_value = new DoubleValue(itr.next().toString());
+                        System.out.print(d_value);
+                    }
+                    else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
+                    {
+                        System.out.print(new StringValue(itr.next().toString()));
+                    }
+                    else {
+                        System.out.print(itr.next());
+                    }
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
