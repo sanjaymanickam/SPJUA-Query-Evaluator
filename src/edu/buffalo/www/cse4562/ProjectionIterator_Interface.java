@@ -23,7 +23,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
             tup = iter.readOneTuple();
         String tableName = null, colName;
         if(tup!=null) {
-                /*Iterator project_iter = selectedColumns.iterator();
+                Iterator project_iter = selectedColumns.iterator();
                 while (project_iter.hasNext()) {
                     colName = project_iter.next().toString();
                     if (colName.indexOf(".") != -1) {
@@ -76,9 +76,9 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                         tuple.add(tup.tuples.get(pos));
                         schema.add(tup.schema.get(pos));
                     }*/
-           // }
-            return tup;
-            //return new Tuple(tuple, schema);
+            }
+            //return tup;
+            return new Tuple(tuple, schema);
         }
         else {
                 return null;

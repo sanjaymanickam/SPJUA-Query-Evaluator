@@ -62,6 +62,17 @@ public class FileIterator_Interface implements Iterator_Interface{
 //        }
         if(aliastableName==null)
             aliastableName = new_file;
+
+        /*if(schemaMap.containsKey(new_file)){
+            schema = schemaMap.get(new_file);
+        }else{
+            while(it.hasNext()){
+                col_name = it.next().toString();
+                Column col = new Column(new Table(aliastableName), col_name);
+                schema.add(col);
+            }
+            schemaMap.put(new_file,schema);
+        }*/
         while(it.hasNext())
         {
             col_name = it.next().toString();

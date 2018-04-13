@@ -8,6 +8,7 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 
+import javax.xml.crypto.Data;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
@@ -16,7 +17,6 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 public class Command_Executor {
     static String prompt = "$> ";
     static LinkedHashMap<String,ArrayList<String>> aggregate_result;
-    static int flag =  0;
     public static void exec(String[] args)
     {
         System.out.println(prompt);
@@ -26,14 +26,6 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
-                if(stmt instanceof Select){
-                    if(flag == 0){
-                        System.out.println(prompt);
-                        System.out.println(prompt);
-                        System.out.println(prompt);
-                        flag = 1;
-                    }
-                }
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -42,6 +34,11 @@ public class Command_Executor {
                 Data_Storage.oper = null;
                 Data_Storage.limit = Long.parseLong("0");
                 Data_Storage.orderBy = null;
+                Data_Storage.groupbyflag = 0;
+                Data_Storage.aggregateflag = 0;
+                Data_Storage.finalColumns.clear();
+                Data_Storage.projectionColumns.clear();
+                Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
