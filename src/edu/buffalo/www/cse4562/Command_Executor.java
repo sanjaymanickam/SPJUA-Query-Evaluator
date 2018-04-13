@@ -88,67 +88,70 @@ public class Command_Executor {
             e.printStackTrace();
         }
     }
-    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<String> schema){
-        for(int i=0;i<Data_Storage.orderBy.size();i++){
-            Column c = Data_Storage.orderBy.get(i);
-            String tableName =  c.getTable().getName();
-            String col_name = c.getColumnName();
+    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
 
-            if(Data_Storage.alias_table.containsKey(c.toString())){
-                col_name = Data_Storage.alias_table.get(c.toString());
-            }
-            if(Data_Storage.table_alias.containsKey(tableName))
-            {
-                tableName =Data_Storage.table_alias.get(tableName);
-            }else{
-                tableName = Data_Storage.current_schema.get(col_name);
-            }
+            if(Data_Storage.orderBy.size() > 0){
+                int ct=0;
+                Column c = Data_Storage.orderBy.get(ct);
+                String tableName =  c.getTable().getName();
+                String col_name = c.getColumnName();
 
-            Column col = new Column(new Table(tableName),col_name);
-            int position = schema.indexOf(col_name);
-            String DataType;
-            if(tableName != null){
-                DataType = Data_Storage.tables.get(tableName).get(col_name);
-            }else{
-                DataType = "DOUBLE";
-            }
+                if(Data_Storage.alias_table.containsKey(c.toString())){
+                    col_name = Data_Storage.alias_table.get(c.toString());
+                }
+                if(Data_Storage.table_alias.containsKey(tableName))
+                {
+                    tableName =Data_Storage.table_alias.get(tableName);
+                }else{
+                    tableName = Data_Storage.current_schema.get(col_name);
+                }
 
-            if("true".equals(Data_Storage.orderBy_sort.get(i))){
-                Collections.sort(result, new Comparator<ArrayList<String>>() {
-                    @Override
-                    public int compare(ArrayList<String> one, ArrayList<String> two) {
-                        if(DataType.equals("DOUBLE")){
-                            Double value1 = Double.parseDouble(one.get(position));
-                            Double value2 = Double.parseDouble(two.get(position));
-                            if(value1 < value2){
-                                return -1;
-                            }else{
-                                return 1;
+                Column col = new Column(new Table(tableName),col_name);
+                int position = schema.indexOf(col);
+                String DataType;
+                if(tableName != null){
+                    DataType = Data_Storage.tables.get(tableName).get(col_name);
+                }else{
+                    DataType = "DOUBLE";
+                }
+
+                if("true".equals(Data_Storage.orderBy_sort.get(ct))){
+                    Collections.sort(result, new Comparator<ArrayList<String>>() {
+                        @Override
+                        public int compare(ArrayList<String> one, ArrayList<String> two) {
+                            if(DataType.equals("DOUBLE")){
+                                Double value1 = Double.parseDouble(one.get(position));
+                                Double value2 = Double.parseDouble(two.get(position));
+                                if(value1 == value2){
+
+                                }else if(value1 < value2){
+                                    return -1;
+                                }else{
+                                    return 1;
+                                }
                             }
+                            return one.get(position).compareTo(two.get(position));
                         }
-                        return one.get(position).compareTo(two.get(position));
-                    }
-                });
-            }else{
-                Collections.sort(result, new Comparator<ArrayList<String>>() {
-                    @Override
-                    public int compare(ArrayList<String> one, ArrayList<String> two) {
-                        if(DataType.equals("DOUBLE")){
-                            Double value1 = Double.parseDouble(two.get(position));
-                            Double value2 = new Double(one.get(position));
-                            if(value1 < value2){
-                                return -1;
-                            }else{
-                                return 1;
+                    });
+                }else{
+                    Collections.sort(result, new Comparator<ArrayList<String>>() {
+                        @Override
+                        public int compare(ArrayList<String> one, ArrayList<String> two) {
+                            if(DataType.equals("DOUBLE")){
+                                Double value1 = Double.parseDouble(two.get(position));
+                                Double value2 = new Double(one.get(position));
+                                if(value1 < value2){
+                                    return -1;
+                                }else{
+                                    return 1;
+                                }
                             }
+                            return two.get(position).compareTo(one.get(position));
                         }
-                        return two.get(position).compareTo(one.get(position));
-                    }
-                });
+                    });
+                }
             }
 
-
-        }
 
 
 
@@ -160,8 +163,32 @@ public class Command_Executor {
             for(int i = 0;i<size_to_iter;i++){
                 Iterator itr = result.get(i).iterator();
                 while (itr.hasNext()) {
+                    Column col = schema.get(temp_i++);
+                    String tableName =  col.getTable().getName();
+                    String col_name = col.getColumnName();
+                    if(Data_Storage.table_alias.containsKey(tableName))
+                        tableName =Data_Storage.table_alias.get(tableName);
+                    if(Data_Storage.current_schema.containsKey(col_name)){
+                        tableName = Data_Storage.current_schema.get(col_name);
+                    }
+                    Column new_col = new Column(new Table(tableName),col_name);
+                    String temp = "DOUBLE";
+                    if(tableName != null){
+                        temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
+                    }
                     //String colname = schema.get(temp_i++);
-                    System.out.print(itr.next().toString());
+                    if(temp.equals("DOUBLE"))
+                    {
+                        DoubleValue d_value = new DoubleValue(itr.next().toString());
+                        System.out.print(d_value);
+                    }
+                    else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
+                    {
+                        System.out.print(new StringValue(itr.next().toString()));
+                    }
+                    else {
+                        System.out.print(itr.next());
+                    }
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
