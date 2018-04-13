@@ -22,6 +22,9 @@ public class JoinIteratorInterface implements Iterator_Interface{
     public Tuple readOneTuple() {
         to_send.schema = new ArrayList<>();
         to_send.tuples = new ArrayList<>();
+        do {
+            to_send.tuples.clear();
+            to_send.schema.clear();
             if (iter1 instanceof JoinIteratorInterface) {
                 if (!Data_Storage.file_temp_tuple.containsKey(iter1)) {
                     Tuple temp = iter1.readOneTuple();
@@ -59,7 +62,6 @@ public class JoinIteratorInterface implements Iterator_Interface{
                     to_send.schema.addAll(Data_Storage.file_temp_tuple.get(iter1).schema);
                 }
             }
-            do {
                 flag=0;
             if (!Data_Storage.stored_files.containsKey(iter2)) {
                 read_file(iter2);
