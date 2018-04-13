@@ -65,6 +65,7 @@ public class Command_Executor {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
                     if(count < 3){
+                        System.err.println("query1 over");
                         System.out.println(prompt);
                         count++;
                         continue;
