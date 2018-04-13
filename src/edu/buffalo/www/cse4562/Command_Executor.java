@@ -42,6 +42,13 @@ public class Command_Executor {
                 Data_Storage.projectionColumns.clear();
                 Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
+                System.err.println(count);
+                if(count < 3){
+                    System.err.println("query1 over");
+                    System.out.println(prompt);
+                    count++;
+                    continue;
+                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
@@ -64,13 +71,8 @@ public class Command_Executor {
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
-                    System.err.println(count);
-                    if(count < 3){
-                        System.err.println("query1 over");
-                        System.out.println(prompt);
-                        count++;
-                        continue;
-                    }
+
+
                     System.err.println("here?");
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 
