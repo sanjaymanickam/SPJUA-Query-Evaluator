@@ -39,6 +39,7 @@ public class Command_Executor {
                 Data_Storage.groupbyflag = 0;
                 Data_Storage.aggregateflag = 0;
                 Data_Storage.finalColumns.clear();
+                Data_Storage.hash_flag = 0;
                 Data_Storage.projectionColumns.clear();
                 Data_Storage.finalSchema.clear();
                 Visitor_Parse.ret_type(stmt);
@@ -64,9 +65,11 @@ public class Command_Executor {
                     Data_Storage.project_array.addAll(temp_set);
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     while (tuple != null){
-                        Iterator it = tuple.tuples.iterator();
-                        result.add(tuple.tuples);
-                        schema = tuple.schema;
+                        Tuple temp = new Tuple();
+                        temp.tuples.addAll(tuple.tuples);
+                        temp.schema.addAll(tuple.schema);
+                        result.add(temp.tuples);
+                        schema = temp.schema;
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                     Column col = new Column();

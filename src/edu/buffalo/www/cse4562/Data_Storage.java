@@ -25,6 +25,7 @@ public class Data_Storage {
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static Long limit;
     static Eval eval;
+    static int hash_flag = 0;
     static ArrayList<Column> orderBy;
     static ArrayList<String> orderBy_sort;
     static String from_alias = null;

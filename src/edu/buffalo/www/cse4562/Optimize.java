@@ -74,40 +74,20 @@ public class Optimize {
                         if(((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getRightExpression() instanceof Column)
                         {
                             Column col =(Column)((BinaryExpression) ((BinaryExpression) expr).getRightExpression()).getRightExpression();
-//                            add_projections(col.getColumnName());
                         }
                     }
                     if(((BinaryExpression) expr).getRightExpression() instanceof Column )
                     {
                         Column col = (Column) ((BinaryExpression) expr).getRightExpression();
-//                        add_projections(col.getColumnName());
                     }
                     if(((BinaryExpression) expr).getLeftExpression() instanceof  Column)
                     {
                         Column col = (Column) ((BinaryExpression) expr).getLeftExpression();
-//                        add_projections(col.getColumnName());
                     }
 
                     if (expr instanceof OrExpression) {
                         BinaryExpression binaryExpression_left = (BinaryExpression) ((OrExpression) expr).getLeftExpression();
                         BinaryExpression binaryExpression_right = (BinaryExpression) ((OrExpression) expr).getRightExpression();
-//                        if(binaryExpression_left.getLeftExpression() instanceof Column && binaryExpression_left.getRightExpression() instanceof Column)
-//                        {
-//                            Column left =(Column) binaryExpression_left.getLeftExpression();
-//                            Column right = (Column) binaryExpression_right.getLeftExpression();
-//                            if(left.getTable().getName().equals(right.getTable().getName()))
-//                            {
-//                                for (int i = 0; i < joins.size(); i++) {
-//                                    if (joins.get(i) instanceof FileIterator_Interface) {
-//                                        FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
-//                                        if (fileIterator_interface.new_file.equals(left.getTable().getName())) {
-//                                            joins.set(i, new EvalIterator_Interface(fileIterator_interface, expr));
-//                                            break;
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
                         beforeExpressionList.add(expr);
                     } else if (expr instanceof AndExpression) {
                         if (((AndExpression) expr).getRightExpression() instanceof OrExpression) {
@@ -136,27 +116,6 @@ public class Optimize {
                             else {
                                 beforeExpressionList.add(((AndExpression) expr).getRightExpression());
                             }
-//                            while(temp!=null)
-//                            {
-//                                if(temp instanceof BinaryExpression)
-//                                {
-//                                    BinaryExpression binaryExpression = (BinaryExpression) temp;
-//                                    if(binaryExpression.getLeftExpression() instanceof Column)
-//                                    {
-//                                        Column col = (Column) binaryExpression.getLeftExpression();
-////                                        add_projections(col.getColumnName());
-//                                    }
-//                                    if(binaryExpression.getRightExpression() instanceof Column)
-//                                    {
-//                                        Column col = (Column) binaryExpression.getRightExpression();
-////                                        add_projections(col.getColumnName());
-//                                    }
-//                                    temp = ((BinaryExpression) temp).getLeftExpression();
-//                                }
-//                                else
-//                                {
-//                                    temp = null;
-//                                }
 
 
                         } else if (((AndExpression) expr).getRightExpression() instanceof BinaryExpression) {
@@ -282,48 +241,21 @@ public class Optimize {
                         if((join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
                                 (join_name2_table.get(t).equals(hashjoin_names.get(t+1))&&join_name1_table.get(t).equals(hashjoin_names.get(t))))
                         {
-                            join_iter = new EvalIterator_Interface(join_iter, join_condition.get(i));
+                            join_iter = new HashJoin_Interface(((JoinIteratorInterface) join_iter).iter1,((JoinIteratorInterface) join_iter).iter2, join_condition.get(i));
                             break;
                         }
                     }
-//                    if(join_name1_table.contains(hashjoin_names.get(i)))
-//                    {
-//                        if(join_name2_table.get(join_name1_table.indexOf(hashjoin_names.get(i))).equals(hashjoin_names.get(i+1))) {
-//                            int pos = join_name1_table.indexOf(hashjoin_names.get(i));
-//
-//                        }
-//                    }
-//                    else if(join_name2_table.contains(hashjoin_names.get(i)))
-//                    {
-//                        if(join_name1_table.get(join_name2_table.indexOf(hashjoin_names.get(i))).equals(hashjoin_names.get(i+1))) {
-//                            int pos = join_name2_table.indexOf(hashjoin_names.get(i));
-//                            join_iter = new EvalIterator_Interface(join_iter, join_condition.get(pos));
-//                        }
-//                    }
                 } else {
                     join_iter = new JoinIteratorInterface(join_iter, joins.get(i));
                     if(join_name1_table.contains(hashjoin_names.get(i))||join_name2_table.contains(hashjoin_names.get(i)))
                     {
                         int pos = join_name1_table.contains(hashjoin_names.get(i))? join_name1_table.indexOf(hashjoin_names.get(i)):join_name2_table.indexOf(hashjoin_names.get(i));
-                        join_iter = new EvalIterator_Interface(join_iter,join_condition.get(pos));
+                        join_iter = new HashJoin_Interface(((JoinIteratorInterface) join_iter).iter1,((JoinIteratorInterface) join_iter).iter2,join_condition.get(pos));
                     }
                 }
             }
         }
         Iterator expr_before_iter = beforeExpressionList.iterator();
-//        while (expr_before_iter.hasNext()) {
-//            if(expr_before_iter.)
-//            {
-//
-//            }
-//            else {
-//                if (expr_before_join == null) {
-//                    expr_before_join = new EvalIterator_Interface(join_iter, (Expression) expr_before_iter.next());
-//                } else {
-//                    expr_before_join = new EvalIterator_Interface(expr_before_join, (Expression) expr_before_iter.next());
-//                }
-//            }
-//        }
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;
