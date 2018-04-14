@@ -1,6 +1,4 @@
 package edu.buffalo.www.cse4562;
-
-import javafx.util.Pair;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
