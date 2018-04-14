@@ -49,6 +49,7 @@ public class Aggregation {
                         result_tosend.put(key, temp);
                     }
                 }else if(selitem.getExpression() instanceof Function){
+//                    finalCol = col;
                     if(selitem.getAlias() != null){
                         columnName = selitem.getAlias();
                         finalCol = new Column(new Table(null),selitem.getAlias());

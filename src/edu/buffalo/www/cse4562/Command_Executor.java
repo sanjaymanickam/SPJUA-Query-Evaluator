@@ -73,11 +73,11 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                     Column col = new Column();
-                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
-                    if(Data_Storage.aggregateflag==1)
-                    {
-                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
-                    }
+                    aggregate_result = GroupByAggregate.groupBy(result, schema);
+//                    if(Data_Storage.aggregateflag==1)
+//                    {
+//                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+//                    }
 
 
                     System.err.println("here?");
