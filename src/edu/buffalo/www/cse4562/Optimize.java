@@ -125,6 +125,7 @@ public class Optimize {
                             } else if (binaryExpression.getLeftExpression() instanceof Column) {
                                 Column col = (Column) binaryExpression.getLeftExpression();
                                 String file_name = col.getTable().getName();
+                                String old_table_name = new String("");
                                 String col_name = col.getColumnName();
                                 if(file_name == null)
                                 {
@@ -133,14 +134,26 @@ public class Optimize {
                                         file_name = Data_Storage.current_schema.get(col.getColumnName());
                                     }
                                 }
-                                if (Data_Storage.table_alias.containsKey(file_name))
+                                if (Data_Storage.table_alias.containsKey(file_name)) {
+                                    old_table_name = old_table_name.concat(file_name);
                                     file_name = Data_Storage.table_alias.get(file_name);
+                                }
                                 for (int i = 0; i < joins.size(); i++) {
                                     if (joins.get(i) instanceof FileIterator_Interface) {
                                         FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
                                         if (fileIterator_interface.new_file.equals(file_name)) {
-                                            joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
-                                            break;
+                                            if(fileIterator_interface.aliastableName!=null) {
+                                                if(fileIterator_interface.aliastableName.equals(old_table_name))
+                                                {
+                                                    joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                                    break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -155,6 +168,7 @@ public class Optimize {
                             Column col = (Column) binaryExpression.getLeftExpression();
                             String file_name = col.getTable().getName();
                             String col_name = col.getColumnName();
+                            String old_table_name = new String();
                             if(file_name == null)
                             {
                                 if(Data_Storage.current_schema.containsKey(col.getColumnName()))
@@ -162,12 +176,12 @@ public class Optimize {
                                     file_name = Data_Storage.current_schema.get(col.getColumnName());
                                 }
                             }
-                            if (Data_Storage.table_alias.containsKey(file_name))
+                            if (Data_Storage.table_alias.containsKey(file_name)) {
+                                old_table_name.concat(file_name);
                                 file_name = Data_Storage.table_alias.get(file_name);
-                            for (int i = 0; i < joins.size(); i++) {
+                            }for (int i = 0; i < joins.size(); i++) {
                                 if (joins.get(i) instanceof FileIterator_Interface) {
                                     FileIterator_Interface fileIterator_interface = (FileIterator_Interface) joins.get(i);
-
                                     if (fileIterator_interface.new_file.equals(file_name)) {
                                         joins.set(i, new EvalIterator_Interface(fileIterator_interface, binaryExpression));
                                     }

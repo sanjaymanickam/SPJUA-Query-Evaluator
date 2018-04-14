@@ -4,9 +4,6 @@ import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import org.omg.Dynamic.Parameter;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GroupByAggregate {
