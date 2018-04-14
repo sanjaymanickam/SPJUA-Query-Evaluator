@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,45 +49,53 @@ public class Aggregation {
                         ///col_array.add(new Column(new Table(),func.toString()));
                         result_tosend.put(key, temp);
                     }
-                }else if(selitem.getExpression() instanceof Function){
+                }else if(selitem.getExpression() instanceof Function) {
 //                    finalCol = col;
-                    if(selitem.getAlias() != null){
+                    if (selitem.getAlias() != null) {
                         columnName = selitem.getAlias();
-                        finalCol = new Column(new Table(null),selitem.getAlias());
+                        finalCol = new Column(new Table(null), selitem.getAlias());
                     }
                     Function func = (Function) selitem.getExpression();
                     String oper_to_perform = func.getName();
                     Expression condition = func.getParameters().getExpressions().get(0);
                     Iterator iter_tuple = tuple.get(key).iterator();
-                    while(iter_tuple.hasNext()) //within each group
-                    {
-                        ArrayList<String> temp_array =(ArrayList)iter_tuple.next();
-                        Tuple tup = new EvalIterator_Interface(new Iterator_Interface() {
-                            @Override
-                            public Tuple readOneTuple() {
-                                return new Tuple(temp_array,schema);
+                        while (iter_tuple.hasNext()) //within each group
+                        {
+                            ArrayList<String> temp_array = (ArrayList) iter_tuple.next();
+                            if (condition instanceof Column) {
+                                aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
                             }
+                            else
+                            {
+                            Tuple tup = new EvalIterator_Interface(new Iterator_Interface() {
+                                @Override
+                                public Tuple readOneTuple() {
+                                    return new Tuple(temp_array, schema);
+                                }
 
-                            @Override
-                            public Iterator_Interface getChild() {
-                                return null;
+                                @Override
+                                public Iterator_Interface getChild() {
+                                    return null;
+                                }
+
+                                @Override
+                                public void print() {
+
+                                }
+
+                                @Override
+                                public void setChild(Iterator_Interface iter) {
+
+                                }
+
+                                @Override
+                                public void reset() {
+
+                                }
+                            }, condition).readOneTuple();
+                            aggregate_func(Double.parseDouble(tup.tuples.get(tup.tuples.size() - 1)), oper_to_perform);
                             }
-                            @Override
-                            public void print(){
-
-                            }
-                            @Override
-                            public void setChild(Iterator_Interface iter) {
-
-                            }
-
-                            @Override
-                            public void reset() {
-
-                            }
-                        }, condition).readOneTuple();
-                        aggregate_func(Double.parseDouble(tup.tuples.get(tup.tuples.size()-1)),oper_to_perform);
-                    }
+                        }
                     String agg_val = "";
                     if(oper_to_perform.equals("SUM")){
                         agg_val = SUM.toString();
