@@ -5,6 +5,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,15 +14,18 @@ import java.util.StringTokenizer;
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     Expression condition;
+    ArrayList<Column> schema;
+    int schema_flag;
     public EvalIterator_Interface(Iterator_Interface iter,Expression condition)
     {
         this.iter = iter;
         this.condition = condition;
+        this.schema = new ArrayList<>();
+        schema_flag = 0;
     }
     @Override
     public Tuple readOneTuple() {
        ArrayList<String> tuple = null;
-       ArrayList<Column> schema = null;
         HashSet<Column> test = new HashSet<>();
        Tuple tup;
         do{
@@ -32,7 +36,11 @@ public class EvalIterator_Interface implements Iterator_Interface{
             }
             else {
                 tuple = tup.tuples;
-                schema = tup.schema;
+                if(schema_flag==0)
+                {
+                    schema = tup.schema;
+                    schema_flag =1;
+                }
             }
             final ArrayList<String> to_copy = tuple;
             final ArrayList<Column> schema_final = schema;

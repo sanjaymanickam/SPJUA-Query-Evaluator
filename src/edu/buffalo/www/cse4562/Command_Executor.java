@@ -42,6 +42,7 @@ public class Command_Executor {
                 Data_Storage.hash_flag = 0;
                 Data_Storage.projectionColumns.clear();
                 Data_Storage.finalSchema.clear();
+                int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     System.err.println(count);
@@ -69,7 +70,10 @@ public class Command_Executor {
                         temp.tuples.addAll(tuple.tuples);
                         temp.schema.addAll(tuple.schema);
                         result.add(temp.tuples);
-                        schema = temp.schema;
+                        if(schema_flag==0) {
+                            schema = temp.schema;
+                            schema_flag=1;
+                        }
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                     Column col = new Column();
