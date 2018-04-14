@@ -3,15 +3,13 @@ package edu.buffalo.www.cse4562;
 import javafx.util.Pair;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import org.omg.Dynamic.Parameter;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class GroupByAggregate {
         static int position1 = -1;
@@ -22,13 +20,9 @@ public class GroupByAggregate {
             Tuple tup = new Tuple();
             ArrayList<Integer> positions = new ArrayList<>();
             LinkedHashMap<String, ArrayList<ArrayList<String>>> resultSet = new LinkedHashMap<>();
-            LinkedHashMap<String, Pair<Double, Integer>> aggregateset = new LinkedHashMap<>();
+            LinkedHashMap<String,HashMap<Double,Integer>> aggregateset = new LinkedHashMap<>();
             LinkedHashMap<String, ArrayList<String>> finalresult = new LinkedHashMap<>();
-            if (Data_Storage.groupbyflag == 0) {
-                resultSet.put("1", tuple);
-            }
-            else
-            {
+
             for (int i = 0; i < Data_Storage.groupByColumn.size(); i++) {
                 Column col = Data_Storage.groupByColumn.get(i);
                 positions.add(schema.indexOf(col));
@@ -36,12 +30,18 @@ public class GroupByAggregate {
 
             for (int i = 0; i < tuple.size(); i++) {
                 String key = "";
-                for (int j = 0; j < positions.size(); j++) {
-                    if (j == positions.size() - 1) {
-                        key = key + tuple.get(i).get(positions.get(j));
-                    } else {
-                        key = key + tuple.get(i).get(positions.get(j)) + ",";
-                    }
+                if (Data_Storage.groupbyflag != 0) {
+                        for (int j = 0; j < positions.size(); j++) {
+                            if (j == positions.size() - 1) {
+                                key = key + tuple.get(i).get(positions.get(j));
+                            } else {
+                                key = key + tuple.get(i).get(positions.get(j)) + ",";
+                            }
+                        }
+                }
+                else
+                {
+                    key = "1";
                 }
                 Tuple tup_to_send = null;
                 Iterator iter = Data_Storage.aggregate_operations.iterator();
@@ -82,20 +82,27 @@ public class GroupByAggregate {
                         }, expr).readOneTuple();
                     }
                 }
-                if (!aggregateset.containsKey(key))
-                    aggregateset.put(key, new Pair<>(Double.parseDouble(tup_to_send.tuples.get(tup_to_send.tuples.size() - 1)), 1));
-                else
-                    aggregateset.replace(key, new Pair<>(aggregateset.get(key).getKey() + Double.parseDouble(tup_to_send.tuples.get(tup_to_send.tuples.size() - 1)), aggregateset.get(key).getValue() + 1));
-
+                if (!aggregateset.containsKey(key)) {
+                    HashMap<Double,Integer> hmap = new HashMap<>();
+                    hmap.put(Double.parseDouble(tup_to_send.tuples.get(tup_to_send.tuples.size() - 1)), 1);
+                    aggregateset.put(key,hmap);
+                }else {
+                    Double dub = new ArrayList<>(aggregateset.get(key).keySet()).get(0);
+                    Integer int1 = aggregateset.get(key).get(dub)+1;
+                    aggregateset.get(key).remove(dub);
+                    dub = dub+Double.parseDouble(tup_to_send.tuples.get(tup_to_send.tuples.size()-1));
+                    aggregateset.get(key).put(dub,int1);
+                }
                 if (resultSet.containsKey(key)) {
                     resultSet.get(key).add(tuple.get(i));
                 } else {
                     ArrayList<ArrayList<String>> temp = new ArrayList<>();
                     temp.add(tuple.get(i));
                     resultSet.put(key, temp);
+
                 }
             }
-            }
+
             Iterator result_set_iter = resultSet.keySet().iterator();
             while(result_set_iter.hasNext()) {
                 String key = result_set_iter.next().toString();
@@ -129,9 +136,11 @@ public class GroupByAggregate {
                         Double to_add_val = 0.0;
                         try{
                         if(function.getName().equals("SUM")) {
-                            to_add_val = aggregateset.get(key).getKey();
+                            to_add_val = new ArrayList<>(aggregateset.get(key).keySet()).get(0);
                         }else{
-                            to_add_val = aggregateset.get(key).getKey()/aggregateset.get(key).getValue();
+                            Double dub = new ArrayList<>(aggregateset.get(key).keySet()).get(0);
+                            Integer int1 = aggregateset.get(key).get(dub);
+                            to_add_val = dub/int1;
                         }
                         }
                         catch (Exception e)
