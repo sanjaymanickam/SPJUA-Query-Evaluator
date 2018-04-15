@@ -65,17 +65,17 @@ public class FileIterator_Interface implements Iterator_Interface{
         if(aliastableName==null)
             aliastableName = new_file;
 
-//        if(schemaMap.containsKey(new_file)){
-//            schema = null;
-//        }else{
-//            while(it.hasNext()){
-//                col_name = it.next().toString();
-//                Column col = new Column(new Table(aliastableName), col_name);
-//                schema.add(col);
-//            }
-//            schemaMap.put(new_file,schema);
-//        }
-        while(it.hasNext())
+        if(schemaMap.containsKey(new_file)){
+            schema = schemaMap.get(new_file);
+        }else{
+            while(it.hasNext()){
+                col_name = it.next().toString();
+                Column col = new Column(new Table(aliastableName), col_name);
+                schema.add(col);
+            }
+            schemaMap.put(new_file,schema);
+        }
+        /*while(it.hasNext())
         {
             col_name = it.next().toString();
             //if(Data_Storage.join == 1) {
@@ -93,8 +93,8 @@ public class FileIterator_Interface implements Iterator_Interface{
                 schema.add(col);
                 to_send.add(iter_string.next().toString());
             }*/
-        }
-        return new Tuple(to_send,schema);
+        //}
+        return new Tuple(str_split,schema);
     }
 
     @Override
