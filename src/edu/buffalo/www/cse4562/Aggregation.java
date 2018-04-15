@@ -17,8 +17,6 @@ public class Aggregation{
     static Integer COUNT = 0;
     static long total = 0;
 
-    static ArrayList<ArrayList<String>> tosend = new ArrayList<>();
-    static ArrayList<String> tosend_schema = new ArrayList<>();
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result,LinkedHashMap<String,ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
          LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
         Iterator iter_key = tuple.keySet().iterator();
@@ -66,8 +64,6 @@ public class Aggregation{
                             aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
                         }
                         else {
-
-                            long starttime = System.nanoTime();
                             Eval eval = new Eval() {
                                 @Override
                                 public PrimitiveValue eval(Column column) {
@@ -112,10 +108,11 @@ public class Aggregation{
                                     }
                                 }
                             };
-                            long endtime = System.nanoTime();
                             try {
                                 //test.clear();
+                                long starttime = System.nanoTime();
                                 PrimitiveValue pr = eval.eval(condition);
+                                long endtime = System.nanoTime();
                                 total = total+(endtime-starttime);
                                 if (pr == BooleanValue.FALSE) {
                                     tuple = null;
