@@ -27,7 +27,6 @@ public class Command_Executor {
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
-                System.err.println(stmt.toString());
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -45,21 +44,10 @@ public class Command_Executor {
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
-                    System.err.println(count);
-//                    if(count == 3){
-//                        System.err.println("query1 over");
-//                        System.out.println(prompt);
-//                        count++;
-//                        continue;
-//                    }
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-//                    while(Data_Storage.oper!=null){
-//                        Data_Storage.oper.print();
-//                        Data_Storage.oper = Data_Storage.oper.getChild();
-//                    }
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
@@ -67,6 +55,7 @@ public class Command_Executor {
                     long starttime = System.nanoTime();
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     while (tuple != null){
+
                         Tuple temp = new Tuple();
                         temp.tuples.addAll(tuple.tuples);
                         temp.schema.addAll(tuple.schema);
@@ -75,22 +64,23 @@ public class Command_Executor {
                             schema = temp.schema;
                             schema_flag=1;
                         }
+                       // GroupByAggregation.groupBy(tuple,schema);
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                     long endtime = System.nanoTime();
-                    System.err.println("Projection : Time : "+(endtime-starttime));
+                    //System.err.println("Projection : Time : "+(endtime-starttime));
                     Column col = new Column();
                     starttime = System.nanoTime();
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     endtime = System.nanoTime();
-                    System.err.println("Groupby Over : Time : "+(endtime-starttime));
+                    //System.err.println("Groupby Over : Time : "+(endtime-starttime));
                     starttime = System.nanoTime();
                     if(Data_Storage.aggregateflag==1)
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
                     endtime= System.nanoTime();
-                    System.err.println("Aggregate Over : Time : "+((endtime-starttime)));
+                    //System.err.println("Aggregate Over : Time : "+((endtime-starttime)));
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 
 //                    group_by_print(aggregate_result,result,schema);
@@ -193,7 +183,6 @@ public class Command_Executor {
                     if(tableName != null){
                         temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
                     }
-                    //String colname = schema.get(temp_i++);
                     if(temp.equals("DOUBLE"))
                     {
                         DoubleValue d_value = new DoubleValue(itr.next().toString());
@@ -209,35 +198,9 @@ public class Command_Executor {
                     if (itr.hasNext()) {
                         System.out.print("|");
                     }
-                    /*Column col = schema.get(temp_i++);
-                    String tableName =  col.getTable().getName();
-                    String col_name = col.getColumnName();
-                    if(Data_Storage.table_alias.containsKey(tableName))
-                        tableName =Data_Storage.table_alias.get(tableName);
-                    Column new_col = new Column(new Table(tableName),col_name);
-                    String temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
-                    if(temp.equals("DOUBLE"))
-                    {
-                        DoubleValue d_value = new DoubleValue(itr.next().toString());
-                        System.out.print(d_value);
-                    }
-                    else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
-                    {
-                        System.out.print(new StringValue(itr.next().toString()));
-                    }
-                    else {
-                        System.out.print(itr.next());
-                    }
-                    if (itr.hasNext()) {
-                        System.out.print("|");
-                    }*/
                 }
                 temp_i=0;
                 System.out.println();
         }
-    }
-    static void group_by_print(LinkedHashMap<String,Tuple> aggregate_result,ArrayList<ArrayList<String>> result,ArrayList<Column> schema)
-    {
-
     }
 }
