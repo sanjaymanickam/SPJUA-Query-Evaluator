@@ -7,10 +7,7 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Aggregation{
     static Double SUM = 0.0,AVG =0.0;
@@ -22,9 +19,11 @@ public class Aggregation{
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result,LinkedHashMap<String,ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
          LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
         Iterator iter_key = tuple.keySet().iterator();
+        HashMap<String,String> dummy_hash = new HashMap<>();
         while(iter_key.hasNext()) //groups
         {
             String key = iter_key.next().toString();
+            String dum_key = key.split(",")[0];
             Iterator iter_func = Data_Storage.finalColumns.iterator();
             while(iter_func.hasNext())
             {
@@ -66,77 +65,82 @@ public class Aggregation{
                             aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
                         }
                         else {
+                            if (!dummy_hash.containsKey(dum_key+func.getName())) {
+                                Eval eval = new Eval() {
+                                    @Override
+                                    public PrimitiveValue eval(Column column) {
+                                        String col_name = column.getColumnName();
+                                        String tableName = null;
+                                        String origtableName = null;
+                                        if (Data_Storage.alias_table.containsKey(col_name))
+                                            col_name = Data_Storage.alias_table.get(col_name);
+                                        if (column.getTable().getName() == null)
+                                            tableName = Data_Storage.current_schema.get(col_name);
+                                        else
+                                            tableName = column.getTable().getName();
+                                        if (Data_Storage.table_alias.containsKey(tableName)) {
+                                            origtableName = Data_Storage.table_alias.get(tableName);
+                                        } else {
+                                            origtableName = tableName;
+                                        }
 
-                            Eval eval = new Eval() {
-                                @Override
-                                public PrimitiveValue eval(Column column) {
-                                    String col_name = column.getColumnName();
-                                    String tableName = null;
-                                    String origtableName = null;
-                                    if (Data_Storage.alias_table.containsKey(col_name))
-                                        col_name = Data_Storage.alias_table.get(col_name);
-                                    if (column.getTable().getName() == null)
-                                        tableName = Data_Storage.current_schema.get(col_name);
-                                    else
-                                        tableName = column.getTable().getName();
-                                    if (Data_Storage.table_alias.containsKey(tableName)) {
-                                        origtableName = Data_Storage.table_alias.get(tableName);
+                                        int position = schema.indexOf(new Column(new Table(origtableName), col_name));
+                                        if (position == -1) {
+                                            position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
+                                        }
+                                        String data_type_table = origtableName;
+                                        if (Data_Storage.table_alias.get(origtableName) != null) {
+                                            data_type_table = Data_Storage.table_alias.get(origtableName);
+                                        }
+
+                                        String data_type = Data_Storage.tables.get(data_type_table).get(col_name);
+                                        if (data_type == null) {
+                                            data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
+                                        }
+                                        if (data_type.equals("INTEGER")) {
+                                            return new LongValue(temp_array.get(position));
+                                        } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
+                                            return new StringValue(temp_array.get(position));
+                                        } else if (data_type.equals("DOUBLE")) {
+                                            return new DoubleValue(temp_array.get(position));
+                                        } else if (data_type.equals("DATE")) {
+                                            return new DateValue(temp_array.get(position));
+                                        } else {
+                                            return null;
+                                        }
+                                    }
+                                };
+
+                                try {
+                                    //test.clear();
+                                    PrimitiveValue pr = eval.eval(condition);
+                                    if (pr == BooleanValue.FALSE) {
+                                        tuple = null;
                                     } else {
-                                        origtableName = tableName;
+                                        if (pr != BooleanValue.TRUE && pr != null) {
+                                            aggregate_func(Double.parseDouble(pr.toString()), oper_to_perform);
+                                        }
                                     }
-
-                                    int position = schema.indexOf(new Column(new Table(origtableName), col_name));
-                                    if(position == -1){
-                                        position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
-                                    }
-                                    String data_type_table = origtableName;
-                                   if(Data_Storage.table_alias.get(origtableName) != null){
-                                       data_type_table = Data_Storage.table_alias.get(origtableName);
-                                   }
-
-                                   String data_type = Data_Storage.tables.get(data_type_table).get(col_name);
-                                   if(data_type == null){
-                                       data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
-                                   }
-                                    if (data_type.equals("INTEGER")) {
-                                        return new LongValue(temp_array.get(position));
-                                    } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
-                                        return new StringValue(temp_array.get(position));
-                                    } else if (data_type.equals("DOUBLE")) {
-                                        return new DoubleValue(temp_array.get(position));
-                                    } else if (data_type.equals("DATE")) {
-                                        return new DateValue(temp_array.get(position));
-                                    } else {
-                                        return null;
-                                    }
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
                                 }
-                            };
-
-                            try {
-                                //test.clear();
-                                PrimitiveValue pr = eval.eval(condition);
-                                if (pr == BooleanValue.FALSE) {
-                                    tuple = null;
-                                } else {
-                                    if (pr != BooleanValue.TRUE && pr != null) {
-                                        aggregate_func(Double.parseDouble(pr.toString()), oper_to_perform);
-                                    }
-                                }
-                            } catch (SQLException e) {
-                                e.printStackTrace();
                             }
                         }
                     }
                     String agg_val = "";
-                    if(oper_to_perform.equals("SUM")){
-                        agg_val = SUM.toString();
-                    }else if(oper_to_perform.equals("AVG")){
-                        Double avg = SUM/COUNT;
-                        agg_val = avg.toString();
+                    if(dummy_hash.containsKey(dum_key+func.getName())){
+                        agg_val = dummy_hash.get(dum_key+func.getName());
+                    }else{
+                        if(oper_to_perform.equals("SUM")){
+                            agg_val = SUM.toString();
+                        }else if(oper_to_perform.equals("AVG")){
+                            Double avg = SUM/COUNT;
+                            agg_val = avg.toString();
+                        }
                     }
                     //group_tuple.add(SUM.toString());
 
-
+                    dummy_hash.put(dum_key+ func.getName(), agg_val);
                     if(result_tosend.containsKey(key))
                     {
                         result_tosend.get(key).add(agg_val);
