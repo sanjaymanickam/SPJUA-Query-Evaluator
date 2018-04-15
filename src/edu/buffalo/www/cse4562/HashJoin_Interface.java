@@ -79,7 +79,7 @@ public class HashJoin_Interface implements Iterator_Interface {
             }
             else
             {
-                    if (count < Data_Storage.stored_files.get(iter2).size()) {
+                    if (count != Data_Storage.stored_files.get(iter2).size()) {
                         to_check = Data_Storage.stored_files.get(iter2).get(count);
                         int pos = to_check.schema.indexOf(left) != -1 ? to_check.schema.indexOf(left) : to_check.schema.indexOf(right);
                         if (builder.containsKey(to_check.tuples.get(pos))) {
@@ -143,7 +143,7 @@ public class HashJoin_Interface implements Iterator_Interface {
         int pos = tup.schema.indexOf(left)!=-1 ? tup.schema.indexOf(left):tup.schema.indexOf(right);
         if(!builder.containsKey(tup.tuples.get(pos)))
         {
-            ArrayList<Tuple> temp = new ArrayList<>(100000);
+            ArrayList<Tuple> temp = new ArrayList<>();
             temp.add(tup);
             builder.put(tup.tuples.get(pos),temp);
         }
