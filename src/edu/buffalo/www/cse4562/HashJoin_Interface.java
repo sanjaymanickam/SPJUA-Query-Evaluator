@@ -57,6 +57,7 @@ public class HashJoin_Interface implements Iterator_Interface {
             {
                 read_file(iter1);
                 read_file_tostore(iter2);
+                Data_Storage.hash_flag = 1;
             }
         }
         do {
