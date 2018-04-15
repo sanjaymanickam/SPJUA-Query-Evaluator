@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 public class Aggregation{
     static Double SUM = 0.0,AVG =0.0;
     static Integer COUNT = 0;
-
+    static long total = 0;
 
     static ArrayList<ArrayList<String>> tosend = new ArrayList<>();
     static ArrayList<String> tosend_schema = new ArrayList<>();
@@ -67,6 +67,7 @@ public class Aggregation{
                         }
                         else {
 
+                            long starttime = System.nanoTime();
                             Eval eval = new Eval() {
                                 @Override
                                 public PrimitiveValue eval(Column column) {
@@ -111,10 +112,11 @@ public class Aggregation{
                                     }
                                 }
                             };
-
+                            long endtime = System.nanoTime();
                             try {
                                 //test.clear();
                                 PrimitiveValue pr = eval.eval(condition);
+                                total = total+(endtime-starttime);
                                 if (pr == BooleanValue.FALSE) {
                                     tuple = null;
                                 } else {
@@ -160,6 +162,7 @@ public class Aggregation{
 
             }
         }
+        System.err.println("Eval TIME : "+total);
         return result_tosend;
     }
     static void aggregate_func(Double primitiveValue, String oper)

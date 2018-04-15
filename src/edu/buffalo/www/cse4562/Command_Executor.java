@@ -64,6 +64,7 @@ public class Command_Executor {
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
                     Data_Storage.project_array.addAll(temp_set);
+                    long starttime = System.nanoTime();
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     while (tuple != null){
                         Tuple temp = new Tuple();
@@ -76,15 +77,20 @@ public class Command_Executor {
                         }
                         tuple = Data_Storage.oper.readOneTuple();
                     }
+                    long endtime = System.nanoTime();
+                    System.err.println("Projection : Time : "+(endtime-starttime));
                     Column col = new Column();
+                    starttime = System.nanoTime();
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
+                    endtime = System.nanoTime();
+                    System.err.println("Groupby Over : Time : "+(endtime-starttime));
+                    starttime = System.nanoTime();
                     if(Data_Storage.aggregateflag==1)
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
                     }
-
-
-                    System.err.println("here?");
+                    endtime= System.nanoTime();
+                    System.err.println("Aggregate Over : Time : "+((endtime-starttime)));
                     sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
 
 //                    group_by_print(aggregate_result,result,schema);
