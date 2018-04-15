@@ -1,13 +1,16 @@
 package edu.buffalo.www.cse4562;
 
+import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -67,33 +70,22 @@ public class Aggregation {
                             }
                             else
                             {
-                            Tuple tup = new EvalIterator_Interface(new Iterator_Interface() {
-                                @Override
-                                public Tuple readOneTuple() {
-                                    return new Tuple(temp_array, schema);
+
+                                Eval eval = new Eval() {
+                                    @Override
+                                    public PrimitiveValue eval(Column col) throws SQLException {
+                                        return new DoubleValue(temp_array.get(schema.indexOf(col)));
+                                    }
+                                };
+                                PrimitiveValue tup = null;
+                                try {
+                                    tup = eval.eval(condition);
                                 }
-
-                                @Override
-                                public Iterator_Interface getChild() {
-                                    return null;
+                                catch (Exception e)
+                                {
+                                    e.printStackTrace();
                                 }
-
-                                @Override
-                                public void print() {
-
-                                }
-
-                                @Override
-                                public void setChild(Iterator_Interface iter) {
-
-                                }
-
-                                @Override
-                                public void reset() {
-
-                                }
-                            }, condition).readOneTuple();
-                            aggregate_func(Double.parseDouble(tup.tuples.get(tup.tuples.size() - 1)), oper_to_perform);
+                            aggregate_func(Double.parseDouble(tup.toString()), oper_to_perform);
                             }
                         }
                     String agg_val = "";
