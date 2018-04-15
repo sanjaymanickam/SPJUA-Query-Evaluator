@@ -9,6 +9,7 @@ import java.util.*;
 public class ProjectionIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     ArrayList<Column> selectedColumns = new ArrayList<>();
+    ArrayList<Column> schema = new ArrayList<>();
     public ProjectionIterator_Interface(ArrayList<Column> selectedColumns, Iterator_Interface iter){
         this.iter = iter;
         this.selectedColumns = selectedColumns;

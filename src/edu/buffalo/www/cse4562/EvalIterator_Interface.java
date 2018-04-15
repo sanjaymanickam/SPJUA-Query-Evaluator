@@ -5,7 +5,6 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,18 +13,17 @@ import java.util.StringTokenizer;
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     Expression condition;
-    ArrayList<Column> schema;
-    int schema_flag;
+    //ArrayList<Column> schema = new ArrayList<>();
     public EvalIterator_Interface(Iterator_Interface iter,Expression condition)
     {
         this.iter = iter;
         this.condition = condition;
-        this.schema = new ArrayList<>();
-        schema_flag = 0;
     }
     @Override
     public Tuple readOneTuple() {
+        Data_Storage.read_tuple++;
        ArrayList<String> tuple = null;
+       ArrayList<Column> schema = null;
         HashSet<Column> test = new HashSet<>();
        Tuple tup;
         do{
@@ -36,11 +34,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
             }
             else {
                 tuple = tup.tuples;
-                if(schema_flag==0)
-                {
-                    schema = tup.schema;
-                    schema_flag =1;
-                }
+                schema = tup.schema;
             }
             final ArrayList<String> to_copy = tuple;
             final ArrayList<Column> schema_final = schema;
@@ -66,10 +60,6 @@ public class EvalIterator_Interface implements Iterator_Interface{
                         origtableName = tableName;
                     }
                     String data_type = Data_Storage.tables.get(origtableName).get(col_name);
-                    if(data_type== null)
-                    {
-                        System.out.println();
-                    }
                         if (data_type.equals("INTEGER")) {
                             return new LongValue(to_copy.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
