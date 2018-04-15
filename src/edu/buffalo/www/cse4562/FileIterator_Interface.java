@@ -60,39 +60,39 @@ public class FileIterator_Interface implements Iterator_Interface{
 //                  new_file = entry.getKey().toString();
 //          }
 //        }
-        if(aliastableName==null)
-            aliastableName = new_file;
-
-        if(schemaMap.containsKey(new_file)){
-            schema = null;
-        }else{
-            while(it.hasNext()){
-                col_name = it.next().toString();
-                Column col = new Column(new Table(aliastableName), col_name);
-                schema.add(col);
-            }
-            schemaMap.put(new_file,schema);
-        }
-//        /*while(it.hasNext())
-//        {
-//            col_name = it.next().toString();
-//            //if(Data_Storage.join == 1) {
-//                if (Data_Storage.project_array.contains(col_name)) {
-//                    Column col = new Column(new Table(aliastableName), col_name);
-//                    schema.add(col);
-//                    to_send.add(iter_string.next().toString());
-//                } else {
-//                    iter_string.next();
-//                }
-//            //}
-//            /*else
-//            {
+//        if(aliastableName==null)
+//            aliastableName = new_file;
+//
+//        if(schemaMap.containsKey(new_file)){
+//            schema = null;
+//        }else{
+//            while(it.hasNext()){
+//                col_name = it.next().toString();
 //                Column col = new Column(new Table(aliastableName), col_name);
 //                schema.add(col);
-//                to_send.add(iter_string.next().toString());
-//            }*/
+//            }
+//            schemaMap.put(new_file,schema);
 //        }
-        return new Tuple(str_split,schema);
+        while(it.hasNext())
+        {
+            col_name = it.next().toString();
+            if(Data_Storage.join == 1) {
+                if (Data_Storage.project_array.contains(col_name)) {
+                    Column col = new Column(new Table(aliastableName), col_name);
+                    schema.add(col);
+                    to_send.add(iter_string.next().toString());
+                } else {
+                    iter_string.next();
+                }
+            }
+            else
+            {
+                Column col = new Column(new Table(aliastableName), col_name);
+                schema.add(col);
+                to_send.add(iter_string.next().toString());
+            }
+        }
+        return new Tuple(to_send,schema);
     }
 
     @Override
