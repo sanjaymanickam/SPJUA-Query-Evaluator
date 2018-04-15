@@ -71,21 +71,22 @@ public class Aggregation {
                             else
                             {
 
-                                Eval eval = new Eval() {
-                                    @Override
-                                    public PrimitiveValue eval(Column col) throws SQLException {
-                                        return new DoubleValue(temp_array.get(schema.indexOf(col)));
-                                    }
-                                };
-                                PrimitiveValue tup = null;
-                                try {
-                                    tup = eval.eval(condition);
-                                }
-                                catch (Exception e)
-                                {
-                                    e.printStackTrace();
-                                }
-                            aggregate_func(Double.parseDouble(tup.toString()), oper_to_perform);
+//                                Eval eval = new Eval() {
+//                                    @Override
+//                                    public PrimitiveValue eval(Column col) throws SQLException {
+//                                        return new DoubleValue(temp_array.get(schema.indexOf(col)));
+//                                    }
+//                                };
+//                                PrimitiveValue tup = null;
+//                                try {
+//                                    tup = eval.eval(condition);
+//                                }
+//                                catch (Exception e)
+//                                {
+//                                    e.printStackTrace();
+//                                }
+//                            aggregate_func(Double.parseDouble(tup.toString()), oper_to_perform);
+                                aggregate_func(Double.parseDouble("0"), oper_to_perform);
                             }
                         }
                     String agg_val = "";
