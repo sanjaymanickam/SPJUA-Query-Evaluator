@@ -1,19 +1,18 @@
 package edu.buffalo.www.cse4562;
 
-import net.sf.jsqlparser.expression.DoubleValue;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.eval.Eval;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.util.deparser.ExpressionDeParser;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
-public class Aggregation {
+public class Aggregation{
     static Double SUM = 0.0,AVG =0.0;
     static Integer COUNT = 0;
 
@@ -49,53 +48,73 @@ public class Aggregation {
                         ///col_array.add(new Column(new Table(),func.toString()));
                         result_tosend.put(key, temp);
                     }
-                }else if(selitem.getExpression() instanceof Function) {
-//                    finalCol = col;
-                    if (selitem.getAlias() != null) {
+                }else if(selitem.getExpression() instanceof Function){
+                    if(selitem.getAlias() != null){
                         columnName = selitem.getAlias();
-                        finalCol = new Column(new Table(null), selitem.getAlias());
+                        finalCol = new Column(new Table(null),selitem.getAlias());
                     }
                     Function func = (Function) selitem.getExpression();
                     String oper_to_perform = func.getName();
                     Expression condition = func.getParameters().getExpressions().get(0);
                     Iterator iter_tuple = tuple.get(key).iterator();
-                        while (iter_tuple.hasNext()) //within each group
-                        {
-                            ArrayList<String> temp_array = (ArrayList) iter_tuple.next();
-                            if (condition instanceof Column) {
-                                aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
+                    while(iter_tuple.hasNext()) //within each group
+                    {
+                        ArrayList<String> temp_array =(ArrayList)iter_tuple.next();
+
+                        Eval eval = new Eval() {
+                            @Override
+                            public PrimitiveValue eval(Column column) {
+                                String col_name = column.getColumnName();
+                                String tableName=null;
+                                String origtableName = null;
+                                if(Data_Storage.alias_table.containsKey(col_name))
+                                    col_name = Data_Storage.alias_table.get(col_name);
+                                if(column.getTable().getName()==null)
+                                    tableName = Data_Storage.current_schema.get(col_name);
+                                else
+                                    tableName = column.getTable().getName();
+                                int position = schema.indexOf(new Column(new Table(tableName),col_name));
+                                if(Data_Storage.table_alias.containsKey(tableName))
+                                {
+                                    origtableName = Data_Storage.table_alias.get(tableName);
+                                }
+                                else
+                                {
+                                    origtableName = tableName;
+                                }
+                                String data_type = Data_Storage.tables.get(origtableName).get(col_name);
+                                if (data_type.equals("INTEGER")) {
+                                    return new LongValue(temp_array.get(position));
+                                } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
+                                    return new StringValue(temp_array.get(position));
+                                } else if (data_type.equals("DOUBLE")) {
+                                    return new DoubleValue(temp_array.get(position));
+                                } else if (data_type.equals("DATE")) {
+                                    return new DateValue(temp_array.get(position));
+                                } else {
+                                    return null;
+                                }
+                            }
+                        };
+
+                        try{
+                            //test.clear();
+                            PrimitiveValue pr = eval.eval(condition);
+                            if(pr == BooleanValue.FALSE) {
+                                tuple = null;
                             }
                             else
                             {
-                            Tuple tup = new EvalIterator_Interface(new Iterator_Interface() {
-                                @Override
-                                public Tuple readOneTuple() {
-                                    return new Tuple(temp_array, schema);
+                                if(pr != BooleanValue.TRUE && pr != null) {
+                                    aggregate_func(Double.parseDouble(pr.toString()),oper_to_perform);
                                 }
-
-                                @Override
-                                public Iterator_Interface getChild() {
-                                    return null;
-                                }
-
-                                @Override
-                                public void print() {
-
-                                }
-
-                                @Override
-                                public void setChild(Iterator_Interface iter) {
-
-                                }
-
-                                @Override
-                                public void reset() {
-
-                                }
-                            }, condition).readOneTuple();
-                            aggregate_func(Double.parseDouble(tup.tuples.get(tup.tuples.size() - 1)), oper_to_perform);
                             }
+                        }catch(SQLException e)
+                        {
+                            e.printStackTrace();
                         }
+
+                    }
                     String agg_val = "";
                     if(oper_to_perform.equals("SUM")){
                         agg_val = SUM.toString();

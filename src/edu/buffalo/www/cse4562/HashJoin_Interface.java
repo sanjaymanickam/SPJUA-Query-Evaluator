@@ -20,8 +20,6 @@ public class HashJoin_Interface implements Iterator_Interface {
     Tuple send_tuple = new Tuple();
     Tuple to_check = null;
     ArrayList<Tuple> to_send = new ArrayList<>();
-    ArrayList<Column> schema;
-    int schema_flag ;
     int pos;
     Iterator to_send_iterator = null;
     public HashJoin_Interface(Iterator_Interface iter1, Iterator_Interface iter2, Expression condition)
@@ -32,8 +30,6 @@ public class HashJoin_Interface implements Iterator_Interface {
         this.binaryExpression = (BinaryExpression)condition;
         this.left = (Column)binaryExpression.getLeftExpression();
         this.right = (Column) binaryExpression.getRightExpression();
-        this.schema_flag = 0;
-        this.schema = new ArrayList<>();
     }
     @Override
     public Tuple readOneTuple() {
@@ -49,15 +45,8 @@ public class HashJoin_Interface implements Iterator_Interface {
                     Tuple tup = iter1.readOneTuple();
                     Tuple to_tup= new Tuple();
                     if(tup!=null) {
-                        if(schema_flag==0) {
-                            to_tup.tuples.addAll(tup.tuples);
-                            to_tup.schema.addAll(tup.schema);
-                            schema = tup.schema;
-                        }
-                        else
-                        {
-                            to_tup.tuples.addAll(tup.tuples);
-                        }
+                        to_tup.tuples.addAll(tup.tuples);
+                        to_tup.schema.addAll(tup.schema);
                         build_table(to_tup);
                         Data_Storage.hash_flag=1;
                     }else
@@ -66,29 +55,21 @@ public class HashJoin_Interface implements Iterator_Interface {
             }
             else
             {
-                    read_file(iter1);
-                    read_file_tostore(iter2);
+                read_file(iter1);
+                read_file_tostore(iter2);
             }
         }
         do {
             if(to_send_iterator!=null) {
                 if (to_send_iterator.hasNext()) {
-                Tuple temp = (Tuple) to_send_iterator.next();
-                send_tuple.tuples.clear();
-                send_tuple.schema.clear();
-                if(schema_flag ==0) {
+                    Tuple temp = (Tuple) to_send_iterator.next();
+                    send_tuple.tuples.clear();
+                    send_tuple.schema.clear();
                     send_tuple.tuples.addAll(temp.tuples);
                     send_tuple.schema.addAll(temp.schema);
                     send_tuple.schema.addAll(to_check.schema);
                     send_tuple.tuples.addAll(to_check.tuples);
-                    schema_flag = 1;
-                }
-                else
-                {
-                    send_tuple.tuples.addAll(temp.tuples);
-                    send_tuple.tuples.addAll(to_check.tuples);
-                }
-                data_flag = 0;
+                    data_flag = 0;
                 }
                 else
                 {
@@ -165,7 +146,7 @@ public class HashJoin_Interface implements Iterator_Interface {
     void build_table(Tuple tup)
     {
 
-        int pos = schema.indexOf(left)!=-1 ? schema.indexOf(left):schema.indexOf(right);
+        int pos = tup.schema.indexOf(left)!=-1 ? tup.schema.indexOf(left):tup.schema.indexOf(right);
         if(!builder.containsKey(tup.tuples.get(pos)))
         {
             ArrayList<Tuple> temp = new ArrayList<>(100000);

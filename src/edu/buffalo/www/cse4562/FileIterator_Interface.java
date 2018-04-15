@@ -10,7 +10,8 @@ public class FileIterator_Interface implements Iterator_Interface{
     BufferedReader read;
     String new_file;
     String aliastableName;
-    HashMap<String, ArrayList<Column>> schemaMap = new HashMap<>();
+    //HashMap<String, ArrayList<Column>> schemaMap = new HashMap<>();
+    ArrayList<Column> schema = new ArrayList<>();
     public FileIterator_Interface(String new_file,String aliastableName) {
         this.new_file = new_file;
         this.aliastableName = aliastableName;
@@ -20,6 +21,7 @@ public class FileIterator_Interface implements Iterator_Interface{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        populateSchema();
     }
 
     @Override
@@ -117,4 +119,14 @@ public class FileIterator_Interface implements Iterator_Interface{
     public void setChild(Iterator_Interface iter) {
 
     }
+
+    public void populateSchema(){
+        Iterator it = Data_Storage.tables.get(new_file).keySet().iterator();
+        while(it.hasNext()){
+            Column col = new Column(new Table(new_file),it.next().toString());
+            this.schema.add(col);
+        }
+
+    }
+
 }
