@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     Expression condition;
-    ArrayList<Column> schema = new ArrayList<>();
+    //ArrayList<Column> schema = new ArrayList<>();
     public EvalIterator_Interface(Iterator_Interface iter,Expression condition)
     {
         this.iter = iter;
