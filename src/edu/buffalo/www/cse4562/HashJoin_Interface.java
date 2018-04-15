@@ -79,8 +79,7 @@ public class HashJoin_Interface implements Iterator_Interface {
             }
             else
             {
-                try {
-                    if (count != Data_Storage.stored_files.get(iter2).size()) {
+                    if (count < Data_Storage.stored_files.get(iter2).size()) {
                         to_check = Data_Storage.stored_files.get(iter2).get(count);
                         int pos = to_check.schema.indexOf(left) != -1 ? to_check.schema.indexOf(left) : to_check.schema.indexOf(right);
                         if (builder.containsKey(to_check.tuples.get(pos))) {
@@ -93,11 +92,6 @@ public class HashJoin_Interface implements Iterator_Interface {
                         data_flag = 0;
                         send_tuple = null;
                     }
-                }
-                catch (Exception e)
-                {
-                    System.out.println();
-                }
             }
         }while(data_flag!=0);
         return send_tuple;

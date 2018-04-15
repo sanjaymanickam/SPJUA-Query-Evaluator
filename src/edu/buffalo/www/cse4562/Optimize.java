@@ -252,7 +252,7 @@ public class Optimize {
                     join_iter = new JoinIteratorInterface(joins.get(i), joins.get((i--) - 1));
                     for(int t = 0;t<join_name1_table.size();t++)
                     {
-                        if((join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
+                        if((hashjoin_names.get(t).equals(hashjoin_names.get(t+1))) || (join_name1_table.get(t).equals(hashjoin_names.get(t+1))&&join_name2_table.get(t).equals(hashjoin_names.get(t))) ||
                                 (join_name2_table.get(t).equals(hashjoin_names.get(t+1))&&join_name1_table.get(t).equals(hashjoin_names.get(t))))
                         {
                             join_iter = new HashJoin_Interface(((JoinIteratorInterface) join_iter).iter1,((JoinIteratorInterface) join_iter).iter2, join_condition.get(i));
