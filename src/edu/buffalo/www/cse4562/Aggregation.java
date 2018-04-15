@@ -19,6 +19,7 @@ public class Aggregation{
 
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result,LinkedHashMap<String,ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
          LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
+         total = 0;
         Iterator iter_key = tuple.keySet().iterator();
         while(iter_key.hasNext()) //groups
         {
