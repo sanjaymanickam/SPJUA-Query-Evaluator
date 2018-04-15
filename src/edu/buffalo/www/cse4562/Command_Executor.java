@@ -46,7 +46,7 @@ public class Command_Executor {
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
                     System.err.println(count);
-//                    if(count < 3){
+//                    if(count == 3){
 //                        System.err.println("query1 over");
 //                        System.out.println(prompt);
 //                        count++;

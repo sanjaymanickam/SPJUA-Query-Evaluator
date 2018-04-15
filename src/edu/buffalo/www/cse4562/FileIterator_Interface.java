@@ -11,7 +11,6 @@ public class FileIterator_Interface implements Iterator_Interface{
     String new_file;
     String aliastableName;
     HashMap<String, ArrayList<Column>> schemaMap = new HashMap<>();
-    ArrayList<Column> schema = new ArrayList<>();
     public FileIterator_Interface(String new_file,String aliastableName) {
         this.new_file = new_file;
         this.aliastableName = aliastableName;
@@ -21,7 +20,6 @@ public class FileIterator_Interface implements Iterator_Interface{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        populateSchema();
     }
 
     @Override
@@ -62,23 +60,23 @@ public class FileIterator_Interface implements Iterator_Interface{
 //                  new_file = entry.getKey().toString();
 //          }
 //        }
-        if(aliastableName==null)
-            aliastableName = new_file;
-
-        if(schemaMap.containsKey(new_file)){
-            schema = schemaMap.get(new_file);
-        }else{
-            while(it.hasNext()){
-                col_name = it.next().toString();
-                Column col = new Column(new Table(aliastableName), col_name);
-                schema.add(col);
-            }
-            schemaMap.put(new_file,schema);
-        }
-        /*while(it.hasNext())
+//        if(aliastableName==null)
+//            aliastableName = new_file;
+//
+//        if(schemaMap.containsKey(new_file)){
+//            schema = null;
+//        }else{
+//            while(it.hasNext()){
+//                col_name = it.next().toString();
+//                Column col = new Column(new Table(aliastableName), col_name);
+//                schema.add(col);
+//            }
+//            schemaMap.put(new_file,schema);
+//        }
+        while(it.hasNext())
         {
             col_name = it.next().toString();
-            //if(Data_Storage.join == 1) {
+            if(Data_Storage.join == 1) {
                 if (Data_Storage.project_array.contains(col_name)) {
                     Column col = new Column(new Table(aliastableName), col_name);
                     schema.add(col);
@@ -86,15 +84,15 @@ public class FileIterator_Interface implements Iterator_Interface{
                 } else {
                     iter_string.next();
                 }
-            //}
-            /*else
+            }
+            else
             {
                 Column col = new Column(new Table(aliastableName), col_name);
                 schema.add(col);
                 to_send.add(iter_string.next().toString());
-            }*/
-        //}
-        return new Tuple(str_split,schema);
+            }
+        }
+        return new Tuple(to_send,schema);
     }
 
     @Override
@@ -119,14 +117,4 @@ public class FileIterator_Interface implements Iterator_Interface{
     public void setChild(Iterator_Interface iter) {
 
     }
-
-    public void populateSchema(){
-        Iterator it = Data_Storage.tables.get(new_file).keySet().iterator();
-        while(it.hasNext()){
-            Column col = new Column(new Table(new_file),it.next().toString());
-            this.schema.add(col);
-        }
-
-    }
-
 }
