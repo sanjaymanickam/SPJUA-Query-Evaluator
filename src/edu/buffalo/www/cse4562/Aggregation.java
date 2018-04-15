@@ -60,60 +60,58 @@ public class Aggregation{
                     while(iter_tuple.hasNext()) //within each group
                     {
                         ArrayList<String> temp_array =(ArrayList)iter_tuple.next();
-
-                        Eval eval = new Eval() {
-                            @Override
-                            public PrimitiveValue eval(Column column) {
-                                String col_name = column.getColumnName();
-                                String tableName=null;
-                                String origtableName = null;
-                                if(Data_Storage.alias_table.containsKey(col_name))
-                                    col_name = Data_Storage.alias_table.get(col_name);
-                                if(column.getTable().getName()==null)
-                                    tableName = Data_Storage.current_schema.get(col_name);
-                                else
-                                    tableName = column.getTable().getName();
-                                int position = schema.indexOf(new Column(new Table(tableName),col_name));
-                                if(Data_Storage.table_alias.containsKey(tableName))
-                                {
-                                    origtableName = Data_Storage.table_alias.get(tableName);
-                                }
-                                else
-                                {
-                                    origtableName = tableName;
-                                }
-                                String data_type = Data_Storage.tables.get(origtableName).get(col_name);
-                                if (data_type.equals("INTEGER")) {
-                                    return new LongValue(temp_array.get(position));
-                                } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
-                                    return new StringValue(temp_array.get(position));
-                                } else if (data_type.equals("DOUBLE")) {
-                                    return new DoubleValue(temp_array.get(position));
-                                } else if (data_type.equals("DATE")) {
-                                    return new DateValue(temp_array.get(position));
-                                } else {
-                                    return null;
-                                }
-                            }
-                        };
-
-                        try{
-                            //test.clear();
-                            PrimitiveValue pr = eval.eval(condition);
-                            if(pr == BooleanValue.FALSE) {
-                                tuple = null;
-                            }
-                            else
-                            {
-                                if(pr != BooleanValue.TRUE && pr != null) {
-                                    aggregate_func(Double.parseDouble(pr.toString()),oper_to_perform);
-                                }
-                            }
-                        }catch(SQLException e)
-                        {
-                            e.printStackTrace();
+                        if (condition instanceof Column) {
+                            aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
                         }
+                        else {
 
+                            Eval eval = new Eval() {
+                                @Override
+                                public PrimitiveValue eval(Column column) {
+                                    String col_name = column.getColumnName();
+                                    String tableName = null;
+                                    String origtableName = null;
+                                    if (Data_Storage.alias_table.containsKey(col_name))
+                                        col_name = Data_Storage.alias_table.get(col_name);
+                                    if (column.getTable().getName() == null)
+                                        tableName = Data_Storage.current_schema.get(col_name);
+                                    else
+                                        tableName = column.getTable().getName();
+                                    int position = schema.indexOf(new Column(new Table(tableName), col_name));
+                                    if (Data_Storage.table_alias.containsKey(tableName)) {
+                                        origtableName = Data_Storage.table_alias.get(tableName);
+                                    } else {
+                                        origtableName = tableName;
+                                    }
+                                    String data_type = Data_Storage.tables.get(origtableName).get(col_name);
+                                    if (data_type.equals("INTEGER")) {
+                                        return new LongValue(temp_array.get(position));
+                                    } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
+                                        return new StringValue(temp_array.get(position));
+                                    } else if (data_type.equals("DOUBLE")) {
+                                        return new DoubleValue(temp_array.get(position));
+                                    } else if (data_type.equals("DATE")) {
+                                        return new DateValue(temp_array.get(position));
+                                    } else {
+                                        return null;
+                                    }
+                                }
+                            };
+
+                            try {
+                                //test.clear();
+                                PrimitiveValue pr = eval.eval(condition);
+                                if (pr == BooleanValue.FALSE) {
+                                    tuple = null;
+                                } else {
+                                    if (pr != BooleanValue.TRUE && pr != null) {
+                                        aggregate_func(Double.parseDouble(pr.toString()), oper_to_perform);
+                                    }
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     String agg_val = "";
                     if(oper_to_perform.equals("SUM")){
