@@ -37,6 +37,8 @@ public class From_Visitor {
                         if (Data_Storage.table_alias.containsKey(tablename))
                             tablename = Data_Storage.table_alias.get(tablename);
                         Data_Storage.table_alias.put(subSelect.getAlias(),tablename);
+                    }else if(temp_it.indexOf("_") != -1){
+                        Data_Storage.table_alias.put(subSelect.getAlias(),temp_it.split("_")[0]);
                     }
                 }
             }

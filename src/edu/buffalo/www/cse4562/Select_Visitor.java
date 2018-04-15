@@ -75,6 +75,8 @@ public class Select_Visitor {
             }
             List<SelectItem> sel_items = plainSelect.getSelectItems();
             Data_Storage.selectedColumns.clear();
+            Data_Storage.finalColumns.clear();
+            Data_Storage.projectionColumns.clear();
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);

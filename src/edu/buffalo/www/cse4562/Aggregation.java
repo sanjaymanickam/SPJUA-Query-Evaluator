@@ -52,6 +52,8 @@ public class Aggregation{
                     if(selitem.getAlias() != null){
                         columnName = selitem.getAlias();
                         finalCol = new Column(new Table(null),selitem.getAlias());
+                    }else{
+                        finalCol = new Column(new Table(null),"alias");
                     }
                     Function func = (Function) selitem.getExpression();
                     String oper_to_perform = func.getName();
@@ -77,13 +79,25 @@ public class Aggregation{
                                         tableName = Data_Storage.current_schema.get(col_name);
                                     else
                                         tableName = column.getTable().getName();
-                                    int position = schema.indexOf(new Column(new Table(tableName), col_name));
                                     if (Data_Storage.table_alias.containsKey(tableName)) {
                                         origtableName = Data_Storage.table_alias.get(tableName);
                                     } else {
                                         origtableName = tableName;
                                     }
-                                    String data_type = Data_Storage.tables.get(origtableName).get(col_name);
+
+                                    int position = schema.indexOf(new Column(new Table(origtableName), col_name));
+                                    if(position == -1){
+                                        position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
+                                    }
+                                    String data_type_table = origtableName;
+                                   if(Data_Storage.table_alias.get(origtableName) != null){
+                                       data_type_table = Data_Storage.table_alias.get(origtableName);
+                                   }
+
+                                   String data_type = Data_Storage.tables.get(data_type_table).get(col_name);
+                                   if(data_type == null){
+                                       data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
+                                   }
                                     if (data_type.equals("INTEGER")) {
                                         return new LongValue(temp_array.get(position));
                                     } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
