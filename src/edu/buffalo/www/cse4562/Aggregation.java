@@ -29,6 +29,10 @@ public class Aggregation{
             {
                 String columnName = "";
                 Column finalCol = null;
+
+
+
+
                 SelectExpressionItem selitem = (SelectExpressionItem) iter_func.next();
                 if(selitem.getExpression() instanceof Column){
                     Column col = (Column) selitem.getExpression();
@@ -58,14 +62,15 @@ public class Aggregation{
                     String oper_to_perform = func.getName();
                     Expression condition = func.getParameters().getExpressions().get(0);
                     Iterator iter_tuple = tuple.get(key).iterator();
-                    while(iter_tuple.hasNext()) //within each group
-                    {
-                        ArrayList<String> temp_array =(ArrayList)iter_tuple.next();
-                        if (condition instanceof Column) {
-                            aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
-                        }
-                        else {
-                            if (!dummy_hash.containsKey(dum_key+func.getName())) {
+                    String agg_val = "";
+                    if (!dummy_hash.containsKey(dum_key+func.toString())) {
+                        while (iter_tuple.hasNext()) //within each group
+                        {
+                            ArrayList<String> temp_array = (ArrayList) iter_tuple.next();
+                            if (condition instanceof Column) {
+                                aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column) condition))), oper_to_perform);
+                            } else {
+
                                 Eval eval = new Eval() {
                                     @Override
                                     public PrimitiveValue eval(Column column) {
@@ -127,9 +132,8 @@ public class Aggregation{
                             }
                         }
                     }
-                    String agg_val = "";
-                    if(dummy_hash.containsKey(dum_key+func.getName())){
-                        agg_val = dummy_hash.get(dum_key+func.getName());
+                    if(dummy_hash.containsKey(dum_key+func.toString())){
+                        agg_val = dummy_hash.get(dum_key+func.toString());
                     }else{
                         if(oper_to_perform.equals("SUM")){
                             agg_val = SUM.toString();
@@ -137,10 +141,11 @@ public class Aggregation{
                             Double avg = SUM/COUNT;
                             agg_val = avg.toString();
                         }
+                        dummy_hash.put(dum_key+ func.toString(), agg_val);
                     }
                     //group_tuple.add(SUM.toString());
 
-                    dummy_hash.put(dum_key+ func.getName(), agg_val);
+
                     if(result_tosend.containsKey(key))
                     {
                         result_tosend.get(key).add(agg_val);
