@@ -82,34 +82,44 @@ public class GroupByAggregation {
                 Eval eval = new Eval() {
                     @Override
                     public PrimitiveValue eval(Column column) {
-                        String col_name = column.getColumnName();
-                        String tableName = null;
-                        String origtableName = null;
-                        if (Data_Storage.alias_table.containsKey(col_name))
-                            col_name = Data_Storage.alias_table.get(col_name);
-                        if (column.getTable().getName() == null)
-                            tableName = Data_Storage.current_schema.get(col_name);
-                        else
-                            tableName = column.getTable().getName();
-                        if (Data_Storage.table_alias.containsKey(tableName)) {
-                            origtableName = Data_Storage.table_alias.get(tableName);
-                        } else {
-                            origtableName = tableName;
+                        String data_type = "";
+                        int position = 0;
+                        if(Data_Storage.dataTypeHash.containsKey(column) && Data_Storage.positionHash.containsKey(column)){
+                            data_type = Data_Storage.dataTypeHash.get(column);
+                            position = Data_Storage.positionHash.get(column);
+                        }else{
+                            String col_name = column.getColumnName();
+                            String tableName = null;
+                            String origtableName = null;
+                            if (Data_Storage.alias_table.containsKey(col_name))
+                                col_name = Data_Storage.alias_table.get(col_name);
+                            if (column.getTable().getName() == null)
+                                tableName = Data_Storage.current_schema.get(col_name);
+                            else
+                                tableName = column.getTable().getName();
+                            if (Data_Storage.table_alias.containsKey(tableName)) {
+                                origtableName = Data_Storage.table_alias.get(tableName);
+                            } else {
+                                origtableName = tableName;
+                            }
+
+                            position = schema.indexOf(new Column(new Table(origtableName), col_name));
+                            if (position == -1) {
+                                position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
+                            }
+                            String data_type_table = origtableName;
+                            if (Data_Storage.table_alias.get(origtableName) != null) {
+                                data_type_table = Data_Storage.table_alias.get(origtableName);
+                            }
+
+                            data_type = Data_Storage.tables.get(data_type_table).get(col_name);
+                            if (data_type == null) {
+                                data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
+                            }
+                            Data_Storage.dataTypeHash.put(column,data_type);
+                            Data_Storage.positionHash.put(column,position);
                         }
 
-                        int position = schema.indexOf(new Column(new Table(origtableName), col_name));
-                        if (position == -1) {
-                            position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
-                        }
-                        String data_type_table = origtableName;
-                        if (Data_Storage.table_alias.get(origtableName) != null) {
-                            data_type_table = Data_Storage.table_alias.get(origtableName);
-                        }
-
-                        String data_type = Data_Storage.tables.get(data_type_table).get(col_name);
-                        if (data_type == null) {
-                            data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
-                        }
                         if (data_type.equals("INTEGER")) {
                             return new LongValue(tup.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
