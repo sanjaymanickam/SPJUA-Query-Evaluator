@@ -35,7 +35,7 @@ public class GroupByAggregation {
                 while (iter.hasNext()) {
                     String curr_val = "";
                     Function func = (Function) iter.next();
-                    curr_val = evaluate(tup,schema,key,func);
+                    //curr_val = evaluate(tup,schema,key,func);
                     if(Data_Storage.aggregateHash.containsKey(key)){
                         if (func.getName().equals("SUM")) {
                             Data_Storage.aggregateHash.get(key).get(count)[0] = Data_Storage.aggregateHash.get(key).get(count)[0] + Double.parseDouble(curr_val);
@@ -71,13 +71,13 @@ public class GroupByAggregation {
                 }
     }
 
-        static String evaluate(Tuple tup, ArrayList<Column> schema, String key, Function func){
+        static Double evaluate(ArrayList<String> tup, ArrayList<Column> schema, String key, Function func){
         String curr_val = "";
             Expression expr = func.getParameters().getExpressions().get(0);
             if (expr instanceof Column) {
                 Column col = (Column) expr;
                 int pos = schema.indexOf(col);
-                curr_val = tup.tuples.get(pos);
+                curr_val = tup.get(pos);
             } else {
                 Eval eval = new Eval() {
                     @Override
@@ -111,13 +111,13 @@ public class GroupByAggregation {
                             data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
                         }
                         if (data_type.equals("INTEGER")) {
-                            return new LongValue(tup.tuples.get(position));
+                            return new LongValue(tup.get(position));
                         } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
-                            return new StringValue(tup.tuples.get(position));
+                            return new StringValue(tup.get(position));
                         } else if (data_type.equals("DOUBLE")) {
-                            return new DoubleValue(tup.tuples.get(position));
+                            return new DoubleValue(tup.get(position));
                         } else if (data_type.equals("DATE")) {
-                            return new DateValue(tup.tuples.get(position));
+                            return new DateValue(tup.get(position));
                         } else {
                             return null;
                         }
@@ -138,7 +138,7 @@ public class GroupByAggregation {
                     e.printStackTrace();
                 }
         }
-        return curr_val;
+        return Double.parseDouble(curr_val);
 
     }
 }

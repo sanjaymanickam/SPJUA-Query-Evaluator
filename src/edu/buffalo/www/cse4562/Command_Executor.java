@@ -41,6 +41,7 @@ public class Command_Executor {
                 Data_Storage.hash_flag = 0;
                 Data_Storage.projectionColumns.clear();
                 Data_Storage.finalSchema.clear();
+                Data_Storage.aggregate_operations.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
