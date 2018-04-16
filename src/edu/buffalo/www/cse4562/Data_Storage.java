@@ -43,7 +43,8 @@ public class Data_Storage {
     static ArrayList<SelectExpressionItem> finalColumns = new ArrayList<>();
     static ArrayList<Column> finalSchema = new ArrayList<>();
     static int read_tuple = 0;
-
+    static HashMap<Column,String> dataTypeHash = new HashMap<>();
+    static HashMap<Column,Integer> positionHash = new HashMap<>();
     static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
 
 

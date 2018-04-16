@@ -23,7 +23,6 @@ public class Command_Executor {
         System.out.flush();
         Reader in = new InputStreamReader(System.in);
         CCJSqlParser parser = new CCJSqlParser(in);
-        int count = 0;
         Statement stmt;
         try {
             while ((stmt = parser.Statement()) != null) {
@@ -42,6 +41,8 @@ public class Command_Executor {
                 Data_Storage.projectionColumns.clear();
                 Data_Storage.finalSchema.clear();
                 Data_Storage.aggregate_operations.clear();
+                Data_Storage.positionHash.clear();
+                Data_Storage.dataTypeHash.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {

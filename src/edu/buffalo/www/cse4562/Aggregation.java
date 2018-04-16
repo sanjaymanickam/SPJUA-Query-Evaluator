@@ -13,13 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
 public class Aggregation {
-    static Double SUM = 0.0, AVG = 0.0;
-    static Integer COUNT = 0;
-    static long total = 0;
+
 
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result, LinkedHashMap<String, ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
         LinkedHashMap<String, ArrayList<String>> result_tosend = new LinkedHashMap<>();
-        total = 0;
         Iterator iter_key = tuple.keySet().iterator();
         buildSchema();
         while (iter_key.hasNext()) //groups

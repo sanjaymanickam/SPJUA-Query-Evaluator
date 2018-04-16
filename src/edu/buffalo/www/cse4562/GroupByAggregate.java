@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class GroupByAggregate {
-    static Integer COUNT = 0;
-    static Double SUM = 0.0;
 
     public static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupBy(ArrayList<ArrayList<String>> tuple, ArrayList<Column> schema){
-        Tuple tup = new Tuple();
         ArrayList<Integer> positions = new ArrayList<>();
         LinkedHashMap<String,ArrayList<ArrayList<String>>> resultSet = new LinkedHashMap<>();
         if(Data_Storage.groupbyflag == 0){
