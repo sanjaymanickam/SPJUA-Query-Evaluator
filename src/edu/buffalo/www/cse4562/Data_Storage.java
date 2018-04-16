@@ -45,7 +45,8 @@ public class Data_Storage {
     static ArrayList<SelectExpressionItem> finalColumns = new ArrayList<>();
     static ArrayList<Column> finalSchema = new ArrayList<>();
     static int read_tuple = 0;
-    static LinkedHashMap<String,Double []> aggregateHash = new LinkedHashMap<>();
+
+    static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
 
 
     static Column stringSplitter(String colName)
