@@ -69,7 +69,7 @@ public class Aggregation{
                                 public PrimitiveValue eval(Column column) {
                                     String data_type;
                                     int position;
-                                    if(!Data_Storage.map_table.containsKey(column)) {
+                                    if(!Data_Storage.map_table.containsKey(column.toString())) {
                                         String col_name = column.getColumnName();
                                         String tableName = null;
                                         String origtableName = null;
@@ -103,8 +103,8 @@ public class Aggregation{
                                     }
                                     else
                                     {
-                                        data_type = Data_Storage.map_table.get(column);
-                                        position = Data_Storage.map_table_pos.get(column);
+                                        data_type = Data_Storage.map_table.get(column.toString());
+                                        position = Data_Storage.map_table_pos.get(column.toString());
                                     }
                                     if (data_type.equals("INTEGER")) {
                                         return new LongValue(temp_array.get(position));
