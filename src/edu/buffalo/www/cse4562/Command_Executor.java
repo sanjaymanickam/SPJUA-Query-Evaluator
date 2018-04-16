@@ -53,7 +53,7 @@ public class Command_Executor {
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
                     Data_Storage.project_array.addAll(temp_set);
-                    long starttime = System.nanoTime();
+                    //long starttime = System.nanoTime();
                     Tuple tuple = Data_Storage.oper.readOneTuple();
                     while (tuple != null){
 
@@ -70,12 +70,11 @@ public class Command_Executor {
                     }
                     long endtime = System.nanoTime();
                     //System.err.println("Projection : Time : "+(endtime-starttime));
-                    Column col = new Column();
-                    starttime = System.nanoTime();
+                    //starttime = System.nanoTime();
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     endtime = System.nanoTime();
                     //System.err.println("Groupby Over : Time : "+(endtime-starttime));
-                    starttime = System.nanoTime();
+                    //starttime = System.nanoTime();
                     if(Data_Storage.aggregateflag==1)
                     {
                        aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
