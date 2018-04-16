@@ -11,6 +11,8 @@ import java.util.*;
 
 public class Data_Storage {
     static HashMap<String,LinkedHashMap<String,String>> tables = new HashMap<>();
+    static HashMap<String,String> map_table = new HashMap<>();
+    static HashMap<String,Integer> map_table_pos = new HashMap<>();
     static HashMap<String,String> alias_table = new HashMap<>();
     static HashMap<String,String> table_alias = new HashMap<>();
     static ArrayList<Column> selectedColumns = new ArrayList<>();

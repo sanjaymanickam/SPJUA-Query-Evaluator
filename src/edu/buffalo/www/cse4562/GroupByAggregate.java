@@ -11,7 +11,7 @@ public class GroupByAggregate {
     public static LinkedHashMap<String, ArrayList<ArrayList<String>>> groupBy(ArrayList<ArrayList<String>> tuple, ArrayList<Column> schema){
         Tuple tup = new Tuple();
         ArrayList<Integer> positions = new ArrayList<>();
-        LinkedHashMap<String,ArrayList<ArrayList<String>>> resultSet = new LinkedHashMap<>();
+        LinkedHashMap<String,ArrayList<ArrayList<String>>> resultSet = new LinkedHashMap<>(10000);
         if(Data_Storage.groupbyflag == 0){
             resultSet.put("1",tuple);
             return resultSet;

@@ -18,8 +18,7 @@ public class Aggregation{
     static long total = 0;
 
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result,LinkedHashMap<String,ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
-         LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
-         total = 0;
+        LinkedHashMap<String,ArrayList<String>> result_tosend = new LinkedHashMap<>();
         Iterator iter_key = tuple.keySet().iterator();
         while(iter_key.hasNext()) //groups
         {
@@ -68,34 +67,45 @@ public class Aggregation{
                             Eval eval = new Eval() {
                                 @Override
                                 public PrimitiveValue eval(Column column) {
-                                    String col_name = column.getColumnName();
-                                    String tableName = null;
-                                    String origtableName = null;
-                                    if (Data_Storage.alias_table.containsKey(col_name))
-                                        col_name = Data_Storage.alias_table.get(col_name);
-                                    if (column.getTable().getName() == null)
-                                        tableName = Data_Storage.current_schema.get(col_name);
+                                    String data_type;
+                                    int position;
+                                    if(!Data_Storage.map_table.containsKey(column)) {
+                                        String col_name = column.getColumnName();
+                                        String tableName = null;
+                                        String origtableName = null;
+                                        if (Data_Storage.alias_table.containsKey(col_name))
+                                            col_name = Data_Storage.alias_table.get(col_name);
+                                        if (column.getTable().getName() == null)
+                                            tableName = Data_Storage.current_schema.get(col_name);
+                                        else
+                                            tableName = column.getTable().getName();
+                                        if (Data_Storage.table_alias.containsKey(tableName)) {
+                                            origtableName = Data_Storage.table_alias.get(tableName);
+                                        } else {
+                                            origtableName = tableName;
+                                        }
+
+                                        position = schema.indexOf(new Column(new Table(origtableName), col_name));
+                                        if (position == -1) {
+                                            position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
+                                        }
+                                        String data_type_table = origtableName;
+                                        if (Data_Storage.table_alias.get(origtableName) != null) {
+                                            data_type_table = Data_Storage.table_alias.get(origtableName);
+                                        }
+
+                                        data_type = Data_Storage.tables.get(data_type_table).get(col_name);
+                                        if (data_type == null) {
+                                            data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
+                                        }
+                                        Data_Storage.map_table.put(column.toString(),data_type);
+                                        Data_Storage.map_table_pos.put(column.toString(),position);
+                                    }
                                     else
-                                        tableName = column.getTable().getName();
-                                    if (Data_Storage.table_alias.containsKey(tableName)) {
-                                        origtableName = Data_Storage.table_alias.get(tableName);
-                                    } else {
-                                        origtableName = tableName;
+                                    {
+                                        data_type = Data_Storage.map_table.get(column);
+                                        position = Data_Storage.map_table_pos.get(column);
                                     }
-
-                                    int position = schema.indexOf(new Column(new Table(origtableName), col_name));
-                                    if(position == -1){
-                                        position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
-                                    }
-                                    String data_type_table = origtableName;
-                                   if(Data_Storage.table_alias.get(origtableName) != null){
-                                       data_type_table = Data_Storage.table_alias.get(origtableName);
-                                   }
-
-                                   String data_type = Data_Storage.tables.get(data_type_table).get(col_name);
-                                   if(data_type == null){
-                                       data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
-                                   }
                                     if (data_type.equals("INTEGER")) {
                                         return new LongValue(temp_array.get(position));
                                     } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
@@ -168,12 +178,12 @@ public class Aggregation{
         switch (oper)
         {
             case "SUM":
-                    SUM = SUM + primitiveValue;
-                    break;
+                SUM = SUM + primitiveValue;
+                break;
             case "AVG":
-                    SUM = SUM + primitiveValue;
-                    COUNT = COUNT + 1;
-                    break;
+                SUM = SUM + primitiveValue;
+                COUNT = COUNT + 1;
+                break;
         }
     }
 }

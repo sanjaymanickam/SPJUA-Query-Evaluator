@@ -71,7 +71,7 @@ public class Command_Executor {
                         temp.tuples.addAll(tuple.tuples);
                         temp.schema.addAll(tuple.schema);
                         result.add(temp.tuples);
-                        if(schema_flag==0) {
+                            if(schema_flag==0) {
                             schema = temp.schema;
                             schema_flag=1;
                         }
