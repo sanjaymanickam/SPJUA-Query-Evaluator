@@ -11,7 +11,7 @@ import java.util.*;
 
 public class Data_Storage {
     static HashMap<String,LinkedHashMap<String,String>> tables = new HashMap<>();
-    static HashMap<String,String> map_table = new HashMap<>();
+    static HashMap<Column,String> map_table = new HashMap<>();
     static HashMap<String,Integer> map_table_pos = new HashMap<>();
     static HashMap<String,String> alias_table = new HashMap<>();
     static HashMap<String,String> table_alias = new HashMap<>();
@@ -48,8 +48,10 @@ public class Data_Storage {
     static HashMap<Column,String> dataTypeHash = new HashMap<>();
     static HashMap<Column,Integer> positionHash = new HashMap<>();
     static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
-
-
+    static String tableName = null;
+    static String origtableName = null;
+    static String data_type = null;
+    static String col_name =null;
     static Column stringSplitter(String colName)
     {
         String tableName;

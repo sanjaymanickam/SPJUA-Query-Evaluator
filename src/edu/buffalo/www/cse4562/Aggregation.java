@@ -6,6 +6,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,72 +65,58 @@ public class Aggregation{
                             aggregate_func(Double.parseDouble(temp_array.get(schema.indexOf((Column)condition))), oper_to_perform);
                         }
                         else {
-                            Eval eval = new Eval() {
+                            Data_Storage.eval = new Eval() {
                                 @Override
                                 public PrimitiveValue eval(Column column) {
-                                    String data_type;
-                                    int position;
-                                    if(!Data_Storage.map_table.containsKey(column.toString())) {
-                                        String col_name = column.getColumnName();
-                                        String tableName = null;
-                                        String origtableName = null;
-                                        if (Data_Storage.alias_table.containsKey(col_name))
-                                            col_name = Data_Storage.alias_table.get(col_name);
+                                    Data_Storage.col_name = column.getColumnName();
+                                    if(!Data_Storage.map_table.containsKey(column)) {
+                                        if (Data_Storage.alias_table.containsKey(Data_Storage.col_name))
+                                            Data_Storage.col_name = Data_Storage.alias_table.get(Data_Storage.col_name);
                                         if (column.getTable().getName() == null)
-                                            tableName = Data_Storage.current_schema.get(col_name);
+                                            Data_Storage.tableName = Data_Storage.current_schema.get(Data_Storage.col_name);
                                         else
-                                            tableName = column.getTable().getName();
-                                        if (Data_Storage.table_alias.containsKey(tableName)) {
-                                            origtableName = Data_Storage.table_alias.get(tableName);
+                                            Data_Storage.tableName = column.getTable().getName();
+                                        if (Data_Storage.table_alias.containsKey(Data_Storage.tableName)) {
+                                            Data_Storage.origtableName = Data_Storage.table_alias.get(Data_Storage.tableName);
                                         } else {
-                                            origtableName = tableName;
+                                            Data_Storage.origtableName = Data_Storage.tableName;
                                         }
-
-                                        position = schema.indexOf(new Column(new Table(origtableName), col_name));
-                                        if (position == -1) {
-                                            position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
+                                        String data_type_table = Data_Storage.origtableName;
+                                        if (Data_Storage.table_alias.get(Data_Storage.origtableName) != null) {
+                                            data_type_table = Data_Storage.table_alias.get(Data_Storage.origtableName);
                                         }
-                                        String data_type_table = origtableName;
-                                        if (Data_Storage.table_alias.get(origtableName) != null) {
-                                            data_type_table = Data_Storage.table_alias.get(origtableName);
+                                        Data_Storage.data_type = Data_Storage.tables.get(data_type_table).get(Data_Storage.col_name);
+                                        if(Data_Storage.data_type == null){
+                                            StringTokenizer stringTokenizer = new StringTokenizer(Data_Storage.col_name,"_");
+                                            stringTokenizer.nextToken();
+                                            Data_Storage.data_type = Data_Storage.tables.get(data_type_table).get(stringTokenizer.nextToken());
                                         }
-
-                                        data_type = Data_Storage.tables.get(data_type_table).get(col_name);
-                                        if (data_type == null) {
-                                            data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
-                                        }
-                                        Data_Storage.map_table.put(column.toString(),data_type);
-                                        Data_Storage.map_table_pos.put(column.toString(),position);
+                                        Data_Storage.map_table.put(column,Data_Storage.data_type);
                                     }
                                     else
                                     {
-                                        data_type = Data_Storage.map_table.get(column.toString());
-                                        position = Data_Storage.map_table_pos.get(column.toString());
+                                        Data_Storage.data_type = Data_Storage.map_table.get(column);
                                     }
-                                    if (data_type.equals("INTEGER")) {
-                                        return new LongValue(temp_array.get(position));
-                                    } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
-                                        return new StringValue(temp_array.get(position));
-                                    } else if (data_type.equals("DOUBLE")) {
-                                        return new DoubleValue(temp_array.get(position));
-                                    } else if (data_type.equals("DATE")) {
-                                        return new DateValue(temp_array.get(position));
-                                    } else {
-                                        return null;
+                                    int position = schema.indexOf(new Column(new Table(Data_Storage.origtableName), Data_Storage.col_name));
+                                    if(position == -1){
+                                        StringTokenizer stringTokenizer = new StringTokenizer(Data_Storage.col_name,"_");
+                                        stringTokenizer.nextToken();
+                                        position = schema.indexOf(new Column(new Table(Data_Storage.origtableName),stringTokenizer.nextToken()));
                                     }
+                                    return new DoubleValue(temp_array.get(position));
                                 }
                             };
                             try {
                                 //test.clear();
                                 long starttime = System.nanoTime();
-                                PrimitiveValue pr = eval.eval(condition);
+                                PrimitiveValue pr = Data_Storage.eval.eval(condition);
                                 long endtime = System.nanoTime();
                                 total = total+(endtime-starttime);
                                 if (pr == BooleanValue.FALSE) {
                                     tuple = null;
                                 } else {
                                     if (pr != BooleanValue.TRUE && pr != null) {
-                                        aggregate_func(Double.parseDouble(pr.toString()), oper_to_perform);
+                                        aggregate_func(pr.toDouble(), oper_to_perform);
                                     }
                                 }
                             } catch (SQLException e) {
