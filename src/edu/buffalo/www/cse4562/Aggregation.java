@@ -39,7 +39,7 @@ public class Aggregation {
                             groupHash.get(func)[0] = groupHash.get(func)[0] + curr_val;
                         }else{
                             groupHash.get(func)[0] = groupHash.get(func)[0] + curr_val;
-                            groupHash.get(func)[1] = groupHash.get(func)[0] + 1;
+                            groupHash.get(func)[1] = groupHash.get(func)[1] + 1;
                         }
 
                     }else{
@@ -71,7 +71,7 @@ public class Aggregation {
                     if(func.getName().equals("SUM")){
                         to_send.add(groupHash.get(func)[0].toString());
                     }else{
-                        Double val = (groupHash.get(func)[0] / groupHash.get(func)[1]);
+                        Double val = ((groupHash.get(func)[0]) / (groupHash.get(func)[1].intValue()));
                         to_send.add(val.toString());
                     }
                 }

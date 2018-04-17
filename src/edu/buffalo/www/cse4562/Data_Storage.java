@@ -46,7 +46,7 @@ public class Data_Storage {
     static HashMap<Column,String> dataTypeHash = new HashMap<>();
     static HashMap<Column,Integer> positionHash = new HashMap<>();
     static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
-
+    static HashMap<Column,String> valHash = new HashMap<>();
 
     static Column stringSplitter(String colName)
     {
