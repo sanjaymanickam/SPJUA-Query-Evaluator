@@ -88,7 +88,7 @@ public class GroupByAggregation {
                 Data_Storage.eval = new Eval() {
                     @Override
                     public PrimitiveValue eval(Column column) {
-                        /*String data_type = "";
+                        String data_type = "";
                         int position;
                         if(Data_Storage.positionHash.containsKey(column)){
                             //data_type = Data_Storage.dataTypeHash.get(column);
@@ -135,8 +135,8 @@ public class GroupByAggregation {
 //                            return new DateValue(tup.get(position));
 //                        } else {
 //                            return null;
-//                        }*/
-                        return new DoubleValue(tup.get(0));
+//                        }
+                        return new DoubleValue(tup.get(position));
                     }
                 };
 
