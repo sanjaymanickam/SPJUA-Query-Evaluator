@@ -1,7 +1,9 @@
 package edu.buffalo.www.cse4562;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -21,6 +23,7 @@ public class Select_Visitor {
             Data_Storage.orderBy_sort = new ArrayList<>();
             Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;
+            Boolean aggregateOperations = false;
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
             Iterator_Interface main_from_item_iter = Data_Storage.oper;
@@ -54,34 +57,55 @@ public class Select_Visitor {
             if(plainSelect.getLimit() != null){
                 Data_Storage.limit = plainSelect.getLimit().getRowCount();
             }
-            if(plainSelect.getOrderByElements() !=null){
+            if(plainSelect.getOrderByElements() !=null) {
                 List<OrderByElement> orderBy = plainSelect.getOrderByElements();
                 Iterator orderby_iter = orderBy.iterator();
-                while(orderby_iter.hasNext()){
+                while (orderby_iter.hasNext()) {
                     OrderByElement o = (OrderByElement) orderby_iter.next();
-                    if(o instanceof OrderByElement){
+                    if (o instanceof OrderByElement) {
                         Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
-                        if(o.getExpression() instanceof Column){
+                        if (o.getExpression() instanceof Column) {
                             Column col = (Column) o.getExpression();
                             Data_Storage.orderBy.add(col);
                             Data_Storage.project_array.add(col.getColumnName());
                         }
                     }
                 }
+            }
              if(plainSelect.getGroupByColumnReferences() != null){
                     Data_Storage.groupbyflag = 1;
-                Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
+                    Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
+                    aggregateOperations = true;
+
              }
-            }
-            List<SelectItem> sel_items = plainSelect.getSelectItems();
+            ArrayList<SelectExpressionItem> sel_items = (ArrayList) plainSelect.getSelectItems();
             Data_Storage.selectedColumns.clear();
             Data_Storage.finalColumns.clear();
             Data_Storage.projectionColumns.clear();
+
+            if(!aggregateOperations){
+                for(SelectItem s : sel_items){
+                    if(s instanceof SelectExpressionItem){
+                        SelectExpressionItem sExp = (SelectExpressionItem)s;
+                        if(sExp.getExpression() instanceof Function){
+                            aggregateOperations = true;
+                            break;
+                        }
+                    }
+
+                }
+            }
+            if(aggregateOperations){
+                Data_Storage.oper =  new AggregateProjection(Data_Storage.oper,sel_items);
+                //Handle groupBy, Aggregation and Projection together
+            }else{
+                Data_Storage.oper = new ProjectionIterator_Interface(sel_items,Data_Storage.oper);
+            }
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
             }
-            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.projectionColumns,Data_Storage.oper);
+
         }
         else if(stmt instanceof Union)
         {

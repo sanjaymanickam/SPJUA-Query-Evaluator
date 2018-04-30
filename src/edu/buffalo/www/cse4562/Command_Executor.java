@@ -1,6 +1,7 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
@@ -43,6 +44,7 @@ public class Command_Executor {
                 Data_Storage.aggregate_operations.clear();
                 Data_Storage.positionHash.clear();
                 Data_Storage.dataTypeHash.clear();
+                Data_Storage.colType.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
                 if(Data_Storage.oper!=null) {
@@ -50,31 +52,41 @@ public class Command_Executor {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
+                    Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
                     Data_Storage.project_array.addAll(temp_set);
-                    Tuple tuple = Data_Storage.oper.readOneTuple();
-                    while (tuple != null){
-
-                        Tuple temp = new Tuple();
-                        temp.tuples.addAll(tuple.tuples);
-                        temp.schema.addAll(tuple.schema);
-                        result.add(temp.tuples);
-                            if(schema_flag==0) {
-                            schema = temp.schema;
-                            schema_flag=1;
+                    ArrayList<PrimitiveValue[]> resultTuples = new ArrayList<>();
+                    PrimitiveValue[] tuple = Data_Storage.oper.readOneTuple();
+                    while(tuple != null){
+                        if(tuple != null){
+                            resultTuples.add(tuple);
+                            print(tuple);
                         }
-                       // GroupByAggregation.groupBy(tuple,schema);
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-
-                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
-                    if(Data_Storage.aggregateflag==1)
-                    {
-                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
-                    }
-                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
+//                    Tuple tuple = Data_Storage.oper.readOneTuple();
+//                    while (tuple != null){
+//
+//                        Tuple temp = new Tuple();
+//                        temp.tuples.addAll(tuple.tuples);
+//                        temp.schema.addAll(tuple.schema);
+//                        result.add(temp.tuples);
+//                            if(schema_flag==0) {
+//                            schema = temp.schema;
+//                            schema_flag=1;
+//                        }
+//                       // GroupByAggregation.groupBy(tuple,schema);
+//                        tuple = Data_Storage.oper.readOneTuple();
+//                    }
+//
+//                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
+//                    if(Data_Storage.aggregateflag==1)
+//                    {
+//                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+//                    }
+//                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
                 }
 
                 System.out.println(prompt);
@@ -193,5 +205,15 @@ public class Command_Executor {
                 temp_i=0;
                 System.out.println();
         }
+    }
+
+    static void print(PrimitiveValue[] arr){
+        for(int i=0;i<arr.length;i++){
+            System.out.print(arr[i]);
+            if(i != arr.length -1){
+                System.out.print("|");
+            }
+        }
+        System.out.println();
     }
 }

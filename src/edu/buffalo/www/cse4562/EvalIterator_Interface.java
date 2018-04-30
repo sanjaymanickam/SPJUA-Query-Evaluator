@@ -8,40 +8,70 @@ import net.sf.jsqlparser.schema.Table;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     Expression condition;
-    //ArrayList<Column> schema = new ArrayList<>();
+    LinkedHashMap<String, Schema> retSchema = new LinkedHashMap<>();
     public EvalIterator_Interface(Iterator_Interface iter,Expression condition)
     {
         this.iter = iter;
         this.condition = condition;
     }
     @Override
-    public Tuple readOneTuple() {
+    public void open(){
+        iter.open();
+        retSchema = iter.getSchema();
+    }
+
+    @Override
+    public PrimitiveValue[] readOneTuple() {
         Data_Storage.read_tuple++;
        ArrayList<String> tuple = null;
        ArrayList<Column> schema = null;
         HashSet<Column> test = new HashSet<>();
        Tuple tup;
+        PrimitiveValue[] retVal = new PrimitiveValue[retSchema.size()];
         do{
-            tup = iter.readOneTuple();
-            if(tup == null)
+            retVal= iter.readOneTuple();
+            if(retVal == null)
             {
                return null;
             }
-            else {
-                tuple = tup.tuples;
-                schema = tup.schema;
-            }
-            final ArrayList<String> to_copy = tuple;
-            final ArrayList<Column> schema_final = schema;
+//            else {
+//                tuple = tup.tuples;
+//                schema = tup.schema;
+//            }
+            final PrimitiveValue[] retArr= retVal;
              Data_Storage.eval = new Eval() {
                 @Override
                 public PrimitiveValue eval(Column column) {
-                    String col_name = column.getColumnName();
+
+                    String colName = column.getColumnName();
+                    String dataType = "";
+                    //Integer pos = -1;
+//                    if(Data_Storage.colType.containsKey(colName)){
+//                        dataType = Data_Storage.colType.get(colName).getDataType();
+//                        pos = Data_Storage.colType.get(colName).getPosition();
+//                    }else{
+//                        int i = 0;
+//                        for(Schema s1 : retSchema.values()){
+//                            if(s1.getColumnName().equals(colName)){
+//                                dataType = s1.getDataType();
+//                                pos = i;
+//                                break;
+//                            }else{
+//                                i++;
+//                            }
+//                        }
+//                    }
+                    Integer pos = retSchema.get(colName).getPosition();
+
+                    return retArr[pos];
+                }
+                    /*String col_name = column.getColumnName();
                     String tableName=null;
                     String origtableName = null;
                     if(Data_Storage.alias_table.containsKey(col_name))
@@ -71,13 +101,13 @@ public class EvalIterator_Interface implements Iterator_Interface{
                         } else {
                             return null;
                         }
-                }
+                }*/
             };
             try{
                 test.clear();
                 PrimitiveValue pr = Data_Storage.eval.eval(condition);
                 if(pr == BooleanValue.FALSE) {
-                  tuple = null;
+                  retVal = null;
                 }
                 else
                 {
@@ -89,12 +119,13 @@ public class EvalIterator_Interface implements Iterator_Interface{
             {
                 e.printStackTrace();
             }
-        }while(tuple ==null);
+        }while(retVal ==null);
 //        System.out.println("EVAL");
-        Tuple ret_tuple = new Tuple(tuple,schema);
-        ret_tuple.tuples = tuple;
-        ret_tuple.schema =schema;
-        return ret_tuple;
+//        Tuple ret_tuple = new Tuple(tuple,schema);
+//        ret_tuple.tuples = tuple;
+//        ret_tuple.schema =schema;
+        //return ret_tuple;
+        return retVal;
     }
 
     @Override
@@ -113,6 +144,10 @@ public class EvalIterator_Interface implements Iterator_Interface{
     @Override
     public void reset() {
 
+    }
+    @Override
+    public LinkedHashMap<String, Schema> getSchema(){
+        return this.retSchema;
     }
 
 }

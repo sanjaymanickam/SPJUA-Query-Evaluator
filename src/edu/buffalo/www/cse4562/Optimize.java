@@ -27,6 +27,7 @@ public class Optimize {
         ArrayList<String> join_name2_table = new ArrayList<>();
         ArrayList<Expression> join_condition = new ArrayList<>();
         ProjectionIterator_Interface projectionIterator_interface = null;
+        AggregateProjection aggProjection = null;
         ArrayList<String> hashjoin_names = new ArrayList<>();
         to_ret = to_optimize;
         Data_Storage.oper = to_optimize;
@@ -38,7 +39,14 @@ public class Optimize {
                     joins.add(Data_Storage.oper);
                     break;
                 }
-            } else if (Data_Storage.oper instanceof EvalIterator_Interface) {
+            } else if(Data_Storage.oper instanceof AggregateProjection){
+                if(projectionIterator_interface==null)
+                    aggProjection = (AggregateProjection) Data_Storage.oper;
+                else {
+                    joins.add(Data_Storage.oper);
+                    break;
+                }
+            }else if (Data_Storage.oper instanceof EvalIterator_Interface) {
                 expressionList.add(((EvalIterator_Interface) Data_Storage.oper).condition);
             } else if (Data_Storage.oper instanceof JoinIteratorInterface) {
                 Iterator_Interface temp_iter = ((JoinIteratorInterface) Data_Storage.oper).iter2;
@@ -200,6 +208,9 @@ public class Optimize {
             if (joins.get(i) instanceof ProjectionIterator_Interface) {
                 joins.set(i, new Optimize().optimize(joins.get(i)));
             }
+            if (joins.get(i) instanceof AggregateProjection) {
+                joins.set(i, new Optimize().optimize(joins.get(i)));
+            }
         }
         while(before_join_iterator.hasNext())
         {
@@ -273,6 +284,9 @@ public class Optimize {
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;
+            if(Data_Storage.groupbyflag == 1 || Data_Storage.aggregateflag == 1){
+                return new AggregateProjection(expr_before_join,aggProjection.selectedColumns);
+            }
             return new ProjectionIterator_Interface(projectionIterator_interface.selectedColumns, expr_before_join);
         } else {
             return to_ret;

@@ -3,6 +3,7 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
@@ -20,8 +21,8 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,Boolean> file_flag = new HashMap<>();
     static int all_flag = 0;
     static HashMap<Iterator_Interface,Iterator> stored_file_iterators = new HashMap<>();
-    static HashMap<Iterator_Interface,Tuple> file_temp_tuple = new HashMap<>();
-    static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
+    static HashMap<Iterator_Interface,PrimitiveValue[]> file_temp_tuple = new HashMap<>();
+    static HashMap<Iterator_Interface,ArrayList<PrimitiveValue[]>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
     static Long limit;
     static Eval eval;
@@ -47,6 +48,8 @@ public class Data_Storage {
     static HashMap<Column,Integer> positionHash = new HashMap<>();
     static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
     static HashMap<Column,String> valHash = new HashMap<>();
+
+    static HashMap<String, ColumnType> colType = new HashMap<>();
 
     static Column stringSplitter(String colName)
     {

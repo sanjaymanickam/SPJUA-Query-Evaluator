@@ -2,6 +2,7 @@ package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 
 import java.util.ArrayList;
@@ -12,15 +13,18 @@ import java.util.LinkedHashMap;
 public class HashJoin_Interface implements Iterator_Interface {
     Iterator_Interface iter1,iter2;
     Expression condition;
-    LinkedHashMap<String,ArrayList<Tuple>> builder;
+    LinkedHashMap<PrimitiveValue,ArrayList<PrimitiveValue[]>> builder;
     int count=0;
     int data_flag = 0;
     BinaryExpression binaryExpression;
     Column right,left;
-    Tuple send_tuple = new Tuple();
-    Tuple to_check = null;
-    ArrayList<Tuple> to_send = new ArrayList<>();
-    int pos;
+    PrimitiveValue[] send_tuple = null;
+    PrimitiveValue[] to_check = null;
+    ArrayList<PrimitiveValue[]> to_send = new ArrayList<>();
+    LinkedHashMap<String, Schema> outSchema = new LinkedHashMap<>();
+    LinkedHashMap<String, Schema> child1Schema = new LinkedHashMap<>();
+    LinkedHashMap<String, Schema> child2Schema = new LinkedHashMap<>();
+    int position;
     Iterator to_send_iterator = null;
     public HashJoin_Interface(Iterator_Interface iter1, Iterator_Interface iter2, Expression condition)
     {
@@ -31,23 +35,40 @@ public class HashJoin_Interface implements Iterator_Interface {
         this.left = (Column)binaryExpression.getLeftExpression();
         this.right = (Column) binaryExpression.getRightExpression();
     }
+
     @Override
-    public Tuple readOneTuple() {
+    public void open(){
+        iter1.open();
+        iter2.open();
+        this.child1Schema = iter1.getSchema();
+        this.child2Schema = iter2.getSchema();
+        generateSchema();
+    }
+
+    @Override
+    public PrimitiveValue[] readOneTuple() {
+        //return null;
+        //send_tuple = new PrimitiveValue[outSchema.size()];
+
         if(Data_Storage.hash_flag==0)
         {
             builder = new LinkedHashMap<>();
-            if(iter1 instanceof HashJoin_Interface)
+            if(iter1 instanceof HashJoin_Interface || iter1 instanceof ProjectionIterator_Interface || iter1 instanceof AggregateProjection)
             {
                 read_file_tostore(iter2);
                 while(iter1!=null)
                 {
 
-                    Tuple tup = iter1.readOneTuple();
-                    Tuple to_tup= new Tuple();
+                    PrimitiveValue[] tup = iter1.readOneTuple();
+                    //Tuple to_tup= new Tuple();
+                    PrimitiveValue[] retVal = new PrimitiveValue[iter1.getSchema().size()];
+                    int i=0;
                     if(tup!=null) {
-                        to_tup.tuples.addAll(tup.tuples);
-                        to_tup.schema.addAll(tup.schema);
-                        build_table(to_tup);
+                        for(int j=0;j<tup.length;j++){
+                            retVal[i] = tup[j];
+                            i++;
+                        }
+                        build_table(retVal,this.outSchema);
                         Data_Storage.hash_flag=1;
                     }else
                         break;
@@ -60,16 +81,22 @@ public class HashJoin_Interface implements Iterator_Interface {
                 Data_Storage.hash_flag = 1;
             }
         }
+
         do {
+
             if(to_send_iterator!=null) {
                 if (to_send_iterator.hasNext()) {
-                    Tuple temp = (Tuple) to_send_iterator.next();
-                    send_tuple.tuples.clear();
-                    send_tuple.schema.clear();
-                    send_tuple.tuples.addAll(temp.tuples);
-                    send_tuple.schema.addAll(temp.schema);
-                    send_tuple.schema.addAll(to_check.schema);
-                    send_tuple.tuples.addAll(to_check.tuples);
+                    PrimitiveValue[] temp = (PrimitiveValue[]) to_send_iterator.next();
+                    position = 0;
+                    send_tuple = new PrimitiveValue[outSchema.size()];
+                    for(int j=0;j<temp.length;j++){
+                        send_tuple[position] = temp[j];
+                        position++;
+                    }
+                    for(int j=0;j<to_check.length;j++){
+                        send_tuple[position] = to_check[j];
+                        position++;
+                    }
                     data_flag = 0;
                 }
                 else
@@ -82,9 +109,12 @@ public class HashJoin_Interface implements Iterator_Interface {
             {
                     if (count != Data_Storage.stored_files.get(iter2).size()) {
                         to_check = Data_Storage.stored_files.get(iter2).get(count);
-                        int pos = to_check.schema.indexOf(left) != -1 ? to_check.schema.indexOf(left) : to_check.schema.indexOf(right);
-                        if (builder.containsKey(to_check.tuples.get(pos))) {
-                            to_send = builder.get(to_check.tuples.get(pos));
+                        if(child1Schema.size() == 33 ){
+                            System.out.println();
+                        }
+                        int pos = this.child2Schema.get(left.getColumnName()) != null ? this.child2Schema.get(left.getColumnName()).getPosition() : this.child2Schema.get(right.getColumnName()).getPosition();
+                        if (builder.containsKey(to_check[pos])) {
+                            to_send = builder.get(to_check[pos]);
                             to_send_iterator = to_send.iterator();
                         }
                         count++;
@@ -118,18 +148,19 @@ public class HashJoin_Interface implements Iterator_Interface {
 
     }
     void read_file(Iterator_Interface file){
-        Tuple temp_tuple;
+        //ArrayList<PrimitiveValue[]> temp_array = new ArrayList<>();
+        PrimitiveValue[] temp_tuple;// = new PrimitiveValue[file.getSchema().size()];
         do
         {
             temp_tuple = file.readOneTuple();
             if(temp_tuple==null)
                 break;
-            build_table(temp_tuple);
+            build_table(temp_tuple,this.child1Schema);
         }while(temp_tuple!= null);
     }
     void read_file_tostore(Iterator_Interface file){
-        Tuple temp_tuple;
-        ArrayList<Tuple> temp_array = new ArrayList<>(100000);
+        PrimitiveValue[] temp_tuple = new PrimitiveValue[file.getSchema().size()];
+        ArrayList<PrimitiveValue[]> temp_array = new ArrayList<>(100000);
         do
         {
             temp_tuple = file.readOneTuple();
@@ -138,25 +169,39 @@ public class HashJoin_Interface implements Iterator_Interface {
         }while(temp_tuple!= null);
         Data_Storage.stored_files.put(file,temp_array);
     }
-    void build_table(Tuple tup)
+    void build_table(PrimitiveValue[] tup, LinkedHashMap<String,Schema> schema)
     {
-
-        int pos = tup.schema.indexOf(left)!=-1 ? tup.schema.indexOf(left):tup.schema.indexOf(right);
-        if(!builder.containsKey(tup.tuples.get(pos)))
+        int pos = this.child1Schema.get(left.getColumnName()) != null ? this.child1Schema.get(left.getColumnName()).getPosition() :this.child1Schema.get(right.getColumnName()).getPosition();
+        if(!builder.containsKey(tup[pos]))
         {
-            ArrayList<Tuple> temp = new ArrayList<>();
+            ArrayList<PrimitiveValue[]> temp = new ArrayList<>();
             temp.add(tup);
-            builder.put(tup.tuples.get(pos),temp);
+            builder.put(tup[pos],temp);
         }
         else
         {
             try {
-                builder.get(tup.tuples.get(pos)).add(tup);
+                builder.get(tup[pos]).add(tup);
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
+        }
+    }
+    @Override
+    public LinkedHashMap<String, Schema> getSchema(){
+        return this.outSchema;
+    }
+    public void generateSchema(){
+        int i =0;
+        for(Schema s : this.iter1.getSchema().values()){
+            this.outSchema.put(s.getColumnName(), new Schema(s.getTableName(), s.getColumnName(), s.getDataType(),i));
+            i++;
+        }
+        for(Schema s : this.iter2.getSchema().values()){
+            this.outSchema.put(s.getColumnName(), new Schema(s.getTableName(), s.getColumnName(), s.getDataType(),i));
+            i++;
         }
     }
 }
