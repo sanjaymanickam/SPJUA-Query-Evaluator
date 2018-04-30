@@ -76,16 +76,22 @@ public class GroupByAggregation {
             Expression expr = func.getParameters().getExpressions().get(0);
             if (expr instanceof Column) {
                 Column col = (Column) expr;
-                int pos = schema.indexOf(col);
+                int pos;
+                if(Data_Storage.positionHash.containsKey(col)) {
+                    pos = Data_Storage.positionHash.get(col);
+                }else{
+                    pos = schema.indexOf(col);
+                }
                 curr_val = tup.get(pos);
+
             } else {
-                Eval eval = new Eval() {
+                Data_Storage.eval = new Eval() {
                     @Override
                     public PrimitiveValue eval(Column column) {
                         String data_type = "";
-                        int position = 0;
-                        if(Data_Storage.dataTypeHash.containsKey(column) && Data_Storage.positionHash.containsKey(column)){
-                            data_type = Data_Storage.dataTypeHash.get(column);
+                        int position;
+                        if(Data_Storage.positionHash.containsKey(column)){
+                            //data_type = Data_Storage.dataTypeHash.get(column);
                             position = Data_Storage.positionHash.get(column);
                         }else{
                             String col_name = column.getColumnName();
@@ -107,43 +113,36 @@ public class GroupByAggregation {
                             if (position == -1) {
                                 position = schema.indexOf(new Column(new Table(origtableName), col_name.split("_")[1]));
                             }
-                            String data_type_table = origtableName;
-                            if (Data_Storage.table_alias.get(origtableName) != null) {
-                                data_type_table = Data_Storage.table_alias.get(origtableName);
-                            }
-
-                            data_type = Data_Storage.tables.get(data_type_table).get(col_name);
-                            if (data_type == null) {
-                                data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
-                            }
-                            Data_Storage.dataTypeHash.put(column,data_type);
+//                            String data_type_table = origtableName;
+//                            if (Data_Storage.table_alias.get(origtableName) != null) {
+//                                data_type_table = Data_Storage.table_alias.get(origtableName);
+//                            }
+//
+//                            data_type = Data_Storage.tables.get(data_type_table).get(col_name);
+//                            if (data_type == null) {
+//                                data_type = Data_Storage.tables.get(data_type_table).get(col_name.split("_")[1]);
+//                            }
                             Data_Storage.positionHash.put(column,position);
                         }
 
-                        if (data_type.equals("INTEGER")) {
-                            return new LongValue(tup.get(position));
-                        } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") | data_type.equals("CHAR")) {
-                            return new StringValue(tup.get(position));
-                        } else if (data_type.equals("DOUBLE")) {
-                            return new DoubleValue(tup.get(position));
-                        } else if (data_type.equals("DATE")) {
-                            return new DateValue(tup.get(position));
-                        } else {
-                            return null;
-                        }
+//                        if (data_type.equals("INTEGER")) {
+//                            return new LongValue(tup.get(position));
+//                        } else if (data_type.equals("STRING") || data_type.equals("VARCHAR") || data_type.equals("CHAR")) {
+//                            return new StringValue(tup.get(position));
+//                        } else if (data_type.equals("DOUBLE")) {
+//                            return new DoubleValue(tup.get(position));
+//                        } else if (data_type.equals("DATE")) {
+//                            return new DateValue(tup.get(position));
+//                        } else {
+//                            return null;
+//                        }
+                        return new DoubleValue(tup.get(position));
                     }
                 };
 
                 try {
-                    //test.clear();
-                    PrimitiveValue pr = eval.eval(expr);
-                    if (pr == BooleanValue.FALSE) {
-                        //tuple = null;
-                    } else {
-                        if (pr != BooleanValue.TRUE && pr != null) {
-                            curr_val = pr.toString();
-                        }
-                    }
+                    PrimitiveValue pr = Data_Storage.eval.eval(expr);
+                    curr_val = pr.toString();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
