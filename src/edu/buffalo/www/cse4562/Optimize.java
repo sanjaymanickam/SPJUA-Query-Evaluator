@@ -33,14 +33,14 @@ public class Optimize {
         Data_Storage.oper = to_optimize;
         while (Data_Storage.oper != null) {
             if (Data_Storage.oper instanceof ProjectionIterator_Interface) {
-                if(projectionIterator_interface==null)
+                if(projectionIterator_interface==null && aggProjection == null)
                     projectionIterator_interface = (ProjectionIterator_Interface) Data_Storage.oper;
                 else {
                     joins.add(Data_Storage.oper);
                     break;
                 }
             } else if(Data_Storage.oper instanceof AggregateProjection){
-                if(projectionIterator_interface==null)
+                if(aggProjection==null && projectionIterator_interface == null)
                     aggProjection = (AggregateProjection) Data_Storage.oper;
                 else {
                     joins.add(Data_Storage.oper);
@@ -284,7 +284,7 @@ public class Optimize {
         if (join_iter != null) {
             if (expr_before_join == null)
                 expr_before_join = join_iter;
-            if(Data_Storage.groupbyflag == 1 || Data_Storage.aggregateflag == 1){
+            if(aggProjection != null){
                 return new AggregateProjection(expr_before_join,aggProjection.selectedColumns);
             }
             return new ProjectionIterator_Interface(projectionIterator_interface.selectedColumns, expr_before_join);

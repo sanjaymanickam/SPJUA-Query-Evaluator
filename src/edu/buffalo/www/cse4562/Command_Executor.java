@@ -7,6 +7,7 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.Select;
 
 import javax.xml.crypto.Data;
@@ -26,6 +27,7 @@ public class Command_Executor {
         CCJSqlParser parser = new CCJSqlParser(in);
         Statement stmt;
         try {
+            int createTableCount = 0;
             while ((stmt = parser.Statement()) != null) {
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
@@ -44,14 +46,23 @@ public class Command_Executor {
                 Data_Storage.aggregate_operations.clear();
                 Data_Storage.positionHash.clear();
                 Data_Storage.dataTypeHash.clear();
+                Data_Storage.projectionCols.clear();
+                Data_Storage.selfJoin = 0;
                 Data_Storage.colType.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
+                if(stmt instanceof CreateTable){
+                    createTableCount++;
+                }
+                if(createTableCount == 5){
+                    Preprocess.preprocessData();
+                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
+                    System.out.println(stmt.toString());
                     Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
@@ -98,7 +109,7 @@ public class Command_Executor {
             e.printStackTrace();
         }
     }
-    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
+   /* public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
 
             if(Data_Storage.orderBy.size() > 0){
                 int ct=0;
@@ -205,7 +216,7 @@ public class Command_Executor {
                 temp_i=0;
                 System.out.println();
         }
-    }
+    }*/
 
     static void print(PrimitiveValue[] arr){
         for(int i=0;i<arr.length;i++){

@@ -9,10 +9,21 @@ import java.util.*;
 
 public class FileIterator_Interface implements Iterator_Interface{
     BufferedReader read;
-    String new_file;
+    public String new_file;
+
+    public String getNew_file() {
+        return new_file;
+    }
+
+    public void setNew_file(String new_file) {
+        this.new_file = new_file;
+    }
+
     String aliastableName;
     HashMap<String, ArrayList<Column>> schemaMap = new HashMap<>();
-    LinkedHashMap<String, Schema> schema = new LinkedHashMap<>();
+    LinkedHashMap<String, Schema> outSchema = new LinkedHashMap<>();
+    LinkedHashMap<String, Schema> inSchema = new LinkedHashMap<>();
+
     public FileIterator_Interface(String new_file,String aliastableName) {
         this.new_file = new_file;
         if(aliastableName == null){
@@ -49,31 +60,29 @@ public class FileIterator_Interface implements Iterator_Interface{
             return null;
         }
 
-        PrimitiveValue[] str_split = new PrimitiveValue[this.schema.size()];
-        String[] str = new String[this.schema.size()];
+        PrimitiveValue[] str_split = new PrimitiveValue[this.outSchema.size()];
+        ArrayList<String> str = new ArrayList<>();
         StringTokenizer str_tok = new StringTokenizer(new_line,"|");
-        int i =0;
         while (str_tok.hasMoreElements()){
-            str[i] = str_tok.nextElement().toString();
-            i++;
+            str.add(str_tok.nextElement().toString());
         }
-        i = 0;
-        Iterator it = schema.values().iterator();
+        int i = 0;
+        Iterator it = this.inSchema.values().iterator();
         while(it.hasNext()){
             Schema s = (Schema) it.next();
             String dataType = s.getDataType();
             switch (dataType){
                 case "INTEGER":
-                    str_split[i] = new LongValue(str[i]);
+                    str_split[i] = new LongValue(str.get(s.getPosition()));
                     break;
                 case "DOUBLE":
-                    str_split[i] = new DoubleValue(str[i]);
+                    str_split[i] = new DoubleValue(str.get(s.getPosition()));
                     break;
                 case "DATE":
-                    str_split[i] = new DateValue(str[i]);
+                    str_split[i] = new StringValue(str.get(s.getPosition()));
                     break;
                 default:
-                    str_split[i] = new StringValue(str[i]);
+                    str_split[i] = new StringValue(str.get(s.getPosition()));
                     break;
             }
             i++;
@@ -166,17 +175,25 @@ public class FileIterator_Interface implements Iterator_Interface{
         //Perform projection push down
         LinkedHashMap<String, String> colSchema= Data_Storage.tables.get(new_file);
         int i=0;
+        int j=0;
         for(Map.Entry<String, String> map : colSchema.entrySet()){
             String colName = map.getKey();
-            String dataType = map.getValue();
-            Schema s = new Schema(this.aliastableName,colName,dataType,i);
-            schema.put(colName, s);
-            i++;
+            if(Data_Storage.projectionCols.contains(colName)){
+                String dataType = map.getValue();
+                Schema s = new Schema(this.aliastableName,colName,dataType,i);
+                this.outSchema.put(colName, s);
+                this.inSchema.put(colName,new Schema(this.aliastableName,colName,dataType,j));
+                i++;
+            }
+            j++;
         }
     }
 
     @Override
     public LinkedHashMap<String, Schema> getSchema(){
-        return this.schema;
+        return this.outSchema;
+    }
+    public String getfileName(){
+        return this.new_file;
     }
 }

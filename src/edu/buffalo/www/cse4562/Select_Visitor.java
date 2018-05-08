@@ -5,6 +5,7 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
 import javax.xml.crypto.Data;
@@ -24,6 +25,8 @@ public class Select_Visitor {
             Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;
             Boolean aggregateOperations = false;
+            Data_Storage.groupbyflag = 0;
+            Data_Storage.aggregateflag = 0;
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
             Iterator_Interface main_from_item_iter = Data_Storage.oper;
@@ -35,6 +38,9 @@ public class Select_Visitor {
                 while(it.hasNext()) {
                     Join join = (Join) it.next();
                     From_Visitor.ret_type(join.getRightItem());
+                    if(((FileIterator_Interface) Data_Storage.oper).new_file.equals(((FileIterator_Interface) main_from_item_iter).new_file)){
+                        Data_Storage.selfJoin = 1;
+                    }
                     if(join_iter==null) {
                         join_iter = new JoinIteratorInterface(main_from_item_iter, Data_Storage.oper);
                     }else {
@@ -101,6 +107,8 @@ public class Select_Visitor {
             }else{
                 Data_Storage.oper = new ProjectionIterator_Interface(sel_items,Data_Storage.oper);
             }
+
+            handleSelectionItems(sel_items);
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
@@ -120,6 +128,7 @@ public class Select_Visitor {
             if(!Data_Storage.project_array.contains(col)){
                 Data_Storage.project_array.add(col.getColumnName());
             }
+            Data_Storage.projectionCols.add(col.getColumnName());
             return;
         }
         if(agg_expr instanceof BinaryExpression){
@@ -130,5 +139,49 @@ public class Select_Visitor {
     public Iterator_Interface getChild()
     {
         return Data_Storage.oper;
+    }
+
+    public static void handleSelectionItems(ArrayList<SelectExpressionItem> selItems){
+        for(SelectItem selItem : selItems){
+            if(selItem instanceof AllColumns){
+
+            }
+            else if(selItem instanceof AllTableColumns){
+                AllTableColumns at = (AllTableColumns) selItem;
+                String tableName = at.getTable().getName();
+                if(Data_Storage.table_alias.containsKey(tableName)){
+                    tableName = Data_Storage.table_alias.get(tableName);
+                }
+                Iterator colIter = Data_Storage.tables.get(tableName).keySet().iterator();
+                while (colIter.hasNext()){
+                    Data_Storage.projectionCols.add(colIter.next().toString());
+                }
+            }
+            else if(selItem instanceof SelectExpressionItem){
+                SelectExpressionItem selExper = (SelectExpressionItem) selItem;
+                Expression expr = (Expression) selExper.getExpression();
+                if(expr instanceof Column){
+                    Column col = (Column)expr;
+                    Data_Storage.projectionCols.add(col.getColumnName());
+                }
+                else if(expr instanceof Function){
+                    Function func = (Function) expr;
+                    Expression aggExpr = (Expression) func.getParameters().getExpressions().get(0);
+                    handleExpression(aggExpr);
+                }
+            }
+        }
+    }
+    public static void handleExpression(Expression agg_expr){
+        if(agg_expr instanceof Column){
+            Column col = (Column) agg_expr;
+            Data_Storage.projectionCols.add(col.getColumnName());
+            return;
+        }
+        if(agg_expr instanceof BinaryExpression){
+            handleExpression(((BinaryExpression) agg_expr).getLeftExpression());
+            handleExpression(((BinaryExpression) agg_expr).getRightExpression());
+        }
+
     }
 }

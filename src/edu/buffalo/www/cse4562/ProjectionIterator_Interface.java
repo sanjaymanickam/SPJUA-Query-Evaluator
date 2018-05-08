@@ -9,6 +9,7 @@ import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 import javax.xml.crypto.Data;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class ProjectionIterator_Interface implements Iterator_Interface{
@@ -17,7 +18,7 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
     ArrayList<Column> schema = new ArrayList<>();
     LinkedHashMap<String, Schema> outSchema = new LinkedHashMap<>();
     LinkedHashMap<String, Schema> inSchema = new LinkedHashMap<>();
-    HashMap<String,ColumnType> colType = new HashMap<>();
+    LinkedHashMap<String, ArrayList<Integer>> allTableColumns = new LinkedHashMap<>();
     public ProjectionIterator_Interface(ArrayList<SelectExpressionItem> selectedColumns, Iterator_Interface iter){
         this.iter = iter;
         this.selectedColumns = selectedColumns;
@@ -116,11 +117,18 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                     return retVal;
                 }
                 else if(sel instanceof AllTableColumns){
-                    //Need to handle all columns
-                    //Columns wil be available in a map generated in generateSchema()
+                    AllTableColumns all = (AllTableColumns) sel;
+                    String tableName = all.getTable().getName();
+                    ArrayList<Integer> cols = allTableColumns.get(tableName);
+                    Iterator colIter = cols.iterator();
+                    while(colIter.hasNext()){
+                        int pos = (Integer) colIter.next();
+                        retVal[i] = retArr[pos];
+                        i++;
+                    }
                 }
                 else{
-                    SelectExpressionItem selItem = (SelectExpressionItem) it.next();
+                    SelectExpressionItem selItem = (SelectExpressionItem) sel;
                     if (selItem.getExpression() instanceof Column) {
                         Column col = (Column) selItem.getExpression();
                         String colName = col.getColumnName();
@@ -129,7 +137,6 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
                         i++;
                     }
                 }
-
             }
             return retVal;
         }else{
@@ -160,24 +167,42 @@ public class ProjectionIterator_Interface implements Iterator_Interface{
         while(it.hasNext()){
             //Need to handle *
             //Store it in a map , can be used in readOneTuple()
-            SelectExpressionItem selItem = (SelectExpressionItem) it.next();
-            if(selItem.getExpression() instanceof Column){
-                Column col = (Column) selItem.getExpression();
-                String colName = col.getColumnName();
-                String alias = colName;
-                if(selItem.getAlias() != null){
-                    alias = selItem.getAlias();
+            SelectItem sel = (SelectItem)  it.next();
+            if(sel instanceof AllTableColumns){
+                AllTableColumns all = (AllTableColumns) sel;
+                String tableName = all.getTable().getName();
+                Iterator schemaIter = this.inSchema.values().iterator();
+                ArrayList<Integer> tableColumns = new ArrayList<>();
+                while(schemaIter.hasNext()){
+                    Schema s = (Schema) schemaIter.next();
+                    if(s.getTableName().equals(tableName)){
+                        this.outSchema.put(s.getColumnName(),new Schema(tableName,s.getColumnName(),s.getDataType(),pos));
+                        tableColumns.add(s.getPosition());
+                        pos++;
+                    }
+
                 }
-                Schema s1 = this.inSchema.get(colName);
-                Schema s = new Schema(s1.getTableName(),colName,s1.getDataType(),pos);
-                if(selItem.getAlias() != null){
-                    s.setColumnName(selItem.getAlias());
+                allTableColumns.put(tableName,tableColumns);
+            }else{
+                SelectExpressionItem selItem = (SelectExpressionItem) sel;
+                if(selItem.getExpression() instanceof Column){
+                    Column col = (Column) selItem.getExpression();
+                    String colName = col.getColumnName();
+                    String alias = colName;
+                    if(selItem.getAlias() != null){
+                        alias = selItem.getAlias();
+                    }
+                    Schema s1 = this.inSchema.get(colName);
+                    Schema s = new Schema(s1.getTableName(),colName,s1.getDataType(),pos);
+                    if(selItem.getAlias() != null){
+                        s.setColumnName(selItem.getAlias());
+                    }
+                    if(!(s1.getTableName().equals(col.getTable().getName()))){
+                        s.setTableName(col.getTable().getName());
+                    }
+                    this.outSchema.put(alias,s);
+                    pos++;
                 }
-                if(!(s1.getTableName().equals(col.getTable().getName()))){
-                    s.setTableName(col.getTable().getName());
-                }
-                this.outSchema.put(alias,s);
-                pos++;
             }
         }
     }

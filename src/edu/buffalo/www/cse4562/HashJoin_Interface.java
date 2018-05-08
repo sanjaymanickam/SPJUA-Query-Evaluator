@@ -88,7 +88,12 @@ public class HashJoin_Interface implements Iterator_Interface {
                 if (to_send_iterator.hasNext()) {
                     PrimitiveValue[] temp = (PrimitiveValue[]) to_send_iterator.next();
                     position = 0;
-                    send_tuple = new PrimitiveValue[outSchema.size()];
+                    if(Data_Storage.selfJoin == 1){
+                        send_tuple = new PrimitiveValue[outSchema.size()*2];
+                    }else{
+                        send_tuple = new PrimitiveValue[outSchema.size()];
+                    }
+
                     for(int j=0;j<temp.length;j++){
                         send_tuple[position] = temp[j];
                         position++;
@@ -109,9 +114,6 @@ public class HashJoin_Interface implements Iterator_Interface {
             {
                     if (count != Data_Storage.stored_files.get(iter2).size()) {
                         to_check = Data_Storage.stored_files.get(iter2).get(count);
-                        if(child1Schema.size() == 33 ){
-                            System.out.println();
-                        }
                         int pos = this.child2Schema.get(left.getColumnName()) != null ? this.child2Schema.get(left.getColumnName()).getPosition() : this.child2Schema.get(right.getColumnName()).getPosition();
                         if (builder.containsKey(to_check[pos])) {
                             to_send = builder.get(to_check[pos]);

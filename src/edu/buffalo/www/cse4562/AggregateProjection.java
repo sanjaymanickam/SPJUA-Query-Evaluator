@@ -18,9 +18,9 @@ public class AggregateProjection implements Iterator_Interface{
     Iterator_Interface iter;
     LinkedHashMap<String, Schema> inSchema = new LinkedHashMap<>();
     LinkedHashMap<String, Schema> outSchema = new LinkedHashMap<>();
+    HashMap<Column, Integer> positionMap = new HashMap<>();
     int count = 0;
     ArrayList<PrimitiveValue[]> result = new ArrayList<>();
-    HashMap<Expression, Integer> positon = new HashMap<>();
     public AggregateProjection(Iterator_Interface iter, ArrayList<SelectExpressionItem> selectedColumns){
         this.iter = iter;
         this.selectedColumns = selectedColumns;
@@ -223,8 +223,13 @@ public class AggregateProjection implements Iterator_Interface{
             Data_Storage.eval = new Eval() {
                 @Override
                 public PrimitiveValue eval(Column column) {
-                int pos = schema.get(column.getColumnName()).getPosition();
-                return tup[pos];
+                    if(positionMap.containsKey(column)){
+                        return tup[positionMap.get(column)];
+                    }else{
+                        int pos = schema.get(column.getColumnName()).getPosition();
+                        positionMap.put(column,pos);
+                        return tup[pos];
+                    }
                 }
             };
             try {

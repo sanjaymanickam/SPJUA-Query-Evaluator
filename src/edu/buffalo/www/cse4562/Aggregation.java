@@ -7,13 +7,9 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Aggregation {
-
 
     public static LinkedHashMap<String, ArrayList<String>> aggregate(ArrayList<ArrayList<String>> result, LinkedHashMap<String, ArrayList<ArrayList<String>>> tuple, ArrayList<Column> schema) {
         LinkedHashMap<String, ArrayList<String>> result_tosend = new LinkedHashMap<>();

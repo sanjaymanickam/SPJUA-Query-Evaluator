@@ -6,15 +6,13 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class EvalIterator_Interface implements Iterator_Interface{
     Iterator_Interface iter;
     Expression condition;
     LinkedHashMap<String, Schema> retSchema = new LinkedHashMap<>();
+    HashMap<Column, Integer> positonMap = new HashMap<>();
     public EvalIterator_Interface(Iterator_Interface iter,Expression condition)
     {
         this.iter = iter;
@@ -49,27 +47,14 @@ public class EvalIterator_Interface implements Iterator_Interface{
                 @Override
                 public PrimitiveValue eval(Column column) {
 
-                    String colName = column.getColumnName();
-                    String dataType = "";
-                    //Integer pos = -1;
-//                    if(Data_Storage.colType.containsKey(colName)){
-//                        dataType = Data_Storage.colType.get(colName).getDataType();
-//                        pos = Data_Storage.colType.get(colName).getPosition();
-//                    }else{
-//                        int i = 0;
-//                        for(Schema s1 : retSchema.values()){
-//                            if(s1.getColumnName().equals(colName)){
-//                                dataType = s1.getDataType();
-//                                pos = i;
-//                                break;
-//                            }else{
-//                                i++;
-//                            }
-//                        }
-//                    }
-                    Integer pos = retSchema.get(colName).getPosition();
-
-                    return retArr[pos];
+                    if(positonMap.containsKey(column)){
+                        return retArr[positonMap.get(column)];
+                    }else{
+                        String colName = column.getColumnName();
+                        Integer pos = retSchema.get(colName).getPosition();
+                        positonMap.put(column,pos);
+                        return retArr[pos];
+                    }
                 }
                     /*String col_name = column.getColumnName();
                     String tableName=null;

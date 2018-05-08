@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
 import java.util.*;
@@ -50,7 +51,13 @@ public class Data_Storage {
     static HashMap<Column,String> valHash = new HashMap<>();
 
     static HashMap<String, ColumnType> colType = new HashMap<>();
+    static HashMap<String, Integer> tableSize = new HashMap<>();
+    static HashSet<String> projectionCols = new HashSet<>();
+    public static int selfJoin = 0;
 
+    static HashMap<String, ArrayList<ArrayList<String>>> primaryKey = new HashMap<>();
+    static HashMap<String, ArrayList<ArrayList<String>>> foreignKey = new HashMap<>();
+    static HashSet<String> indexColumns = new HashSet<>();
     static Column stringSplitter(String colName)
     {
         String tableName;
