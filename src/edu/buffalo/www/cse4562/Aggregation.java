@@ -19,6 +19,7 @@ public class Aggregation {
         LinkedHashMap<String, ArrayList<String>> result_tosend = new LinkedHashMap<>();
         Iterator iter_key = tuple.keySet().iterator();
         buildSchema();
+
         while (iter_key.hasNext()) //groups
         {
             LinkedHashMap<Function, Double[]> groupHash = new LinkedHashMap<>();

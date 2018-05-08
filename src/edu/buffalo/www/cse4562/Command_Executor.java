@@ -6,6 +6,7 @@ import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.Select;
 
 import javax.xml.crypto.Data;
@@ -24,6 +25,7 @@ public class Command_Executor {
         Reader in = new InputStreamReader(System.in);
         CCJSqlParser parser = new CCJSqlParser(in);
         Statement stmt;
+        int count = 0;
         try {
             while ((stmt = parser.Statement()) != null) {
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
@@ -45,6 +47,13 @@ public class Command_Executor {
                 Data_Storage.dataTypeHash.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
+                if(stmt instanceof CreateTable){
+                    count++;
+                }
+                if(count == 7){
+                    Preprocess.preprocessData();
+                    return;
+                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
@@ -55,8 +64,9 @@ public class Command_Executor {
                     Data_Storage.project_array.clear();
                     Data_Storage.project_array.addAll(temp_set);
                     Tuple tuple = Data_Storage.oper.readOneTuple();
+                    int dummyCount = 0;
                     while (tuple != null){
-
+                        dummyCount++;
                         Tuple temp = new Tuple();
                         temp.tuples.addAll(tuple.tuples);
                         temp.schema.addAll(tuple.schema);
@@ -68,7 +78,7 @@ public class Command_Executor {
                        // GroupByAggregation.groupBy(tuple,schema);
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-
+                    System.out.println(dummyCount);
                     Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
                     if(Data_Storage.aggregateflag==1)
                     {
