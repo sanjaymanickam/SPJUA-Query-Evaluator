@@ -52,40 +52,39 @@ public class Command_Executor {
                 }
                 if(count == 7){
                     Preprocess.preprocessData();
-                    return;
                 }
-                if(Data_Storage.oper!=null) {
-                    if(Data_Storage.join ==1) {
-                        Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
-                        Data_Storage.oper = iter;
-                    }
-                    Set<String> temp_set = new HashSet<>();
-                    temp_set.addAll(Data_Storage.project_array);
-                    Data_Storage.project_array.clear();
-                    Data_Storage.project_array.addAll(temp_set);
-                    Tuple tuple = Data_Storage.oper.readOneTuple();
-                    int dummyCount = 0;
-                    while (tuple != null){
-                        dummyCount++;
-                        Tuple temp = new Tuple();
-                        temp.tuples.addAll(tuple.tuples);
-                        temp.schema.addAll(tuple.schema);
-                        result.add(temp.tuples);
-                            if(schema_flag==0) {
-                            schema = temp.schema;
-                            schema_flag=1;
-                        }
-                       // GroupByAggregation.groupBy(tuple,schema);
-                        tuple = Data_Storage.oper.readOneTuple();
-                    }
-                    System.out.println(dummyCount);
-                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
-                    if(Data_Storage.aggregateflag==1)
-                    {
-                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
-                    }
-                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
-                }
+//                if(Data_Storage.oper!=null) {
+//                    if(Data_Storage.join ==1) {
+//                        Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
+//                        Data_Storage.oper = iter;
+//                    }
+//                    Set<String> temp_set = new HashSet<>();
+//                    temp_set.addAll(Data_Storage.project_array);
+//                    Data_Storage.project_array.clear();
+//                    Data_Storage.project_array.addAll(temp_set);
+//                    Tuple tuple = Data_Storage.oper.readOneTuple();
+//                    int dummyCount = 0;
+//                    while (tuple != null){
+//                        dummyCount++;
+//                        Tuple temp = new Tuple();
+//                        temp.tuples.addAll(tuple.tuples);
+//                        temp.schema.addAll(tuple.schema);
+//                        result.add(temp.tuples);
+//                            if(schema_flag==0) {
+//                            schema = temp.schema;
+//                            schema_flag=1;
+//                        }
+//                       // GroupByAggregation.groupBy(tuple,schema);
+//                        tuple = Data_Storage.oper.readOneTuple();
+//                    }
+//                    System.out.println(dummyCount);
+//                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
+//                    if(Data_Storage.aggregateflag==1)
+//                    {
+//                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
+//                    }
+//                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
+//                }
 
                 System.out.println(prompt);
                 System.out.flush();

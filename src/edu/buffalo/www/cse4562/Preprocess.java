@@ -11,7 +11,7 @@ public class Preprocess {
             //Foreign key indexing
             getStats(tableName);
             //HashMap<String, HashSet<Integer>> stats = getStats(tableName, Data_Storage.foreignKey.get(tableName));
-            System.out.println("Done");
+            System.err.println("Done");
         }
         return true;
     }
@@ -42,7 +42,7 @@ public class Preprocess {
                 tupleCount++;
                 line = buf.readLine();
             }
-            System.out.println("TableName : "+file+" ------- "+tupleCount);
+            System.err.println("TableName : "+file+" ------- "+tupleCount);
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
