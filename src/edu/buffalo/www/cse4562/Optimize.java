@@ -11,6 +11,7 @@ import java.util.*;
 public class Optimize {
     ProjectionIterator_Interface to_project = null;
     AggregateProjection to_aggr = null;
+    Sort to_sort = null;
     Expression expr_to_iterate = null;
     List<Expression> expressions_list = new ArrayList<>();
     LinkedHashMap<String,Iterator_Interface> join_list = new LinkedHashMap<>();

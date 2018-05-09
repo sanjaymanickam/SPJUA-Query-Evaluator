@@ -79,7 +79,7 @@ public class FileIterator_Interface implements Iterator_Interface{
                     str_split[i] = new DoubleValue(str.get(s.getPosition()));
                     break;
                 case "DATE":
-                    str_split[i] = new StringValue(str.get(s.getPosition()));
+                    str_split[i] = new DateValue(str.get(s.getPosition()));
                     break;
                 default:
                     str_split[i] = new StringValue(str.get(s.getPosition()));
