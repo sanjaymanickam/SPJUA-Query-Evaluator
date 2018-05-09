@@ -25,6 +25,7 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,PrimitiveValue[]> file_temp_tuple = new HashMap<>();
     static HashMap<Iterator_Interface,ArrayList<PrimitiveValue[]>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
+    static HashMap<String,Integer> table_sizes = new HashMap<>();
     static Long limit;
     static Eval eval;
     static int hash_flag = 0;

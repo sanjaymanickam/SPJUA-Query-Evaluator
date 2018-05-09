@@ -24,6 +24,14 @@ public class JoinIteratorInterface implements Iterator_Interface{
     {
         this.iter1 = iter1;
         this.iter2 = iter2;
+        if(iter1 instanceof FileIterator_Interface)
+            table1 = ((FileIterator_Interface) iter1).new_file;
+        else
+            table2 = null;
+        if(iter2 instanceof FileIterator_Interface)
+            table2 = ((FileIterator_Interface) iter2).new_file;
+        else
+            table2 = null;
         this.schema = new ArrayList<>();
         this.schema_flag=0;
     }

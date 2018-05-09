@@ -38,10 +38,6 @@ public class EvalIterator_Interface implements Iterator_Interface{
             {
                return null;
             }
-//            else {
-//                tuple = tup.tuples;
-//                schema = tup.schema;
-//            }
             final PrimitiveValue[] retArr= retVal;
              Data_Storage.eval = new Eval() {
                 @Override
