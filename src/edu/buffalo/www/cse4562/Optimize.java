@@ -134,6 +134,19 @@ public class Optimize {
         if(binaryExpression.getRightExpression() instanceof Column && binaryExpression.getLeftExpression() instanceof Column) {
             before_expression_list.add(expr);
         }
+        else if(binaryExpression instanceof OrExpression)
+        {
+            BinaryExpression binaryExpression1 = (BinaryExpression) binaryExpression.getLeftExpression();
+            BinaryExpression binaryExpression2 = (BinaryExpression) binaryExpression.getRightExpression();
+            String table_name1 = ((Column)binaryExpression1.getLeftExpression()).getTable().getName();
+            if(Data_Storage.table_alias.containsKey(table_name1))
+                table_name1 = Data_Storage.table_alias.get(table_name1);
+            if (join_list.containsKey(table_name1)) {
+                join_list.put(table_name1, new EvalIterator_Interface(new FileIterator_Interface(table_name1, Data_Storage.table_alias.get(table_name1)), expr));
+            } else {
+                join_list.replace(table_name1, new EvalIterator_Interface(join_list.get(table_name1), expr));
+            }
+        }
         else
         {
             Column col = (Column) binaryExpression.getLeftExpression();
