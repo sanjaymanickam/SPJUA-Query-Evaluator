@@ -63,27 +63,11 @@ public class Select_Visitor {
             if(plainSelect.getLimit() != null){
                 Data_Storage.limit = plainSelect.getLimit().getRowCount();
             }
-            if(plainSelect.getOrderByElements() !=null) {
-                List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-                Iterator orderby_iter = orderBy.iterator();
-                while (orderby_iter.hasNext()) {
-                    OrderByElement o = (OrderByElement) orderby_iter.next();
-                    if (o instanceof OrderByElement) {
-                        Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
-                        if (o.getExpression() instanceof Column) {
-                            Column col = (Column) o.getExpression();
-                            Data_Storage.orderBy.add(col);
-                            Data_Storage.project_array.add(col.getColumnName());
-                        }
-                    }
-                }
-            }
-             if(plainSelect.getGroupByColumnReferences() != null){
+            if(plainSelect.getGroupByColumnReferences() != null){
                     Data_Storage.groupbyflag = 1;
                     Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
                     aggregateOperations = true;
-
-             }
+            }
             ArrayList<SelectExpressionItem> sel_items = (ArrayList) plainSelect.getSelectItems();
             Data_Storage.selectedColumns.clear();
             Data_Storage.finalColumns.clear();
@@ -112,6 +96,9 @@ public class Select_Visitor {
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
+            }
+            if(plainSelect.getOrderByElements() != null){
+                Data_Storage.oper = new Sort(Data_Storage.oper, plainSelect.getOrderByElements());
             }
 
         }
