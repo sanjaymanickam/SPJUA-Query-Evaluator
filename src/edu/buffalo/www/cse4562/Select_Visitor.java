@@ -1,8 +1,11 @@
 package edu.buffalo.www.cse4562;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
 import javax.xml.crypto.Data;
@@ -21,6 +24,9 @@ public class Select_Visitor {
             Data_Storage.orderBy_sort = new ArrayList<>();
             Data_Storage.orderBy = new ArrayList<>();
             PlainSelect plainSelect = (PlainSelect) stmt;
+            Boolean aggregateOperations = false;
+            Data_Storage.groupbyflag = 0;
+            Data_Storage.aggregateflag = 0;
             From_Visitor.ret_type(plainSelect.getFromItem());
             List<Join> joins = plainSelect.getJoins();
             Iterator_Interface main_from_item_iter = Data_Storage.oper;
@@ -32,6 +38,9 @@ public class Select_Visitor {
                 while(it.hasNext()) {
                     Join join = (Join) it.next();
                     From_Visitor.ret_type(join.getRightItem());
+                    if(((FileIterator_Interface) Data_Storage.oper).new_file.equals(((FileIterator_Interface) main_from_item_iter).new_file)){
+                        Data_Storage.selfJoin = 1;
+                    }
                     if(join_iter==null) {
                         join_iter = new JoinIteratorInterface(main_from_item_iter, Data_Storage.oper);
                     }else {
@@ -54,34 +63,44 @@ public class Select_Visitor {
             if(plainSelect.getLimit() != null){
                 Data_Storage.limit = plainSelect.getLimit().getRowCount();
             }
-            if(plainSelect.getOrderByElements() !=null){
-                List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-                Iterator orderby_iter = orderBy.iterator();
-                while(orderby_iter.hasNext()){
-                    OrderByElement o = (OrderByElement) orderby_iter.next();
-                    if(o instanceof OrderByElement){
-                        Data_Storage.orderBy_sort.add(String.valueOf(o.isAsc()));
-                        if(o.getExpression() instanceof Column){
-                            Column col = (Column) o.getExpression();
-                            Data_Storage.orderBy.add(col);
-                            Data_Storage.project_array.add(col.getColumnName());
-                        }
-                    }
-                }
-             if(plainSelect.getGroupByColumnReferences() != null){
+            if(plainSelect.getGroupByColumnReferences() != null){
                     Data_Storage.groupbyflag = 1;
-                Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
-             }
+                    Data_Storage.groupByColumn = plainSelect.getGroupByColumnReferences();
+                    aggregateOperations = true;
             }
-            List<SelectItem> sel_items = plainSelect.getSelectItems();
+            ArrayList<SelectExpressionItem> sel_items = (ArrayList) plainSelect.getSelectItems();
             Data_Storage.selectedColumns.clear();
             Data_Storage.finalColumns.clear();
             Data_Storage.projectionColumns.clear();
+
+            if(!aggregateOperations){
+                for(SelectItem s : sel_items){
+                    if(s instanceof SelectExpressionItem){
+                        SelectExpressionItem sExp = (SelectExpressionItem)s;
+                        if(sExp.getExpression() instanceof Function){
+                            aggregateOperations = true;
+                            break;
+                        }
+                    }
+
+                }
+            }
+            if(aggregateOperations){
+                Data_Storage.oper =  new AggregateProjection(Data_Storage.oper,sel_items);
+                //Handle groupBy, Aggregation and Projection together
+            }else{
+                Data_Storage.oper = new ProjectionIterator_Interface(sel_items,Data_Storage.oper);
+            }
+
+            handleSelectionItems(sel_items);
             for(SelectItem col : sel_items)
             {
                 SelectItem_Visitor.ret_type(col);
             }
-            Data_Storage.oper = new ProjectionIterator_Interface(Data_Storage.projectionColumns,Data_Storage.oper);
+            if(plainSelect.getOrderByElements() != null){
+                Data_Storage.oper = new Sort(Data_Storage.oper, plainSelect.getOrderByElements());
+            }
+
         }
         else if(stmt instanceof Union)
         {
@@ -96,6 +115,7 @@ public class Select_Visitor {
             if(!Data_Storage.project_array.contains(col)){
                 Data_Storage.project_array.add(col.getColumnName());
             }
+            Data_Storage.projectionCols.add(col.getColumnName());
             return;
         }
         if(agg_expr instanceof BinaryExpression){
@@ -106,5 +126,49 @@ public class Select_Visitor {
     public Iterator_Interface getChild()
     {
         return Data_Storage.oper;
+    }
+
+    public static void handleSelectionItems(ArrayList<SelectExpressionItem> selItems){
+        for(SelectItem selItem : selItems){
+            if(selItem instanceof AllColumns){
+
+            }
+            else if(selItem instanceof AllTableColumns){
+                AllTableColumns at = (AllTableColumns) selItem;
+                String tableName = at.getTable().getName();
+                if(Data_Storage.table_alias.containsKey(tableName)){
+                    tableName = Data_Storage.table_alias.get(tableName);
+                }
+                Iterator colIter = Data_Storage.tables.get(tableName).keySet().iterator();
+                while (colIter.hasNext()){
+                    Data_Storage.projectionCols.add(colIter.next().toString());
+                }
+            }
+            else if(selItem instanceof SelectExpressionItem){
+                SelectExpressionItem selExper = (SelectExpressionItem) selItem;
+                Expression expr = (Expression) selExper.getExpression();
+                if(expr instanceof Column){
+                    Column col = (Column)expr;
+                    Data_Storage.projectionCols.add(col.getColumnName());
+                }
+                else if(expr instanceof Function){
+                    Function func = (Function) expr;
+                    Expression aggExpr = (Expression) func.getParameters().getExpressions().get(0);
+                    handleExpression(aggExpr);
+                }
+            }
+        }
+    }
+    public static void handleExpression(Expression agg_expr){
+        if(agg_expr instanceof Column){
+            Column col = (Column) agg_expr;
+            Data_Storage.projectionCols.add(col.getColumnName());
+            return;
+        }
+        if(agg_expr instanceof BinaryExpression){
+            handleExpression(((BinaryExpression) agg_expr).getLeftExpression());
+            handleExpression(((BinaryExpression) agg_expr).getRightExpression());
+        }
+
     }
 }

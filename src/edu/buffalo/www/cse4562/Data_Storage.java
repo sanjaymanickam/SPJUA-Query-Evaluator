@@ -3,8 +3,10 @@ package edu.buffalo.www.cse4562;
 import net.sf.jsqlparser.eval.Eval;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 
 import java.util.*;
@@ -20,9 +22,10 @@ public class Data_Storage {
     static HashMap<Iterator_Interface,Boolean> file_flag = new HashMap<>();
     static int all_flag = 0;
     static HashMap<Iterator_Interface,Iterator> stored_file_iterators = new HashMap<>();
-    static HashMap<Iterator_Interface,Tuple> file_temp_tuple = new HashMap<>();
-    static HashMap<Iterator_Interface,ArrayList<Tuple>> stored_files = new HashMap<>();
+    static HashMap<Iterator_Interface,PrimitiveValue[]> file_temp_tuple = new HashMap<>();
+    static HashMap<Iterator_Interface,ArrayList<PrimitiveValue[]>> stored_files = new HashMap<>();
     static HashMap<String , Iterator_Interface> operator_map = new HashMap<>();
+    static HashMap<String,Integer> table_sizes = new HashMap<>();
     static Long limit;
     static Eval eval;
     static int hash_flag = 0;
@@ -48,6 +51,14 @@ public class Data_Storage {
     static LinkedHashMap<String,ArrayList<Double []>> aggregateHash = new LinkedHashMap<>();
     static HashMap<Column,String> valHash = new HashMap<>();
 
+    static HashMap<String, ColumnType> colType = new HashMap<>();
+    static HashMap<String, Integer> tableSize = new HashMap<>();
+    static HashSet<String> projectionCols = new HashSet<>();
+    public static int selfJoin = 0;
+
+    static HashMap<String, ArrayList<ArrayList<String>>> primaryKey = new HashMap<>();
+    static HashMap<String, ArrayList<ArrayList<String>>> foreignKey = new HashMap<>();
+    static HashSet<String> indexColumns = new HashSet<>();
     static Column stringSplitter(String colName)
     {
         String tableName;
@@ -55,5 +66,21 @@ public class Data_Storage {
         tableName = str_tok.nextElement().toString();
         colName = str_tok.nextElement().toString();
         return new Column(new Table(tableName),colName);
+    }
+    static String get_filename(Column rightColumn){
+        String fileName;
+        if(Data_Storage.indexColumns.contains(rightColumn.getColumnName())){
+            String tableName = rightColumn.getTable().getName();
+            String colName = rightColumn.getColumnName();
+            if(Data_Storage.table_alias.containsKey(tableName)){
+                tableName = Data_Storage.table_alias.get(tableName);
+            }
+            fileName = tableName+"_"+colName+"_";
+        }
+        else
+        {
+            fileName = null;
+        }
+        return fileName;
     }
 }

@@ -1,11 +1,13 @@
 package edu.buffalo.www.cse4562;
 
 import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.select.Select;
 
 import javax.xml.crypto.Data;
@@ -25,6 +27,7 @@ public class Command_Executor {
         CCJSqlParser parser = new CCJSqlParser(in);
         Statement stmt;
         try {
+            int createTableCount = 0;
             while ((stmt = parser.Statement()) != null) {
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
@@ -43,38 +46,42 @@ public class Command_Executor {
                 Data_Storage.aggregate_operations.clear();
                 Data_Storage.positionHash.clear();
                 Data_Storage.dataTypeHash.clear();
+                Data_Storage.projectionCols.clear();
+                Data_Storage.selfJoin = 0;
+                Data_Storage.colType.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
+                if(stmt instanceof CreateTable){
+                    createTableCount++;
+                }
+                if(createTableCount == 5){
+                    Preprocess.preprocessData();
+                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
+                    System.out.println(stmt.toString());
+                    Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
                     Data_Storage.project_array.clear();
                     Data_Storage.project_array.addAll(temp_set);
-                    Tuple tuple = Data_Storage.oper.readOneTuple();
-                    while (tuple != null){
-
-                        Tuple temp = new Tuple();
-                        temp.tuples.addAll(tuple.tuples);
-                        temp.schema.addAll(tuple.schema);
-                        result.add(temp.tuples);
-                            if(schema_flag==0) {
-                            schema = temp.schema;
-                            schema_flag=1;
+                    ArrayList<PrimitiveValue[]> resultTuples = new ArrayList<>();
+                    PrimitiveValue[] tuple = Data_Storage.oper.readOneTuple();
+                    int count = 1;
+                    while(tuple != null){
+                        if(tuple != null){
+                            resultTuples.add(tuple);
+                            print(tuple);
+                            if(count >= Data_Storage.limit){
+                                break;
+                            }
                         }
-                       // GroupByAggregation.groupBy(tuple,schema);
+                        count++;
                         tuple = Data_Storage.oper.readOneTuple();
                     }
-
-                    Data_Storage.groupby_resultset = GroupByAggregate.groupBy(result, schema);
-                    if(Data_Storage.aggregateflag==1)
-                    {
-                       aggregate_result = Aggregation.aggregate(result,Data_Storage.groupby_resultset,schema);
-                    }
-                    sort(new ArrayList<>(aggregate_result.values()),Data_Storage.finalSchema);
                 }
 
                 System.out.println(prompt);
@@ -83,115 +90,16 @@ public class Command_Executor {
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            e.printStackTrace();    
         }
     }
-    public static void sort(ArrayList<ArrayList<String>> result, ArrayList<Column> schema){
-
-            if(Data_Storage.orderBy.size() > 0){
-                int ct=0;
-                Column c = Data_Storage.orderBy.get(ct);
-                String tableName =  c.getTable().getName();
-                String col_name = c.getColumnName();
-
-                if(Data_Storage.alias_table.containsKey(c.toString())){
-                    col_name = Data_Storage.alias_table.get(c.toString());
-                }
-                if(Data_Storage.table_alias.containsKey(tableName))
-                {
-                    tableName =Data_Storage.table_alias.get(tableName);
-                }else{
-                    tableName = Data_Storage.current_schema.get(col_name);
-                }
-
-                Column col = new Column(new Table(tableName),col_name);
-                int position = schema.indexOf(col);
-                String DataType;
-                if(tableName != null){
-                    DataType = Data_Storage.tables.get(tableName).get(col_name);
-                }else{
-                    DataType = "DOUBLE";
-                }
-
-                if("true".equals(Data_Storage.orderBy_sort.get(ct))){
-                    Collections.sort(result, new Comparator<ArrayList<String>>() {
-                        @Override
-                        public int compare(ArrayList<String> one, ArrayList<String> two) {
-                            if(DataType.equals("DOUBLE")){
-                                Double value1 = Double.parseDouble(one.get(position));
-                                Double value2 = Double.parseDouble(two.get(position));
-                                if(value1 == value2){
-
-                                }else if(value1 < value2){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                            return one.get(position).compareTo(two.get(position));
-                        }
-                    });
-                }else{
-                    Collections.sort(result, new Comparator<ArrayList<String>>() {
-                        @Override
-                        public int compare(ArrayList<String> one, ArrayList<String> two) {
-                            if(DataType.equals("DOUBLE")){
-                                Double value1 = Double.parseDouble(two.get(position));
-                                Double value2 = new Double(one.get(position));
-                                if(value1 < value2){
-                                    return -1;
-                                }else{
-                                    return 1;
-                                }
-                            }
-                            return two.get(position).compareTo(one.get(position));
-                        }
-                    });
-                }
+    static void print(PrimitiveValue[] arr){
+        for(int i=0;i<arr.length;i++){
+            System.out.print(arr[i]);
+            if(i != arr.length -1){
+                System.out.print("|");
             }
-
-
-
-
-        int temp_i=0;
-        int size_to_iter =  result.size();
-        if(Data_Storage.limit > 0 && result.size() > Data_Storage.limit) {
-            size_to_iter = Data_Storage.limit.intValue();
         }
-            for(int i = 0;i<size_to_iter;i++){
-                Iterator itr = result.get(i).iterator();
-                while (itr.hasNext()) {
-                    Column col = schema.get(temp_i++);
-                    String tableName =  col.getTable().getName();
-                    String col_name = col.getColumnName();
-                    if(Data_Storage.table_alias.containsKey(tableName))
-                        tableName =Data_Storage.table_alias.get(tableName);
-                    if(Data_Storage.current_schema.containsKey(col_name)){
-                        tableName = Data_Storage.current_schema.get(col_name);
-                    }
-                    Column new_col = new Column(new Table(tableName),col_name);
-                    String temp = "DOUBLE";
-                    if(tableName != null){
-                        temp = Data_Storage.tables.get(new_col.getTable().getName()).get(new_col.getColumnName());
-                    }
-                    if(temp.equals("DOUBLE"))
-                    {
-                        DoubleValue d_value = new DoubleValue(itr.next().toString());
-                        System.out.print(d_value);
-                    }
-                    else if(temp.equals("STRING") || temp.equals("VARCHAR") || temp.equals("CHARACTER"))
-                    {
-                        System.out.print(new StringValue(itr.next().toString()));
-                    }
-                    else {
-                        System.out.print(itr.next());
-                    }
-                    if (itr.hasNext()) {
-                        System.out.print("|");
-                    }
-                }
-                temp_i=0;
-                System.out.println();
-        }
+        System.out.println();
     }
 }

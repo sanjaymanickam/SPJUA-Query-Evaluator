@@ -51,7 +51,7 @@ public class From_Visitor {
                 {
                     Data_Storage.table_alias.put(table.getAlias(),table_name);
                 }
-                Data_Storage.oper = new FileIterator_Interface(table_name,table.getAlias());
+                Data_Storage.oper = new FileIterator_Interface(table_name,table.getAlias(),true);
                 ArrayList<String> cols = new ArrayList<>(Data_Storage.tables.get(table_name).keySet());
                 Iterator it = cols.iterator();
                 while(it.hasNext()){
