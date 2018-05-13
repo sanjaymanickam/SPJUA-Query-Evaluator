@@ -67,4 +67,20 @@ public class Data_Storage {
         colName = str_tok.nextElement().toString();
         return new Column(new Table(tableName),colName);
     }
+    static String get_filename(Column rightColumn){
+        String fileName;
+        if(Data_Storage.indexColumns.contains(rightColumn.getColumnName())){
+            String tableName = rightColumn.getTable().getName();
+            String colName = rightColumn.getColumnName();
+            if(Data_Storage.table_alias.containsKey(tableName)){
+                tableName = Data_Storage.table_alias.get(tableName);
+            }
+            fileName = tableName+"_"+colName+"_";
+        }
+        else
+        {
+            fileName = null;
+        }
+        return fileName;
+    }
 }

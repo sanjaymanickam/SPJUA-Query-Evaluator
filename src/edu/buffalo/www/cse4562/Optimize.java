@@ -62,8 +62,7 @@ public class Optimize {
                 BinaryExpression binaryExpression = (BinaryExpression) expr_to_iterate;
                 if(binaryExpression instanceof OrExpression)
                 {
-                    before_expression = binaryExpression;
-                    break;
+                    add_join(binaryExpression);
                 }
                 else if(binaryExpression instanceof AndExpression)
                 {
@@ -73,18 +72,38 @@ public class Optimize {
                 }
                 else
                 {
-                    expressions_list.add(binaryExpression);
+                    if(binaryExpression.getLeftExpression() instanceof Column && binaryExpression.getRightExpression() instanceof Column)
+                        before_expression_list.add(binaryExpression);
+                    else
+                        expressions_list.add(binaryExpression);
                 }
                 expr_to_iterate = binaryExpression.getLeftExpression();
             }
             else if(expr_to_iterate instanceof Column)
                 break;
         }
-        if(Data_Storage.table_sizes.size()==2)
-            if (Data_Storage.table_sizes.get(join_name.get(0)) > Data_Storage.table_sizes.get(join_name.get(1)))
+        if(Data_Storage.tableSize.size()==2)
+            if (Data_Storage.tableSize.get(join_name.get(0)) > Data_Storage.tableSize.get(join_name.get(1)))
                 Collections.swap(join_name, 0, 1);
         Iterator before_iter = before_expression_list.iterator();
+//        while(before_iter.hasNext())
+//        {
+//            BinaryExpression binaryExpression = (BinaryExpression)before_iter.next();
+//            if(binaryExpression instanceof OrExpression)
+//            {
+//                Column col1 = (Column)((BinaryExpression)binaryExpression.getLeftExpression()).getLeftExpression();
+//                Column col2 = (Column)((BinaryExpression)binaryExpression.getRightExpression()).getLeftExpression();
+//                if(col1.getTable().getName().equals(col2.getTable().getName()))
+//                {
+//                    int join_index = join_name.indexOf(col1.getTable().getName());
+//                    join_list.replace(col1.getTable().getName(),new EvalIterator_Interface(join_list.get(join_index),binaryExpression));
+//                }
+//                before_expression_list.remove(binaryExpression);
+//                break;
+//            }
+//        }
         Iterator_Interface join_iter = null;
+        Iterator expr_iter = before_expression_list.iterator();
         for(int i=join_list.size()-1;i>0;i--) {
             String table1, table2;
 
@@ -92,9 +111,9 @@ public class Optimize {
                 table1 = join_name.get(i-1);
                 int count = 0;
                 int flag=0;
-                while(before_iter.hasNext())
+                while(expr_iter.hasNext())
                 {
-                    Expression expr = (Expression) before_iter.next();
+                    Expression expr = (Expression) expr_iter.next();
                     Column col[] = split(expr);
                     String checktable1,checktable2;
                     checktable1 = col[0].getTable().getName();
@@ -114,7 +133,7 @@ public class Optimize {
                 else
                     join_iter = new JoinIteratorInterface(join_iter,join_list.get(table1));
                 if(flag == 1)
-                    join_iter = new HashJoin_Interface(((JoinIteratorInterface)join_iter).iter1,((JoinIteratorInterface)join_iter).iter2,before_expression_list.get(count-1));
+                    join_iter = new IndexNestedLoopJoin(((JoinIteratorInterface)join_iter).iter1,((JoinIteratorInterface)join_iter).iter2,before_expression_list.get(count-1));
                 flag = 0;
         }
         Iterator_Interface to_send = null;
@@ -141,8 +160,8 @@ public class Optimize {
             String table_name1 = ((Column)binaryExpression1.getLeftExpression()).getTable().getName();
             if(Data_Storage.table_alias.containsKey(table_name1))
                 table_name1 = Data_Storage.table_alias.get(table_name1);
-            if (join_list.containsKey(table_name1)) {
-                join_list.put(table_name1, new EvalIterator_Interface(new FileIterator_Interface(table_name1, Data_Storage.table_alias.get(table_name1)), expr));
+            if (!join_list.containsKey(table_name1)) {
+                join_list.put(table_name1, new EvalIterator_Interface(new FileIterator_Interface(table_name1, Data_Storage.table_alias.get(table_name1),true), expr));
             } else {
                 join_list.replace(table_name1, new EvalIterator_Interface(join_list.get(table_name1), expr));
             }
@@ -153,8 +172,8 @@ public class Optimize {
             String table_name = col.getTable().getName();
             if(Data_Storage.table_alias.containsKey(table_name))
                 table_name = Data_Storage.table_alias.get(table_name);
-            if (join_list.containsKey(table_name)) {
-                join_list.put(table_name, new EvalIterator_Interface(new FileIterator_Interface(table_name, Data_Storage.table_alias.get(table_name)), expr));
+            if (!join_list.containsKey(table_name)) {
+                join_list.put(table_name, new EvalIterator_Interface(new FileIterator_Interface(table_name, Data_Storage.table_alias.get(table_name),true), expr));
             } else {
                 join_list.replace(table_name, new EvalIterator_Interface(join_list.get(table_name), expr));
             }

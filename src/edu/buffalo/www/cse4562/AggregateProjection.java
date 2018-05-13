@@ -29,7 +29,6 @@ public class AggregateProjection implements Iterator_Interface{
     public Iterator_Interface getChild() {
         return this.iter;
     }
-
     @Override
     public PrimitiveValue[] readOneTuple() {
         if(this.result.size() == 0){

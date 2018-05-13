@@ -124,7 +124,7 @@ public class EvalIterator_Interface implements Iterator_Interface{
     }
     @Override
     public void reset() {
-
+            iter.reset();
     }
     @Override
     public LinkedHashMap<String, Schema> getSchema(){

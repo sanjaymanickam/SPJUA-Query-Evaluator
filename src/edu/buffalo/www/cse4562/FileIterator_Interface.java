@@ -24,15 +24,21 @@ public class FileIterator_Interface implements Iterator_Interface{
     LinkedHashMap<String, Schema> outSchema = new LinkedHashMap<>();
     LinkedHashMap<String, Schema> inSchema = new LinkedHashMap<>();
 
-    public FileIterator_Interface(String new_file,String aliastableName) {
+    boolean filetype ;
+
+    public FileIterator_Interface(String new_file,String aliastableName,boolean filetype) {
         this.new_file = new_file;
         if(aliastableName == null){
             this.aliastableName = new_file;
         }else{
             this.aliastableName = aliastableName;
         }
-
-        String file = "data/"+new_file+".dat";
+        this.filetype = filetype;
+        String file;
+        if(filetype)
+            file = "data/"+new_file+".dat";
+        else
+            file = "indexes/"+new_file+".txt";
         try {
             read = new BufferedReader(new FileReader(new File(file)));
         } catch (FileNotFoundException e) {
@@ -150,9 +156,14 @@ public class FileIterator_Interface implements Iterator_Interface{
 
     @Override
     public void reset() {
+        String file;
+        if(filetype)
+            file = "data/"+new_file+".dat";
+        else
+            file = "indexes/"+new_file+".txt";
         try {
-            read.reset();
-        } catch (IOException e) {
+            read = new BufferedReader(new FileReader(new File(file)));
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -173,7 +184,15 @@ public class FileIterator_Interface implements Iterator_Interface{
 
     public void generateSchema(){
         //Perform projection push down
-        LinkedHashMap<String, String> colSchema= Data_Storage.tables.get(new_file);
+        String tablename;
+        if(new_file.indexOf("_")!=-1) {
+            tablename = new StringTokenizer(new_file, "_").nextToken();
+        }
+        else
+        {
+            tablename = new_file;
+        }
+        LinkedHashMap<String, String> colSchema= Data_Storage.tables.get(tablename);
         int i=0;
         int j=0;
         for(Map.Entry<String, String> map : colSchema.entrySet()){

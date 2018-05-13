@@ -7,7 +7,7 @@ import net.sf.jsqlparser.schema.Column;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public interface Iterator_Interface {
+public interface Iterator_Interface  {
     PrimitiveValue[] readOneTuple();
     Iterator_Interface getChild();
     void print();
