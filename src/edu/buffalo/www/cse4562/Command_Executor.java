@@ -51,10 +51,16 @@ public class Command_Executor {
                 Data_Storage.colType.clear();
                 int schema_flag=0;
                 Visitor_Parse.ret_type(stmt);
+                boolean flag_temp = false;
                 if(stmt instanceof CreateTable){
                     createTableCount++;
                 }
-                if(createTableCount == 5){
+                else
+                {
+                    flag_temp = true;
+                    System.err.println(createTableCount);
+                }
+                if(flag_temp){
                     Preprocess.preprocessData();
                 }
                 if(Data_Storage.oper!=null) {
