@@ -62,6 +62,7 @@ public class Command_Executor {
                 }
                 if(flag_temp){
                     Preprocess.preprocessData();
+                    flag_temp = false;
                 }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
