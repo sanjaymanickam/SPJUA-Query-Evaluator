@@ -1,12 +1,10 @@
 package edu.buffalo.www.cse4562;
 
-import com.sun.deploy.util.ArrayUtil;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.PrimitiveValue;
 import net.sf.jsqlparser.schema.Column;
 
-import java.io.File;
 import java.util.*;
 
 public class IndexNestedLoopJoin implements Iterator_Interface {
