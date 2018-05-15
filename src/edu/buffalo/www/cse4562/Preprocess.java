@@ -11,7 +11,7 @@ public class Preprocess {
             //Foreign key indexing
 
             HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
-            System.out.println("Done");
+            //System.out.println("Done");
         }
         return true;
     }
