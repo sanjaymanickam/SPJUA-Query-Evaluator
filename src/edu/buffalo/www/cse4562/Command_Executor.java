@@ -60,6 +60,7 @@ public class Command_Executor {
                     flag_temp = true;
                     System.err.println(createTableCount);
                 }
+                System.err.println(createTableCount);
                 if(createTableCount==8){
                     Preprocess.preprocessData();
                     flag_temp = false;
@@ -90,7 +91,7 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                 }
-
+                System.err.println("Printing Prompt");
                 System.out.println(prompt);
                 System.out.flush();
             }

@@ -8,7 +8,9 @@ public class Preprocess {
         Iterator tableIter = Data_Storage.tables.keySet().iterator();
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
+            System.err.println("Processing start - Table - "+tableName);
             HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
+            System.err.println("Processing done - Table - "+tableName);
         }
         return true;
     }
@@ -39,7 +41,9 @@ public class Preprocess {
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
                         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
                             out.println(line);
+                            out.close();
                         } catch (IOException e) {
+                            System.err.println("Exception while writing");
                             System.err.println(e);
                         }
                     }
@@ -51,9 +55,11 @@ public class Preprocess {
             Data_Storage.tableSize.put(file,tupleCount);
         }
         catch (FileNotFoundException e){
+            System.err.println("Exception File not found");
             e.printStackTrace();
         }
         catch (IOException e){
+            System.err.println("IO ");
             e.printStackTrace();
         }
         return index;
