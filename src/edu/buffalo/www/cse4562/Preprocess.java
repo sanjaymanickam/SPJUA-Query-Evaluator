@@ -31,11 +31,7 @@ public class Preprocess {
             String line = buf.readLine();
             while (line !=null){
                 if(toIndex){
-                    if(printCount == 0){
-                        System.err.println("Reading file - "+file);
-                        printCount = 1;
-                    }
-                    for (ArrayList<String> keys : indexMeta) {
+                    ArrayList<String> keys = indexMeta.get(0);
                         int pos = Integer.parseInt(keys.get(1));
                         String colName = keys.get(0);
                         ArrayList<String> tuple = new ArrayList<>();
@@ -52,10 +48,6 @@ public class Preprocess {
                         }
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
                         bw = new BufferedWriter(new FileWriter(new File(fileName),true));
-                        if(printCount == 1){
-                            System.err.println("Going to write to - "+fileName);
-                            printCount = 2;
-                        }
                         try {
                             bw.write(line);
                             bw.write("\n");
@@ -68,13 +60,12 @@ public class Preprocess {
                             System.err.println("Exception while writing");
                             System.err.println(e);
                         }
-                    }
                 }
                 tupleCount++;
                 line = buf.readLine();
             }
             System.err.println("Read file");
-            System.err.println(tupleCount);
+            System.out.println(tupleCount);
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
