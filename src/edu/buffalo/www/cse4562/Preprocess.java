@@ -9,8 +9,9 @@ public class Preprocess {
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
             //Foreign key indexing
-
-            HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
+            if(tableName.equals("LINEITEM") || tableName.equals("ORDERS")){
+                HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
+            }
             System.out.println("Done");
         }
         return true;
@@ -48,6 +49,7 @@ public class Preprocess {
                 tupleCount++;
                 line = buf.readLine();
             }
+            buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
         catch (FileNotFoundException e){
