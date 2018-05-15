@@ -21,6 +21,7 @@ public class Preprocess {
         files.add("ORDERS");
         int printCount = 0;
         boolean toIndex = false;
+        BufferedWriter bw;
         if(files.contains(file)){
             toIndex = true;
         }
@@ -50,12 +51,18 @@ public class Preprocess {
                             stringTokenizer.nextElement();
                         }
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
-                        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
-                            out.println(line);
-                            out.close();
-                            if(printCount == 0){
+                        bw = new BufferedWriter(new FileWriter(new File(fileName),true));
+                        if(printCount == 1){
+                            System.err.println("Going to write to - "+fileName);
+                            printCount = 2;
+                        }
+                        try {
+                            bw.write(line);
+                            bw.write("\n");
+                            bw.close();
+                            if(printCount == 2){
                                 System.err.println("New file written - "+fileName);
-                                printCount = 1;
+                                printCount = 3;
                             }
                         } catch (IOException e) {
                             System.err.println("Exception while writing");
@@ -67,6 +74,7 @@ public class Preprocess {
                 line = buf.readLine();
             }
             System.err.println("Read file");
+            System.err.println(tupleCount);
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
