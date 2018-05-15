@@ -29,6 +29,7 @@ public class Command_Executor {
         try {
             int createTableCount = 0;
             while ((stmt = parser.Statement()) != null) {
+                System.err.println(stmt.toString());
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -71,7 +72,6 @@ public class Command_Executor {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-                    System.out.println(stmt.toString());
                     Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
@@ -83,6 +83,7 @@ public class Command_Executor {
                     while(tuple != null){
                         if(tuple != null){
                             resultTuples.add(tuple);
+                            System.err.println("Printitng tuple");
                             print(tuple);
                             if(count >= Data_Storage.limit){
                                 break;

@@ -52,9 +52,9 @@ public class Preprocess {
                             bw.write(line);
                             bw.write("\n");
                             bw.close();
-                            if(printCount == 2){
+                            if(printCount == 0){
                                 System.err.println("New file written - "+fileName);
-                                printCount = 3;
+                                printCount = 1;
                             }
                         } catch (IOException e) {
                             System.err.println("Exception while writing");
@@ -65,7 +65,7 @@ public class Preprocess {
                 line = buf.readLine();
             }
             System.err.println("Read file");
-            System.out.println(tupleCount);
+            System.err.println(tupleCount);
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
