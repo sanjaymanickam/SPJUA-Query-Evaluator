@@ -28,10 +28,16 @@ public class Preprocess {
                     String colName = keys.get(0);
                     ArrayList<String> tuple = new ArrayList<>();
                     StringTokenizer stringTokenizer = new StringTokenizer(line,"|");
+                    int count = 0;
+                    String value = "";
                     while (stringTokenizer.hasMoreElements()){
-                        tuple.add(stringTokenizer.nextElement().toString());
+                        if (count == pos){
+                            value = stringTokenizer.nextElement().toString();
+                            break;
+                        }
+                        count++;
+                        stringTokenizer.nextElement();
                     }
-                    String value = tuple.get(pos);
                     String fileName = "indexes/"+file+"_"+colName+"_"+value+".txt";
                     try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
                         out.println(line);
