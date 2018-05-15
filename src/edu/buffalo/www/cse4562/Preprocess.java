@@ -8,8 +8,7 @@ public class Preprocess {
         Iterator tableIter = Data_Storage.tables.keySet().iterator();
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
-            //Foreign key indexing
-            System.out.println("Done");
+            HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
         }
         return true;
     }
