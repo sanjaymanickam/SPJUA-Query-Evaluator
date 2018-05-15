@@ -19,6 +19,7 @@ public class Preprocess {
         HashSet<String> files = new HashSet<>();
         files.add("LINEITEM");
         files.add("ORDERS");
+        int printCount = 0;
         boolean toIndex = false;
         if(files.contains(file)){
             toIndex = true;
@@ -29,9 +30,11 @@ public class Preprocess {
             String line = buf.readLine();
             while (line !=null){
                 if(toIndex){
-                    System.out.println("Started for file "+file);
+                    if(printCount == 0){
+                        System.err.println("Reading file - "+file);
+                        printCount = 1;
+                    }
                     for (ArrayList<String> keys : indexMeta) {
-                        System.out.println("Foreign key --- "+keys.get(1));
                         int pos = Integer.parseInt(keys.get(1));
                         String colName = keys.get(0);
                         ArrayList<String> tuple = new ArrayList<>();
@@ -50,6 +53,10 @@ public class Preprocess {
                         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
                             out.println(line);
                             out.close();
+                            if(printCount == 0){
+                                System.err.println("New file written - "+fileName);
+                                printCount = 1;
+                            }
                         } catch (IOException e) {
                             System.err.println("Exception while writing");
                             System.err.println(e);
@@ -59,6 +66,7 @@ public class Preprocess {
                 tupleCount++;
                 line = buf.readLine();
             }
+            System.err.println("Read file");
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
