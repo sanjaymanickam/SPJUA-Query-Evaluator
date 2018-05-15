@@ -9,9 +9,6 @@ public class Preprocess {
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
             //Foreign key indexing
-            if(tableName.equals("LINEITEM") || tableName.equals("ORDERS")){
-                HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
-            }
             System.out.println("Done");
         }
         return true;
@@ -24,26 +21,28 @@ public class Preprocess {
             BufferedReader buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
             String line = buf.readLine();
             while (line !=null){
-                for(ArrayList<String> keys : indexMeta){
-                    int pos = Integer.parseInt(keys.get(1));
-                    String colName = keys.get(0);
-                    ArrayList<String> tuple = new ArrayList<>();
-                    StringTokenizer stringTokenizer = new StringTokenizer(line,"|");
-                    int count = 0;
-                    String value = "";
-                    while (stringTokenizer.hasMoreElements()){
-                        if (count == pos){
-                            value = stringTokenizer.nextElement().toString();
-                            break;
+                if(file.equals("LINEITEM") || file.equals("ORDERS")) {
+                    for (ArrayList<String> keys : indexMeta) {
+                        int pos = Integer.parseInt(keys.get(1));
+                        String colName = keys.get(0);
+                        ArrayList<String> tuple = new ArrayList<>();
+                        StringTokenizer stringTokenizer = new StringTokenizer(line, "|");
+                        int count = 0;
+                        String value = "";
+                        while (stringTokenizer.hasMoreElements()) {
+                            if (count == pos) {
+                                value = stringTokenizer.nextElement().toString();
+                                break;
+                            }
+                            count++;
+                            stringTokenizer.nextElement();
                         }
-                        count++;
-                        stringTokenizer.nextElement();
-                    }
-                    String fileName = "indexes/"+file+"_"+colName+"_"+value+".txt";
-                    try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
-                        out.println(line);
-                    }catch (IOException e) {
-                        System.err.println(e);
+                        String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
+                        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)))) {
+                            out.println(line);
+                        } catch (IOException e) {
+                            System.err.println(e);
+                        }
                     }
                 }
                 tupleCount++;
