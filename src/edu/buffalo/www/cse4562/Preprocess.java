@@ -17,13 +17,21 @@ public class Preprocess {
     public static HashMap<String, HashSet<Integer>> getStats(String file, ArrayList<ArrayList<String>> indexMeta){
         HashMap<String,HashSet<Integer>> index = new HashMap<>();
         HashSet<String> files = new HashSet<>();
+        files.add("LINEITEM");
+        files.add("ORDERS");
+        boolean toIndex = false;
+        if(files.contains(file)){
+            toIndex = true;
+        }
         try {
             int tupleCount = 0;
             BufferedReader buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
             String line = buf.readLine();
             while (line !=null){
-                if(file.equals("LINEITEM") || file.equals("ORDERS")) {
+                if(toIndex){
+                    System.out.println("Started for file "+file);
                     for (ArrayList<String> keys : indexMeta) {
+                        System.out.println("Foreign key --- "+keys.get(1));
                         int pos = Integer.parseInt(keys.get(1));
                         String colName = keys.get(0);
                         ArrayList<String> tuple = new ArrayList<>();

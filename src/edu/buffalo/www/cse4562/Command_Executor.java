@@ -64,6 +64,7 @@ public class Command_Executor {
                 if(createTableCount==8){
                     Preprocess.preprocessData();
                     flag_temp = false;
+                    createTableCount = 0;
                 }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
