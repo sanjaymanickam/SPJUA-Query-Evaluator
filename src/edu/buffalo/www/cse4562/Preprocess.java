@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class Preprocess {
+    static HashMap<String, ArrayList<Integer>> partKeyIndex = new HashMap<>();
     public static boolean preprocessData(){
         Iterator tableIter = Data_Storage.tables.keySet().iterator();
         while (tableIter.hasNext()){
@@ -54,28 +55,29 @@ public class Preprocess {
                             count++;
                             stringTokenizer.nextElement();
                         }
-                        String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
-                        if(colName.equals("L_SUPPKEY")){
-                            l_supkey.add(value);
-                        }
-                        else if(colName.equals("L_ORDERKEY")){
-                            l_orderkey.add(value);
-                        }
-                        else if(colName.equals("L_PARTKEY")){
-                            l_partkey.add(value);
-                        }
-                        bw = new BufferedWriter(new FileWriter(new File(fileName), true));
-                        try {
-                            bw.write(line);
-                            bw.newLine();
-                            bw.flush();
-                            bw.close();
-                            if (c == 0) {
-                                System.err.println("New file written - " + fileName);
+                        if(colName.equals("L_PARTKEY")){
+                            if(partKeyIndex.containsKey(value)){
+                                partKeyIndex.get(value).add(tupleCount);
+                            }else{
+                                ArrayList<Integer> test = new ArrayList<>();
+                                test.add(tupleCount);
+                                partKeyIndex.put(value,test);
                             }
-                        } catch (IOException e) {
-                            System.err.println("Exception while writing");
-                            System.err.println(e);
+                        }else{
+                            String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
+                            bw = new BufferedWriter(new FileWriter(new File(fileName), true));
+                            try {
+                                bw.write(line);
+                                bw.newLine();
+                                bw.flush();
+                                bw.close();
+                                if (c == 0) {
+                                    System.err.println("New file written - " + fileName);
+                                }
+                            } catch (IOException e) {
+                                System.err.println("Exception while writing");
+                                System.err.println(e);
+                            }
                         }
                     }
                 }
@@ -85,9 +87,7 @@ public class Preprocess {
             }
             System.err.println("Read file");
             System.err.println(tupleCount);
-            System.err.println("SUP - "+l_supkey.size());
-            System.err.println("Order - "+l_orderkey.size());
-            System.err.println("Part - "+l_partkey.size());
+            System.err.println(partKeyIndex.size());
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
