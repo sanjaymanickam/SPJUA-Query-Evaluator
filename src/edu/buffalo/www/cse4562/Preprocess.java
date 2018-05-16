@@ -32,9 +32,9 @@ public class Preprocess {
             buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
             String line = buf.readLine();
             int c = 0;
-            int l_supkey = 0;
-            int l_orderkey = 0;
-            int l_partkey = 0;
+            HashSet<String> l_supkey = new HashSet<>();
+            HashSet<String> l_orderkey = new HashSet<>();
+            HashSet<String> l_partkey = new HashSet<>();
             while (line !=null){
                 if(toIndex){
                     for(int i=0;i<names.size();i++) {
@@ -56,13 +56,13 @@ public class Preprocess {
                         }
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
                         if(colName.equals("L_SUPPKEY")){
-                            l_supkey++;
+                            l_supkey.add(value);
                         }
                         else if(colName.equals("L_ORDERKEY")){
-                            l_orderkey++;
+                            l_orderkey.add(value);
                         }
                         else if(colName.equals("L_PARTKEY")){
-                            l_partkey++;
+                            l_partkey.add(value);
                         }
                         bw = new BufferedWriter(new FileWriter(new File(fileName), true));
                         try {
@@ -81,9 +81,9 @@ public class Preprocess {
                 }
                 c++;
                 tupleCount++;
-                System.err.println("SUP - "+l_supkey);
-                System.err.println("Order - "+l_orderkey);
-                System.err.println("Part - "+l_partkey);
+                System.err.println("SUP - "+l_supkey.size());
+                System.err.println("Order - "+l_orderkey.size());
+                System.err.println("Part - "+l_partkey.size());
                 line = buf.readLine();
             }
             System.err.println("Read file");
