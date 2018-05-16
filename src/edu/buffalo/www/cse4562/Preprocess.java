@@ -81,13 +81,13 @@ public class Preprocess {
                 }
                 c++;
                 tupleCount++;
-                System.err.println("SUP - "+l_supkey.size());
-                System.err.println("Order - "+l_orderkey.size());
-                System.err.println("Part - "+l_partkey.size());
                 line = buf.readLine();
             }
             System.err.println("Read file");
             System.err.println(tupleCount);
+            System.err.println("SUP - "+l_supkey.size());
+            System.err.println("Order - "+l_orderkey.size());
+            System.err.println("Part - "+l_partkey.size());
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
