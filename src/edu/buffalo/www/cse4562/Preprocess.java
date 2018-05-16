@@ -9,32 +9,38 @@ public class Preprocess {
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
             System.err.println("Processing start - Table - "+tableName);
-            HashMap<String, HashSet<Integer>> stats = getStats(tableName,Data_Storage.foreignKey.get(tableName));
+            HashMap<String, HashSet<Integer>> stats = getStats(tableName);
             System.err.println("Processing done - Table - "+tableName);
         }
         return true;
     }
-    public static HashMap<String, HashSet<Integer>> getStats(String file, ArrayList<ArrayList<String>> indexMeta){
+    public static HashMap<String, HashSet<Integer>> getStats(String file){
         HashMap<String,HashSet<Integer>> index = new HashMap<>();
         HashSet<String> files = new HashSet<>();
         files.add("LINEITEM");
         files.add("ORDERS");
-        int printCount = 0;
         boolean toIndex = false;
         BufferedWriter bw;
+        BufferedReader buf;
         if(files.contains(file)){
             toIndex = true;
         }
         try {
+            ArrayList<String> names = Data_Storage.fKeyNames.get(file);
+            ArrayList<Integer> indexes = Data_Storage.fKeyPositions.get(file);
             int tupleCount = 0;
-            BufferedReader buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
+            buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
             String line = buf.readLine();
+            int c = 0;
             while (line !=null){
+
                 if(toIndex){
-                    ArrayList<String> keys = indexMeta.get(0);
-                        int pos = Integer.parseInt(keys.get(1));
-                        String colName = keys.get(0);
-                        ArrayList<String> tuple = new ArrayList<>();
+                    for(int i=0;i<names.size();i++) {
+                        int pos = indexes.get(i);
+                        String colName = names.get(i);
+                        if(c == 0){
+                            System.err.println("Indexing col - "+colName);
+                        }
                         StringTokenizer stringTokenizer = new StringTokenizer(line, "|");
                         int count = 0;
                         String value = "";
@@ -47,20 +53,22 @@ public class Preprocess {
                             stringTokenizer.nextElement();
                         }
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
-                        bw = new BufferedWriter(new FileWriter(new File(fileName),true));
+                        bw = new BufferedWriter(new FileWriter(new File(fileName), true));
                         try {
                             bw.write(line);
-                            bw.write("\n");
+                            bw.newLine();
+                            bw.flush();
                             bw.close();
-                            if(printCount == 0){
-                                System.err.println("New file written - "+fileName);
-                                printCount = 1;
+                            if (c == 0) {
+                                System.err.println("New file written - " + fileName);
                             }
                         } catch (IOException e) {
                             System.err.println("Exception while writing");
                             System.err.println(e);
                         }
+                    }
                 }
+                c++;
                 tupleCount++;
                 line = buf.readLine();
             }

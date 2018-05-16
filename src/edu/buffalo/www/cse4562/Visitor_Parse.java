@@ -27,8 +27,8 @@ public class Visitor_Parse {
             LinkedHashMap<String,String> tableDetails = new LinkedHashMap<>();
             LinkedHashMap<String,ColumnDefinition> tableColDetails = new LinkedHashMap<>();
             List<Index> indices = createTable.getIndexes();
-            ArrayList<ArrayList<String>> primaryIndex = new ArrayList<>();
-            ArrayList<ArrayList<String>> foreignIndex = new ArrayList<>();
+            ArrayList<Integer> foreignKeyIndex = new ArrayList<>();
+            ArrayList<String> foreignKeyNames = new ArrayList<>();
             for(Integer i=0;i<columnDefinitions.size();i++)
             {
                 ColumnDefinition colDef = (ColumnDefinition) columnDefinitions.get(i);
@@ -36,31 +36,29 @@ public class Visitor_Parse {
                 tableColDetails.put(columnDefinitions.get(i).getColumnName(),columnDefinitions.get(i));
                 List<String> indexList = colDef.getColumnSpecStrings();
                 if(indexList!=null){
-                    if(indexList.get(0).equals("PRIMARY")){
-                        ArrayList<String> primary = new ArrayList<>();
-                        primary.add(colDef.getColumnName());
-                        primary.add(i.toString());
-                        primaryIndex.add(primary);
-                    }
+//                    if(indexList.get(0).equals("PRIMARY")){
+//                        ArrayList<String> primary = new ArrayList<>();
+//                        primary.add(colDef.getColumnName());
+//                        primary.add(i.toString());
+//                        primaryIndex.add(primary);
+//                    }
                     if(indexList.get(0).equals("REFERENCES")){
-                        ArrayList<String> secondary = new ArrayList<>();
-                        secondary.add(colDef.getColumnName());
-                        secondary.add(i.toString());
-                        foreignIndex.add(secondary);
+                        foreignKeyIndex.add(i);
+                        foreignKeyNames.add(colDef.getColumnName());
                     }
                     Data_Storage.indexColumns.add(colDef.getColumnName());
                 }
-                if(indices!=null && indices.get(0).getColumnsNames().contains(columnDefinitions.get(i).getColumnName())){
-                    ArrayList<String> primary = new ArrayList<>();
-                    primary.add(colDef.getColumnName());
-                    primary.add(i.toString());
-                    primaryIndex.add(primary);
-                    Data_Storage.indexColumns.add(colDef.getColumnName());
-                }
+//                if(indices!=null && indices.get(0).getColumnsNames().contains(columnDefinitions.get(i).getColumnName())){
+//                    ArrayList<String> primary = new ArrayList<>();
+//                    primary.add(colDef.getColumnName());
+//                    primary.add(i.toString());
+//                    primaryIndex.add(primary);
+//                    Data_Storage.indexColumns.add(colDef.getColumnName());
+//                }
 
             }
-            Data_Storage.primaryKey.put(createTable.getTable().getName(),primaryIndex);
-            Data_Storage.foreignKey.put(createTable.getTable().getName(),foreignIndex);
+            Data_Storage.fKeyNames.put(createTable.getTable().getName(),foreignKeyNames);
+            Data_Storage.fKeyPositions.put(createTable.getTable().getName(),foreignKeyIndex);
             Data_Storage.tables.put(createTable.getTable().getName(),tableDetails);
         }
     }
