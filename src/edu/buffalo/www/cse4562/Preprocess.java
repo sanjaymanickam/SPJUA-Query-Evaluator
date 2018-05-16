@@ -32,8 +32,10 @@ public class Preprocess {
             buf = new BufferedReader(new FileReader(new File("data/"+file+".dat")));
             String line = buf.readLine();
             int c = 0;
+            int l_supkey = 0;
+            int l_orderkey = 0;
+            int l_partkey = 0;
             while (line !=null){
-
                 if(toIndex){
                     for(int i=0;i<names.size();i++) {
                         int pos = indexes.get(i);
@@ -53,6 +55,15 @@ public class Preprocess {
                             stringTokenizer.nextElement();
                         }
                         String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
+                        if(colName.equals("L_SUPPKEY")){
+                            l_supkey++;
+                        }
+                        else if(colName.equals("L_ORDERKEY")){
+                            l_orderkey++;
+                        }
+                        else if(colName.equals("L_PARTKEY")){
+                            l_partkey++;
+                        }
                         bw = new BufferedWriter(new FileWriter(new File(fileName), true));
                         try {
                             bw.write(line);
@@ -70,6 +81,9 @@ public class Preprocess {
                 }
                 c++;
                 tupleCount++;
+                System.err.println("SUP - "+l_supkey);
+                System.err.println("Order - "+l_orderkey);
+                System.err.println("Part - "+l_partkey);
                 line = buf.readLine();
             }
             System.err.println("Read file");
