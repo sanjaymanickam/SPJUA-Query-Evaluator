@@ -55,7 +55,7 @@ public class Preprocess {
                                 count++;
                                 stringTokenizer.nextElement();
                             }
-                            if (colName.equals("L_PARTKEY")) {
+                            if (colName.equals("L_SUPPKEY")) {
                                 if (partKeyIndex.containsKey(value)) {
                                     partKeyIndex.get(value).add(tupleCount);
                                 } else {

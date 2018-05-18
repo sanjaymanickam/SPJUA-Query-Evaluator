@@ -13,6 +13,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import javax.xml.crypto.Data;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.atomic.DoubleAccumulator;
 
@@ -64,6 +65,16 @@ public class Command_Executor {
                     Preprocess.preprocessData();
                     createTableCount++;
                     flag_temp = false;
+                }
+                else
+                {
+                    createTableCount++;
+                }
+                if(createTableCount==10)
+                {
+                    System.out.println(prompt);
+                    System.out.println(prompt);
+                    System.out.println(prompt);
                 }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
