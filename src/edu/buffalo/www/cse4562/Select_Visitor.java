@@ -6,7 +6,6 @@ import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 
 public class Select_Visitor {

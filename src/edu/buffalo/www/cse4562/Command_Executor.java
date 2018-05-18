@@ -80,14 +80,13 @@ public class Command_Executor {
                     PrimitiveValue[] tuple = Data_Storage.oper.readOneTuple();
                     int count = 1;
                     while(tuple != null){
-                        if(tuple != null){
                             resultTuples.add(tuple);
                             print(tuple);
-                            if(count >= Data_Storage.limit){
+                            if(count >= Data_Storage.limit) {
                                 break;
                             }
-                        }
                         count++;
+
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                 }
