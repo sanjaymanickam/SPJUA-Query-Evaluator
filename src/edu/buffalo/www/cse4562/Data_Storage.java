@@ -56,8 +56,8 @@ public class Data_Storage {
     static HashSet<String> projectionCols = new HashSet<>();
     public static int selfJoin = 0;
 
-    static HashMap<String, ArrayList<ArrayList<String>>> primaryKey = new HashMap<>();
-    static HashMap<String, ArrayList<ArrayList<String>>> foreignKey = new HashMap<>();
+    static HashMap<String, ArrayList<String>> fKeyNames = new HashMap<>();
+    static HashMap<String, ArrayList<Integer>> fKeyPositions = new HashMap<>();
     static HashSet<String> indexColumns = new HashSet<>();
     static Column stringSplitter(String colName)
     {

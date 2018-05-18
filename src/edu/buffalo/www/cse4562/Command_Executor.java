@@ -29,6 +29,7 @@ public class Command_Executor {
         try {
             int createTableCount = 0;
             while ((stmt = parser.Statement()) != null) {
+                System.err.println(stmt.toString());
                 ArrayList<ArrayList<String>> result = new ArrayList<>();
                 ArrayList<Column> schema = new ArrayList<>();
                 Data_Storage.selectedColumns.clear();
@@ -60,16 +61,17 @@ public class Command_Executor {
                     flag_temp = true;
                     System.err.println(createTableCount);
                 }
-                if(createTableCount==6){
+                System.err.println(createTableCount);
+                if(createTableCount==8){
                     Preprocess.preprocessData();
                     flag_temp = false;
+                    createTableCount = 0;
                 }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-                    System.out.println(stmt.toString());
                     Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
@@ -81,6 +83,7 @@ public class Command_Executor {
                     while(tuple != null){
                         if(tuple != null){
                             resultTuples.add(tuple);
+                            System.err.println("Printitng tuple");
                             print(tuple);
                             if(count >= Data_Storage.limit){
                                 break;
@@ -90,7 +93,7 @@ public class Command_Executor {
                         tuple = Data_Storage.oper.readOneTuple();
                     }
                 }
-
+                System.err.println("Printing Prompt");
                 System.out.println(prompt);
                 System.out.flush();
             }

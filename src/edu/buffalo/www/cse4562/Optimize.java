@@ -143,7 +143,7 @@ public class Optimize {
         if(to_aggr!=null && to_project!=null) {
             to_send = new AggregateProjection(to_send, to_aggr.selectedColumns);
         }
-        else {
+        else if(to_aggr != null && to_project==null){
             to_send = new AggregateProjection(join_iter,to_aggr.selectedColumns);
         }
         return to_send;
@@ -158,9 +158,13 @@ public class Optimize {
         {
             BinaryExpression binaryExpression1 = (BinaryExpression) binaryExpression.getLeftExpression();
             BinaryExpression binaryExpression2 = (BinaryExpression) binaryExpression.getRightExpression();
-            String table_name1 = ((Column)binaryExpression1.getLeftExpression()).getTable().getName();
+            Column col = ((Column)binaryExpression1.getLeftExpression());
+            String table_name1 = col.getTable().getName();
             if(Data_Storage.table_alias.containsKey(table_name1))
                 table_name1 = Data_Storage.table_alias.get(table_name1);
+            if(table_name1 == null){
+                table_name1 = Data_Storage.current_schema.get(col.getColumnName());
+            }
             if (!join_list.containsKey(table_name1)) {
                 join_list.put(table_name1, new EvalIterator_Interface(new FileIterator_Interface(table_name1, Data_Storage.table_alias.get(table_name1),true), expr));
             } else {
@@ -173,6 +177,10 @@ public class Optimize {
             String table_name = col.getTable().getName();
             if(Data_Storage.table_alias.containsKey(table_name))
                 table_name = Data_Storage.table_alias.get(table_name);
+
+            if(table_name == null){
+                table_name = Data_Storage.current_schema.get(col.getColumnName());
+            }
             if (!join_list.containsKey(table_name)) {
                 join_list.put(table_name, new EvalIterator_Interface(new FileIterator_Interface(table_name, Data_Storage.table_alias.get(table_name),true), expr));
             } else {
