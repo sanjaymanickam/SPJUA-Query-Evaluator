@@ -12,6 +12,7 @@ public interface Iterator_Interface  {
     Iterator_Interface getChild();
     void print();
     void setChild(Iterator_Interface iter);
+    String getFileName();
     void reset();
     void open();
     LinkedHashMap<String, Schema> getSchema();

@@ -182,6 +182,11 @@ public class FileIterator_Interface implements Iterator_Interface{
 
     }
 
+    @Override
+    public String getFileName() {
+        return this.new_file;
+    }
+
     public void generateSchema(){
         //Perform projection push down
         String tablename;
@@ -211,8 +216,5 @@ public class FileIterator_Interface implements Iterator_Interface{
     @Override
     public LinkedHashMap<String, Schema> getSchema(){
         return this.outSchema;
-    }
-    public String getfileName(){
-        return this.new_file;
     }
 }

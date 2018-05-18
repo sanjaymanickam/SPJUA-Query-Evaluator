@@ -66,6 +66,7 @@ public class Optimize {
                 if(binaryExpression instanceof OrExpression)
                 {
                     add_join(binaryExpression);
+                    binaryExpression = (BinaryExpression)binaryExpression.getLeftExpression();
                 }
                 else if(binaryExpression instanceof AndExpression)
                 {
@@ -119,7 +120,6 @@ public class Optimize {
             table1 = join_name.get(i - 1);
             int count = 0;
             int flag = 0;
-            while (count_beforeexpression-- != 0) {
                 while (expr_iter.hasNext()) {
                     Expression expr = (Expression) expr_iter.next();
                     Column col[] = split(expr);
@@ -146,7 +146,6 @@ public class Optimize {
                 if (flag == 1)
                     join_iter = new IndexNestedLoopJoin(((JoinIteratorInterface) join_iter).iter1, ((JoinIteratorInterface) join_iter).iter2, before_expression_list.get(count - 1));
                 flag = 0;
-            }
         }
         Iterator_Interface to_send = null;
         if(to_project!=null)

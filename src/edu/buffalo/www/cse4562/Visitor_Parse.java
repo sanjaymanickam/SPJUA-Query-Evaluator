@@ -45,8 +45,9 @@ public class Visitor_Parse {
                     if(indexList.get(0).equals("REFERENCES")){
                         foreignKeyIndex.add(i);
                         foreignKeyNames.add(colDef.getColumnName());
+                        Data_Storage.indexColumns.add(colDef.getColumnName());
                     }
-                    Data_Storage.indexColumns.add(colDef.getColumnName());
+
                 }
 //                if(indices!=null && indices.get(0).getColumnsNames().contains(columnDefinitions.get(i).getColumnName())){
 //                    ArrayList<String> primary = new ArrayList<>();

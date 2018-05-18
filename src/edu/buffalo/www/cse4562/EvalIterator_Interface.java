@@ -130,5 +130,10 @@ public class EvalIterator_Interface implements Iterator_Interface{
     public LinkedHashMap<String, Schema> getSchema(){
         return this.retSchema;
     }
+    @Override
+    public String getFileName()
+    {
+        return (iter).getFileName();
+    }
 
 }

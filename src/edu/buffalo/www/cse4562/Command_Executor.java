@@ -60,8 +60,9 @@ public class Command_Executor {
                     flag_temp = true;
                     System.err.println(createTableCount);
                 }
-                if(createTableCount==6){
+                if(createTableCount==7){
 //                    Preprocess.preprocessData();
+                       createTableCount++;
                     flag_temp = false;
                 }
                 if(Data_Storage.oper!=null) {

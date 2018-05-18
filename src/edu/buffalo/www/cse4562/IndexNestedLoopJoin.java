@@ -36,39 +36,47 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
 
     @Override
     public PrimitiveValue[] readOneTuple() {
+        boolean to_flag = false;
         if(iter1 instanceof FileIterator_Interface || iter1 instanceof EvalIterator_Interface) {
-            if (tuples.size() != -1)
-                read_file(iter1);
-            fileName = Data_Storage.get_filename(leftColumn);
-            indexAvailable = fileName == null ? false : true;
-            PrimitiveValue[] child1 = null;
-            PrimitiveValue[] child2 = null;
-            if(count<tuples.size())
-                child1 = tuples.get(count);
-            else
-                return null;
-            int child1setSize = child1Schema.keySet().size();
-            if (indexAvailable) {
+            do {
+                if (tuples.size() != -1)
+                    read_file(iter1);
+                if (new ArrayList(Data_Storage.tables.get(iter2.getFileName()).keySet()).contains(leftColumn.getColumnName()))
+                    fileName = Data_Storage.get_filename(leftColumn);
+                else
+                    fileName = Data_Storage.get_filename(rightColumn);
+                indexAvailable = fileName == null ? false : true;
+                PrimitiveValue[] child1 = null;
+                PrimitiveValue[] child2 = null;
+                if (count < tuples.size())
+                    child1 = tuples.get(count);
+                else
+                    return null;
+                int child1setSize = child1Schema.keySet().size();
                 for (int i = 0; i < child1setSize; i++)
                     to_send[i] = child1[i];
-                if (second_file == null)
-                    second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(rightColumn.getColumnName()).getPosition()].toRawString());
-            }
-            else
-            {
-                if(second_file == null)
-                    second_file = iter2;
-            }
-            child2 = second_file.readOneTuple();
-            if(child2 == null)
-            {
-                this.count++;
-                second_file  = set_iterator(iter2,fileName+to_send[child1Schema.get(rightColumn.getColumnName()).getPosition()].toString());
-            }
-            if(child2!=null) {
-                for (int j = 0; j < child2Schema.keySet().size(); j++)
-                    to_send[j + child1setSize] = child2[j];
-            }
+                if (indexAvailable) {
+                    if (second_file == null)
+                        second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(rightColumn.getColumnName()).getPosition()].toRawString());
+                } else {
+                    if (second_file == null)
+                        second_file = iter2;
+                }
+                child2 = second_file.readOneTuple();
+                if (child2 == null) {
+                    to_flag = true;
+                    this.count++;
+                    if(count<tuples.size())
+                        second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()].toString());
+                    else
+                        return null;
+                }
+                if (child2 != null) {
+                    to_flag = false;
+                    for (int j = 0; j < child2Schema.keySet().size(); j++)
+                        to_send[j + child1setSize] = child2[j];
+                }
+            }while(to_flag);
         }
         return to_send;
     }
@@ -125,6 +133,11 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
     @Override
     public void setChild(Iterator_Interface iter) {
 
+    }
+
+    @Override
+    public String getFileName() {
+        return null;
     }
 
     @Override

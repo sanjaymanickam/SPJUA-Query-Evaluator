@@ -146,6 +146,11 @@ public class HashJoin_Interface implements Iterator_Interface {
     }
 
     @Override
+    public String getFileName() {
+        return null;
+    }
+
+    @Override
     public void reset() {
 
     }

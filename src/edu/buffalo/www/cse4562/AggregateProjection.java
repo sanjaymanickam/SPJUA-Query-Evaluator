@@ -51,6 +51,11 @@ public class AggregateProjection implements Iterator_Interface{
     }
 
     @Override
+    public String getFileName() {
+        return null;
+    }
+
+    @Override
     public void reset() {
 
     }

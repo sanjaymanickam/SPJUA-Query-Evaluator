@@ -41,44 +41,44 @@ public class Preprocess {
                     for(int i=0;i<names.size();i++) {
                         int pos = indexes.get(i);
                         String colName = names.get(i);
-                        if(c == 0){
-                            System.err.println("Indexing col - "+colName);
-                        }
-                        StringTokenizer stringTokenizer = new StringTokenizer(line, "|");
-                        int count = 0;
-                        String value = "";
-                        while (stringTokenizer.hasMoreElements()) {
-                            if (count == pos) {
-                                value = stringTokenizer.nextElement().toString();
-                                break;
+                            if (c == 0) {
+                                System.err.println("Indexing col - " + colName);
                             }
-                            count++;
-                            stringTokenizer.nextElement();
-                        }
-                        if(colName.equals("L_PARTKEY")){
-                            if(partKeyIndex.containsKey(value)){
-                                partKeyIndex.get(value).add(tupleCount);
-                            }else{
-                                ArrayList<Integer> test = new ArrayList<>();
-                                test.add(tupleCount);
-                                partKeyIndex.put(value,test);
-                            }
-                        }else{
-                            String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
-                            bw = new BufferedWriter(new FileWriter(new File(fileName), true));
-                            try {
-                                bw.write(line);
-                                bw.newLine();
-                                bw.flush();
-                                bw.close();
-                                if (c == 0) {
-                                    System.err.println("New file written - " + fileName);
+                            StringTokenizer stringTokenizer = new StringTokenizer(line, "|");
+                            int count = 0;
+                            String value = "";
+                            while (stringTokenizer.hasMoreElements()) {
+                                if (count == pos) {
+                                    value = stringTokenizer.nextElement().toString();
+                                    break;
                                 }
-                            } catch (IOException e) {
-                                System.err.println("Exception while writing");
-                                System.err.println(e);
+                                count++;
+                                stringTokenizer.nextElement();
                             }
-                        }
+                            if (colName.equals("L_PARTKEY")) {
+                                if (partKeyIndex.containsKey(value)) {
+                                    partKeyIndex.get(value).add(tupleCount);
+                                } else {
+                                    ArrayList<Integer> test = new ArrayList<>();
+                                    test.add(tupleCount);
+                                    partKeyIndex.put(value, test);
+                                }
+                            } else {
+                                String fileName = "indexes/" + file + "_" + colName + "_" + value + ".txt";
+                                bw = new BufferedWriter(new FileWriter(new File(fileName), true));
+                                try {
+                                    bw.write(line);
+                                    bw.newLine();
+                                    bw.flush();
+                                    bw.close();
+                                    if (c == 0) {
+                                        System.err.println("New file written - " + fileName);
+                                    }
+                                } catch (IOException e) {
+                                    System.err.println("Exception while writing");
+                                    System.err.println(e);
+                                }
+                            }
                     }
                 }
                 c++;
