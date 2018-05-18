@@ -1,11 +1,9 @@
 package edu.buffalo.www.cse4562;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
 import javax.xml.crypto.Data;
