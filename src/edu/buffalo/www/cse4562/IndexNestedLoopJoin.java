@@ -59,7 +59,10 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                     to_send[i] = child1[i];
                 if (indexAvailable) {
                     if (second_file == null)
-                        second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(leftColumn.getColumnName()).getPosition()].toRawString());
+                        if(temp_array.contains(leftColumn.getColumnName()))
+                            second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(rightColumn.getColumnName()).getPosition()].toRawString());
+                        else
+                            second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(leftColumn.getColumnName()).getPosition()].toRawString());
                 } else {
                     if (second_file == null)
                         second_file = iter2;
@@ -69,7 +72,10 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                     to_flag = true;
                     this.count++;
                     if(count<tuples.size())
-                        second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(leftColumn.getColumnName()).getPosition()]);
+                        if(temp_array.contains(leftColumn.getColumnName()))
+                            second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()]);
+                        else
+                            second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(leftColumn.getColumnName()).getPosition()]);
                     else
                         return null;
                 }

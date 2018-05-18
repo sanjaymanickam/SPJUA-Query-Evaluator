@@ -218,6 +218,6 @@ public class JoinIteratorInterface implements Iterator_Interface{
             retSchema.put(s.getColumnName(), new Schema(s.getTableName(), s.getColumnName(), s.getDataType(),i));
             i++;
         }
-        System.out.println("Done check");
+//        System.out.println("Done check");
     }
 }
