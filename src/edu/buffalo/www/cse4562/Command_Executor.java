@@ -70,12 +70,12 @@ public class Command_Executor {
                 {
                     createTableCount++;
                 }
-                if(createTableCount==18)
-                {
-                    System.out.println(prompt);
-                    System.out.println(prompt);
-                    System.out.println(prompt);
-                }
+//                if(createTableCount==18)
+//                {
+//                    System.out.println(prompt);
+//                    System.out.println(prompt);
+//                    System.out.println(prompt);
+//                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
