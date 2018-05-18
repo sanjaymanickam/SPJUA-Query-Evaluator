@@ -44,9 +44,9 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                     read_file(iter1);
                 ArrayList<String> temp_array =  new ArrayList(Data_Storage.tables.get(iter2.getFileName()).keySet());
                 if (temp_array.contains(leftColumn.getColumnName()))
-                    fileName = Data_Storage.get_filename(leftColumn);
-                else
                     fileName = Data_Storage.get_filename(rightColumn);
+                else
+                    fileName = Data_Storage.get_filename(leftColumn);
                 indexAvailable = fileName == null ? false : true;
                 PrimitiveValue[] child1 = null;
                 PrimitiveValue[] child2 = null;
