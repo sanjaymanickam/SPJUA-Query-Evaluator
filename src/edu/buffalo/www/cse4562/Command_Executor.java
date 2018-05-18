@@ -21,7 +21,7 @@ public class Command_Executor {
     static LinkedHashMap<String,ArrayList<String>> aggregate_result = new LinkedHashMap<>();
     public static void exec(String[] args)
     {
-        System.out.println(prompt);
+        //System.out.println(prompt);
         System.out.flush();
         Reader in = new InputStreamReader(System.in);
         CCJSqlParser parser = new CCJSqlParser(in);
@@ -70,7 +70,7 @@ public class Command_Executor {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-                    System.out.println(stmt.toString());
+                   // System.out.println(stmt.toString());
                     Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);

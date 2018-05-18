@@ -147,7 +147,6 @@ public class AggregateProjection implements Iterator_Interface{
                     }
                 }
                 retVal = iter.readOneTuple();
-                System.out.println("");
             }
         aggregate(groups);
     }
