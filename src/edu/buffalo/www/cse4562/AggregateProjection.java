@@ -111,14 +111,17 @@ public class AggregateProjection implements Iterator_Interface{
         PrimitiveValue[] retVal;
         LinkedHashMap<String, ArrayList<PrimitiveValue[]>> groups = new LinkedHashMap<>();
         HashSet<PrimitiveValue[]> test = new HashSet<>();
+        PrimitiveValue[] to_add = null;
         retVal = iter.readOneTuple();
             while (retVal!=null){
+                to_add = new PrimitiveValue[retVal.length];
+                System.arraycopy(retVal,0,to_add,0,retVal.length);
                 if(Data_Storage.groupbyflag == 0){
                     if(groups.containsKey("none")){
-                        groups.get("none").add(retVal);
+                        groups.get("none").add(to_add);
                     }else{
                         ArrayList<PrimitiveValue[]> temp = new ArrayList<>();
-                        temp.add(retVal);
+                        temp.add(to_add);
                         groups.put("none",temp);
                     }
                 }else{
@@ -130,20 +133,21 @@ public class AggregateProjection implements Iterator_Interface{
                         Schema s = this.inSchema.get(colName);
                         int pos = s.getPosition();
                         if(it.hasNext()){
-                            key = key + retVal[pos]+",";
+                            key = key + to_add[pos]+",";
                         }else{
-                            key = key + retVal[pos];
+                            key = key + to_add[pos];
                         }
                     }
                     if(groups.containsKey(key)){
-                        groups.get(key).add(retVal);
+                        groups.get(key).add(to_add);
                     }else{
                         ArrayList<PrimitiveValue[]> temp = new ArrayList<>();
-                        temp.add(retVal);
+                        temp.add(to_add);
                         groups.put(key,temp);
                     }
                 }
                 retVal = iter.readOneTuple();
+                System.out.println("");
             }
         aggregate(groups);
     }

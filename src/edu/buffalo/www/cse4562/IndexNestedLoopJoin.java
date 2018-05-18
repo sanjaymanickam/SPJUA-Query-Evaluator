@@ -37,6 +37,7 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
     @Override
     public PrimitiveValue[] readOneTuple() {
         boolean to_flag = false;
+        to_send = new PrimitiveValue[outSchema.size()];
         if(iter1 instanceof FileIterator_Interface || iter1 instanceof EvalIterator_Interface) {
             do {
                 if (tuples.size() != -1)
