@@ -62,7 +62,7 @@ public class Command_Executor {
                 }
                 if(createTableCount==8){
                     Preprocess.preprocessData();
-                       createTableCount++;
+                    createTableCount++;
                     flag_temp = false;
                 }
                 if(Data_Storage.oper!=null) {

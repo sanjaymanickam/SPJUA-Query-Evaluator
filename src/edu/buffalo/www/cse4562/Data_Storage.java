@@ -75,6 +75,18 @@ public class Data_Storage {
             if(Data_Storage.table_alias.containsKey(tableName)){
                 tableName = Data_Storage.table_alias.get(tableName);
             }
+            if(tableName == null) {
+                ArrayList<String> names = new ArrayList(Data_Storage.tables.keySet());
+                String table_name1 = null;
+                Iterator iter = Data_Storage.tables.keySet().iterator();
+                for (int i = 0; i < Data_Storage.tables.size(); i++) {
+                    if (iter.hasNext()) {
+                        if (Data_Storage.tables.get(iter.next()).containsKey(colName))
+                            table_name1 = names.get(i);
+                    }
+                }
+                tableName = table_name1;
+            }
             fileName = tableName+"_"+colName+"_";
         }
         else
