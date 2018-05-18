@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.schema.Column;
 
+import javax.xml.crypto.Data;
 import java.util.*;
 
 public class Optimize {
@@ -18,6 +19,7 @@ public class Optimize {
     Expression before_expression;
     List<Expression> before_expression_list = new ArrayList<>();
     List<String> join_name = new ArrayList<>();
+    ArrayList<String> names = new ArrayList(Data_Storage.tables.keySet());
     public Iterator_Interface optimize(Iterator_Interface to_optimize) {
         Data_Storage.oper = to_optimize;
         Iterator_Interface old_itereator = to_optimize;
@@ -73,10 +75,14 @@ public class Optimize {
                 }
                 else
                 {
-                    if(binaryExpression.getLeftExpression() instanceof Column && binaryExpression.getRightExpression() instanceof Column)
+                    if(binaryExpression.getLeftExpression() instanceof Column && binaryExpression.getRightExpression() instanceof Column) {
                         before_expression_list.add(binaryExpression);
-                    else
+                        add_join(binaryExpression);
+                    }
+                    else {
                         expressions_list.add(binaryExpression);
+                        add_join(binaryExpression);
+                    }
                 }
                 expr_to_iterate = binaryExpression.getLeftExpression();
             }
@@ -105,45 +111,50 @@ public class Optimize {
 //        }
         Iterator_Interface join_iter = null;
         Iterator expr_iter = before_expression_list.iterator();
+        int count_beforeexpression = before_expression_list.size();
         for(int i=join_list.size()-1;i>0;i--) {
             String table1, table2;
 
-                table2 = join_name.get(i);
-                table1 = join_name.get(i-1);
-                int count = 0;
-                int flag=0;
-                while(expr_iter.hasNext())
-                {
+            table2 = join_name.get(i);
+            table1 = join_name.get(i - 1);
+            int count = 0;
+            int flag = 0;
+            while (count_beforeexpression-- != 0) {
+                while (expr_iter.hasNext()) {
                     Expression expr = (Expression) expr_iter.next();
                     Column col[] = split(expr);
-                    String checktable1,checktable2;
+                    String checktable1, checktable2;
                     checktable1 = col[0].getTable().getName();
                     checktable2 = col[1].getTable().getName();
-                    if(Data_Storage.table_alias.containsKey(checktable1))
+                    if (checktable1 == null)
+                        checktable1 = getTableName(col[0].getColumnName());
+                    if (checktable2 == null)
+                        checktable2 = getTableName(col[1].getColumnName());
+                    if (Data_Storage.table_alias.containsKey(checktable1))
                         checktable1 = Data_Storage.table_alias.get(checktable1);
-                    if(Data_Storage.table_alias.containsKey(checktable2))
+                    if (Data_Storage.table_alias.containsKey(checktable2))
                         checktable2 = Data_Storage.table_alias.get(checktable2);
-                    if((table1.equals(checktable1) || table1.equals(checktable2)) && (table2.equals(checktable1) || table2.equals(checktable2)))
-                    {
-                        flag=1;
+                    if ((table1.equals(checktable1) || table1.equals(checktable2)) && (table2.equals(checktable1) || table2.equals(checktable2))) {
+                        flag = 1;
                     }
                     count++;
                 }
-                if(join_iter==null)
-                    join_iter = new JoinIteratorInterface(join_list.get(table1),join_list.get(table2));
+                if (join_iter == null)
+                    join_iter = new JoinIteratorInterface(join_list.get(table1), join_list.get(table2));
                 else
-                    join_iter = new JoinIteratorInterface(join_iter,join_list.get(table1));
-                if(flag == 1)
-                    join_iter = new IndexNestedLoopJoin(((JoinIteratorInterface)join_iter).iter1,((JoinIteratorInterface)join_iter).iter2,before_expression_list.get(count-1));
+                    join_iter = new JoinIteratorInterface(join_iter, join_list.get(table1));
+                if (flag == 1)
+                    join_iter = new IndexNestedLoopJoin(((JoinIteratorInterface) join_iter).iter1, ((JoinIteratorInterface) join_iter).iter2, before_expression_list.get(count - 1));
                 flag = 0;
+            }
         }
         Iterator_Interface to_send = null;
         if(to_project!=null)
             to_send = new ProjectionIterator_Interface(to_project.selectedColumns,join_iter);
-        if(to_aggr!=null && to_project!=null) {
+        else if(to_aggr!=null && to_project!=null) {
             to_send = new AggregateProjection(to_send, to_aggr.selectedColumns);
         }
-        else if(to_aggr != null && to_project==null){
+        else {
             to_send = new AggregateProjection(join_iter,to_aggr.selectedColumns);
         }
         return to_send;
@@ -158,13 +169,15 @@ public class Optimize {
         {
             BinaryExpression binaryExpression1 = (BinaryExpression) binaryExpression.getLeftExpression();
             BinaryExpression binaryExpression2 = (BinaryExpression) binaryExpression.getRightExpression();
-            Column col = ((Column)binaryExpression1.getLeftExpression());
-            String table_name1 = col.getTable().getName();
+            String table_name1 = ((Column)binaryExpression1.getLeftExpression()).getTable().getName();
+
+            if(table_name1 == null)
+            {
+                String columnname = binaryExpression.getLeftExpression().toString();
+                table_name1 = getTableName(columnname);
+            }
             if(Data_Storage.table_alias.containsKey(table_name1))
                 table_name1 = Data_Storage.table_alias.get(table_name1);
-            if(table_name1 == null){
-                table_name1 = Data_Storage.current_schema.get(col.getColumnName());
-            }
             if (!join_list.containsKey(table_name1)) {
                 join_list.put(table_name1, new EvalIterator_Interface(new FileIterator_Interface(table_name1, Data_Storage.table_alias.get(table_name1),true), expr));
             } else {
@@ -175,12 +188,13 @@ public class Optimize {
         {
             Column col = (Column) binaryExpression.getLeftExpression();
             String table_name = col.getTable().getName();
+            if(table_name == null)
+            {
+                String columnname = binaryExpression.getLeftExpression().toString();
+                table_name = getTableName(columnname);
+            }
             if(Data_Storage.table_alias.containsKey(table_name))
                 table_name = Data_Storage.table_alias.get(table_name);
-
-            if(table_name == null){
-                table_name = Data_Storage.current_schema.get(col.getColumnName());
-            }
             if (!join_list.containsKey(table_name)) {
                 join_list.put(table_name, new EvalIterator_Interface(new FileIterator_Interface(table_name, Data_Storage.table_alias.get(table_name),true), expr));
             } else {
@@ -191,5 +205,18 @@ public class Optimize {
     public Column[] split(Expression expr)
     {
         return new Column[]{(Column)((BinaryExpression)expr).getLeftExpression(),(Column)((BinaryExpression)expr).getRightExpression()};
+    }
+    public String getTableName(String columnname)
+    {
+        String table_name1 = null;
+        Iterator iter = Data_Storage.tables.keySet().iterator();
+        for(int i=0;i<Data_Storage.tables.size();i++)
+        {
+            if(iter.hasNext()) {
+                if (Data_Storage.tables.get(iter.next()).containsKey(columnname))
+                    table_name1 = names.get(i);
+            }
+        }
+        return table_name1;
     }
 }
