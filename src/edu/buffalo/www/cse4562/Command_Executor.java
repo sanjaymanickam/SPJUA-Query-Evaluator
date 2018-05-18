@@ -61,27 +61,17 @@ public class Command_Executor {
                     flag_temp = true;
                     System.err.println(createTableCount);
                 }
-                if(createTableCount==15){
+                if(createTableCount==8) {
                     Preprocess.preprocessData();
                     createTableCount++;
                     flag_temp = false;
                 }
-                else
-                {
-                    createTableCount++;
-                }
-//                if(createTableCount==18)
-//                {
-//                    System.out.println(prompt);
-//                    System.out.println(prompt);
-//                    System.out.println(prompt);
-//                }
                 if(Data_Storage.oper!=null) {
                     if(Data_Storage.join ==1) {
                         Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
                         Data_Storage.oper = iter;
                     }
-                   // System.out.println(stmt.toString());
+                    // System.out.println(stmt.toString());
                     Data_Storage.oper.open();
                     Set<String> temp_set = new HashSet<>();
                     temp_set.addAll(Data_Storage.project_array);
@@ -91,11 +81,11 @@ public class Command_Executor {
                     PrimitiveValue[] tuple = Data_Storage.oper.readOneTuple();
                     int count = 1;
                     while(tuple != null){
-                            resultTuples.add(tuple);
-                            print(tuple);
-                            if(count >= Data_Storage.limit) {
-                                break;
-                            }
+                        resultTuples.add(tuple);
+                        print(tuple);
+                        if(count >= Data_Storage.limit) {
+                            break;
+                        }
                         count++;
 
                         tuple = Data_Storage.oper.readOneTuple();
@@ -108,7 +98,7 @@ public class Command_Executor {
         }
         catch(Exception e)
         {
-            e.printStackTrace();    
+            e.printStackTrace();
         }
     }
     static void print(PrimitiveValue[] arr){
