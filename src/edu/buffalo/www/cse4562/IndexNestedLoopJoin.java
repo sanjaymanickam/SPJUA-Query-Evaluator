@@ -68,7 +68,7 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                     to_flag = true;
                     this.count++;
                     if(count<tuples.size())
-                        second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()].toString());
+                        second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()]);
                     else
                         return null;
                 }

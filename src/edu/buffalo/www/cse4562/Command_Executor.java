@@ -21,7 +21,7 @@ public class Command_Executor {
     static LinkedHashMap<String,ArrayList<String>> aggregate_result = new LinkedHashMap<>();
     public static void exec(String[] args)
     {
-        //System.out.println(prompt);
+        System.out.println(prompt);
         System.out.flush();
         Reader in = new InputStreamReader(System.in);
         CCJSqlParser parser = new CCJSqlParser(in);
@@ -61,7 +61,7 @@ public class Command_Executor {
                     System.err.println(createTableCount);
                 }
                 if(createTableCount==7){
-//                    Preprocess.preprocessData();
+                    Preprocess.preprocessData();
                        createTableCount++;
                     flag_temp = false;
                 }
