@@ -9,9 +9,9 @@ public class Preprocess {
         Iterator tableIter = Data_Storage.tables.keySet().iterator();
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();
-            System.err.println("Processing start - Table - "+tableName);
+//            System.err.println("Processing start - Table - "+tableName);
             HashMap<String, HashSet<Integer>> stats = getStats(tableName);
-            System.err.println("Processing done - Table - "+tableName);
+//            System.err.println("Processing done - Table - "+tableName);
         }
         return true;
     }
@@ -42,7 +42,7 @@ public class Preprocess {
                         int pos = indexes.get(i);
                         String colName = names.get(i);
                             if (c == 0) {
-                                System.err.println("Indexing col - " + colName);
+//                                System.err.println("Indexing col - " + colName);
                             }
                             StringTokenizer stringTokenizer = new StringTokenizer(line, "|");
                             int count = 0;
@@ -72,11 +72,11 @@ public class Preprocess {
                                     bw.flush();
                                     bw.close();
                                     if (c == 0) {
-                                        System.err.println("New file written - " + fileName);
+//                                        System.err.println("New file written - " + fileName);
                                     }
                                 } catch (IOException e) {
-                                    System.err.println("Exception while writing");
-                                    System.err.println(e);
+//                                    System.err.println("Exception while writing");
+//                                    System.err.println(e);
                                 }
                             }
                     }
@@ -85,18 +85,18 @@ public class Preprocess {
                 tupleCount++;
                 line = buf.readLine();
             }
-            System.err.println("Read file");
-            System.err.println(tupleCount);
-            System.err.println(partKeyIndex.size());
+//            System.err.println("Read file");
+//            System.err.println(tupleCount);
+//            System.err.println(partKeyIndex.size());
             buf.close();
             Data_Storage.tableSize.put(file,tupleCount);
         }
         catch (FileNotFoundException e){
-            System.err.println("Exception File not found");
+//            System.err.println("Exception File not found");
             e.printStackTrace();
         }
         catch (IOException e){
-            System.err.println("IO ");
+//            System.err.println("IO ");
             e.printStackTrace();
         }
         return index;
