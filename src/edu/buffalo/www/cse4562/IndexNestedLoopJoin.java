@@ -44,9 +44,9 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                     read_file(iter1);
                 ArrayList<String> temp_array =  new ArrayList(Data_Storage.tables.get(iter2.getFileName()).keySet());
                 if (temp_array.contains(leftColumn.getColumnName()))
-                    fileName = Data_Storage.get_filename(rightColumn);
-                else
                     fileName = Data_Storage.get_filename(leftColumn);
+                else
+                    fileName = Data_Storage.get_filename(rightColumn);
                 indexAvailable = fileName == null ? false : true;
                 PrimitiveValue[] child1 = null;
                 PrimitiveValue[] child2 = null;
@@ -64,18 +64,26 @@ public class IndexNestedLoopJoin implements Iterator_Interface {
                         else
                             second_file = set_iterator(iter2, fileName + to_send[child1Schema.get(leftColumn.getColumnName()).getPosition()].toRawString());
                 } else {
-                    if (second_file == null)
+                    if (second_file == null) {
+                        fileName = iter2.getFileName();
                         second_file = iter2;
+                    }
                 }
                 child2 = second_file.readOneTuple();
                 if (child2 == null) {
                     to_flag = true;
                     this.count++;
                     if(count<tuples.size())
-                        if(temp_array.contains(leftColumn.getColumnName()))
-                            second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()]);
+                        if(indexAvailable) {
+                            if (temp_array.contains(leftColumn.getColumnName()))
+                                second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(rightColumn.getColumnName()).getPosition()]);
+                            else
+                                second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(leftColumn.getColumnName()).getPosition()]);
+                        }
                         else
-                            second_file = set_iterator(iter2, fileName + tuples.get(count)[child1Schema.get(leftColumn.getColumnName()).getPosition()]);
+                        {
+                            second_file.reset();
+                        }
                     else
                         return null;
                 }

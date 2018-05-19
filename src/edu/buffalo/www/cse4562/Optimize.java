@@ -90,7 +90,7 @@ public class Optimize {
             else if(expr_to_iterate instanceof Column)
                 break;
         }
-        if(Data_Storage.tableSize.size()==2)
+        if(join_name.size()==2)
             if (Data_Storage.tableSize.get(join_name.get(0)) > Data_Storage.tableSize.get(join_name.get(1)))
                 Collections.swap(join_name, 0, 1);
         Iterator before_iter = before_expression_list.iterator();
