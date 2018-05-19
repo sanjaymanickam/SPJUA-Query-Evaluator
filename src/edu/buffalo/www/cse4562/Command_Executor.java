@@ -69,11 +69,7 @@ public class Command_Executor {
                     createTableCount++;
                     flag_temp = false;
                 }
-                if(selectCount==2)
-                {
 
-                }
-                else {
                     if (Data_Storage.oper != null) {
                         if (Data_Storage.join == 1) {
                             Iterator_Interface iter = new Optimize().optimize(Data_Storage.oper);
@@ -99,8 +95,6 @@ public class Command_Executor {
                             tuple = Data_Storage.oper.readOneTuple();
                         }
                     }
-                }
-
                 System.out.println(prompt);
                 System.out.flush();
             }
@@ -114,7 +108,7 @@ public class Command_Executor {
 
         for(int i=0;i<arr.length;i++){
             System.out.print(arr[i]);
-            System.err.println(arr[i]);
+            System.err.print(arr[i]);
             if(i != arr.length -1){
                 System.out.print("|");
                 System.err.println("|");
