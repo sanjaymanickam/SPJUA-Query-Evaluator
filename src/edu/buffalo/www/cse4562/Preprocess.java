@@ -6,6 +6,7 @@ import java.util.*;
 public class Preprocess {
     static HashMap<String, ArrayList<Integer>> partKeyIndex = new HashMap<>();
     public static boolean preprocessData(){
+        Data_Storage.indexColumns.remove("L_PARTKEY");
         Iterator tableIter = Data_Storage.tables.keySet().iterator();
         while (tableIter.hasNext()){
             String tableName = tableIter.next().toString();

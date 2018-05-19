@@ -69,7 +69,7 @@ public class Command_Executor {
                     createTableCount++;
                     flag_temp = false;
                 }
-                if(selectCount==2 ||selectCount ==3 ||selectCount ==4)
+                if(selectCount==2)
                 {
 
                 }
@@ -111,11 +111,13 @@ public class Command_Executor {
         }
     }
     static void print(PrimitiveValue[] arr){
-        System.err.println("E");
+
         for(int i=0;i<arr.length;i++){
             System.out.print(arr[i]);
+            System.err.println(arr[i]);
             if(i != arr.length -1){
                 System.out.print("|");
+                System.err.println("|");
             }
         }
         System.out.println();
