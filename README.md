@@ -29,3 +29,9 @@ with open('data.dat', 'r') as f:
 SELECT fields[1] FROM 'data.dat' 
 WHERE fields[2] != "Ensign" AND CAST(fields[3] AS int) > 25
 ```
+Implemented all these joins to use in different occasions like when the join fits in memory or when the join goes out of our memory size.
+-Sort-Merge Join: An implementation of sort-merge join for use on out-of-memory joins.
+-1-Pass Hash Join: An implementation of the in-memory hash join algorithm.
+-Index Nested-Loop Join: An implementation of index nested loop join algorithm.
+-Join Specialization: Rewrite Selection + CrossProduct operators into Hash Join operators.
+-Index Scanner: Search values with index lookup.
