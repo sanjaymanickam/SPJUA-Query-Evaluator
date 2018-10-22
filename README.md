@@ -29,7 +29,7 @@ with open('data.dat', 'r') as f:
 SELECT fields[1] FROM 'data.dat' 
 WHERE fields[2] != "Ensign" AND CAST(fields[3] AS int) > 25
 ```
-##Query rewriting##
+## Query rewriting
 The first steps to execute an SQL command is to parse it into a realtional algebra tree. Then for query optimization we push down the selection operators and replace every selection operator on top of a cross product with a hash join. 
 Implemented all these joins to use in different occasions like when the join fits in memory or when the join goes out of our memory size.
 - Sort-Merge Join: An implementation of sort-merge join for use on out-of-memory joins.
