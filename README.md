@@ -17,7 +17,7 @@ The method which was used was volcano style iteration of the queries.
 Volcano-Style Computation (Iterators)
 =====================================
 This is an example of volcano style computation.
-'
+'code()'
 with open('data.dat', 'r') as f:
   for line in f:
     fields = split(",", line)
