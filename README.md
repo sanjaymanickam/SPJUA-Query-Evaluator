@@ -31,7 +31,11 @@ WHERE fields[2] != "Ensign" AND CAST(fields[3] AS int) > 25
 ```
 ## Query rewriting
 The first steps to execute an SQL command is to parse it into a realtional algebra tree. Then for query optimization we push down the selection operators and replace every selection operator on top of a cross product with a hash join. 
-Another optimization I did is projection pushdown operation. Essentially, you only read the attributes that you will need in the query from the each database file, and discard all the attributes that you will not use. 
+
+Another optimization I did is projection pushdown operation. 
+
+Essentially, you only read the attributes that you will need in the query from the each database file, and discard all the attributes that you will not use. 
+
 Implemented all these joins to use in different occasions like when the join fits in memory or when the join goes out of our memory size.
 - Sort-Merge Join: An implementation of sort-merge join for use on out-of-memory joins.
 - 1-Pass Hash Join: An implementation of the in-memory hash join algorithm.
